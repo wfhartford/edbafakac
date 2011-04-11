@@ -8,7 +8,11 @@ public final class Configuration {
 
   public static final String DFLT_USER_COLLECTION = "users";
 
-  public static final String DFLT_CONFIG_COLLECTION = "config";
+  public static final String DFLT_TYPES_COLLECTION = "types";
+
+  public static final String DFLT_FIELDS_COLLECTION = "fields";
+
+  public static final String DFLT_ACTIONS_COLLECTION = "actions";
 
   public static final String DFLT_ITEMS_COLLECTION = "items";
 
@@ -22,7 +26,11 @@ public final class Configuration {
 
     private String usersCollection;
 
-    private String configCollection;
+    private String typesCollection;
+
+    private String fieldsCollection;
+
+    private String actionsCollection;
 
     private String itemsCollection;
 
@@ -43,8 +51,18 @@ public final class Configuration {
       return this;
     }
 
-    public Builder setConfigCollection(final String configCollection) {
-      this.configCollection = configCollection;
+    public Builder setTypesCollection(final String typesCollection) {
+      this.typesCollection = typesCollection;
+      return this;
+    }
+
+    public Builder setFieldsCollection(final String fieldsCollection) {
+      this.fieldsCollection = fieldsCollection;
+      return this;
+    }
+
+    public Builder setActionsCollection(final String actionsCollection) {
+      this.actionsCollection = actionsCollection;
       return this;
     }
 
@@ -70,8 +88,16 @@ public final class Configuration {
       return null == usersCollection ? DFLT_USER_COLLECTION : usersCollection;
     }
 
-    public String getConfigCollection() {
-      return null == configCollection ? DFLT_CONFIG_COLLECTION : configCollection;
+    public String getTypesCollection() {
+      return null == typesCollection ? DFLT_TYPES_COLLECTION : typesCollection;
+    }
+
+    public String getFieldsCollection() {
+      return null == fieldsCollection ? DFLT_FIELDS_COLLECTION : fieldsCollection;
+    }
+
+    public String getActionsCollection() {
+      return null == actionsCollection ? DFLT_ACTIONS_COLLECTION : actionsCollection;
     }
 
     public String getItemsCollection() {
@@ -93,7 +119,11 @@ public final class Configuration {
 
   private final String usersCollection;
 
-  private final String configCollection;
+  private final String typesCollection;
+
+  private final String fieldsCollection;
+
+  private final String actionsCollection;
 
   private final String itemsCollection;
 
@@ -107,7 +137,9 @@ public final class Configuration {
     mongoUri = builder.getMongoUri();
     dbName = builder.getDBName();
     usersCollection = builder.getUsersCollection();
-    configCollection = builder.getConfigCollection();
+    typesCollection = builder.getTypesCollection();
+    fieldsCollection = builder.getFieldsCollection();
+    actionsCollection = builder.getActionsCollection();
     itemsCollection = builder.getItemsCollection();
     logCollection = builder.getLogCollection();
   }
@@ -124,8 +156,16 @@ public final class Configuration {
     return usersCollection;
   }
 
-  public String getConfigCollection() {
-    return configCollection;
+  public String getTypesCollection() {
+    return typesCollection;
+  }
+
+  public String getFieldsCollection() {
+    return fieldsCollection;
+  }
+
+  public String getActionsCollection() {
+    return actionsCollection;
   }
 
   public String getItemsCollection() {
