@@ -6,6 +6,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
 import com.mongodb.DB;
@@ -32,19 +33,22 @@ public final class Database {
   public static Database getExistingInstance(final Configuration configuration) {
     final Database database = INSTANCES.get(configuration);
     Preconditions.checkArgument(null != database, "No database with specified configuration: %s", configuration);
-    final Lock readLock = database.lock.readLock();
-    readLock.lock();
+    database.readLock.lock();
     try {
       Preconditions.checkArgument(!database.closed,
           "Databsae with specified configuration has been closed: %s", configuration);
     }
     finally {
-      readLock.unlock();
+      database.readLock.unlock();
     }
     return database;
   }
 
   private final ReadWriteLock lock = new ReentrantReadWriteLock();
+
+  private final Lock readLock = lock.readLock();
+
+  private final Lock writeLock = lock.writeLock();
 
   private final Configuration configuration;
 
@@ -79,7 +83,7 @@ public final class Database {
   }
 
   public void close() {
-    lock.writeLock().lock();
+    writeLock.lock();
     try {
       if (!closed) {
         mongo.close();
@@ -87,22 +91,22 @@ public final class Database {
       }
     }
     finally {
-      lock.writeLock().unlock();
+      writeLock.unlock();
+    }
+  }
+
+  private <F, T> T locked(final Function<F, T> function, final F input) {
+    readLock.lock();
+    try {
+      return function.apply(input);
+    }
+    finally {
+      readLock.unlock();
     }
   }
 
   public Configuration getConfiguration() {
     return configuration;
-  }
-
-  public Type<?> getType(final Entry entry) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("getType has not been implemented");
-  }
-
-  public Iterable<Field<?>> getFields(final Type type) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("getFields has not been implemented");
   }
 
 }

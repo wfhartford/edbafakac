@@ -9,9 +9,12 @@ public abstract class Entry {
 
   private final Configuration configuration;
 
-  public Entry(final DBObject object, final Configuration configuration) {
+  private final boolean readOnly;
+
+  public Entry(final DBObject object, final Configuration configuration, final boolean readOnly) {
     this.object = object;
     this.configuration = configuration;
+    this.readOnly = readOnly;
   }
 
   public Configuration getConfiguration() {
@@ -23,7 +26,11 @@ public abstract class Entry {
   }
 
   public Type<?> getType() {
-    return getDatabase().getType(this);
+    return getFieldValue(Fields.getTypeField(configuration));
+  }
+
+  public String getName() {
+    return getFieldValue(Fields.getNameField(configuration));
   }
 
   public Iterable<Field<?>> getFields() {
@@ -32,6 +39,10 @@ public abstract class Entry {
 
   public <T> T getFieldValue(final Field<T> field) {
     return field.getValue(this);
+  }
+
+  public boolean isReadOnly() {
+    return readOnly;
   }
 
   DBObject getObject() {

@@ -1,13 +1,13 @@
 package ca.cutterslade.edbafakac.db;
 
-import com.mongodb.DBObject;
+import java.util.Map;
+
+import com.mongodb.BasicDBObject;
 
 final class KeyField extends Field<String> {
 
-  private static final DBObject VALUES = new ImmutableDBObject();
-
-  KeyField(final Configuration configuration) {
-    super(VALUES, configuration);
+  KeyField(final Map<String, Object> values, final Configuration configuration) {
+    super(new BasicDBObject(values), configuration, false);
   }
 
   @Override
