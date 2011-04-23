@@ -2,6 +2,7 @@ package ca.cutterslade.edbafakac.db;
 
 import java.util.Map;
 
+import com.google.common.base.Preconditions;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -16,11 +17,11 @@ public final class Type<T> extends Entry {
   }
 
   public Iterable<Field<?>> getTypeFields() {
-    return getFieldValue(Fields.getFieldsField(getConfiguration()));
+    return getFieldValue(BasicField.getTypeFieldsField(getConfiguration()));
   }
 
   public Action<T> getConverter() {
-    return (Action<T>) getFieldValue(Fields.getConverterField(getConfiguration()));
+    return (Action<T>) getFieldValue(BasicField.getConverterField(getConfiguration()));
   }
 
   public T convertExternal(final Object object, final boolean readOnly) {
@@ -29,5 +30,12 @@ public final class Type<T> extends Entry {
 
   public Object convertInternal(final T value) {
     return getConverter().undo(value);
+  }
+
+  Type<? extends Entry> asEntryType() {
+    Preconditions.checkState(BasicType.isEntryType(this));
+    @SuppressWarnings("unchecked")
+    final Type<? extends Entry> entryType = (Type<? extends Entry>) this;
+    return entryType;
   }
 }

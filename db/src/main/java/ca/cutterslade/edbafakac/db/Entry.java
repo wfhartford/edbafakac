@@ -17,31 +17,31 @@ public abstract class Entry {
     this.readOnly = readOnly;
   }
 
-  public Configuration getConfiguration() {
+  public final Configuration getConfiguration() {
     return configuration;
   }
 
-  public Database getDatabase() {
+  public final Database getDatabase() {
     return Database.getExistingInstance(configuration);
   }
 
-  public Type<?> getType() {
-    return getFieldValue(Fields.getTypeField(configuration));
+  public final Type<?> getType() {
+    return getFieldValue(BasicField.getTypeField(configuration));
   }
 
-  public String getName() {
-    return getFieldValue(Fields.getNameField(configuration));
+  public final String getName() {
+    return getFieldValue(BasicField.getNameField(configuration));
   }
 
-  public Iterable<Field<?>> getFields() {
-    return Iterables.concat(Fields.getBaseFields(configuration), getType().getTypeFields());
+  public final Iterable<Field<?>> getFields() {
+    return Iterables.concat(BasicField.getBaseFields(configuration), getType().getTypeFields());
   }
 
-  public <T> T getFieldValue(final Field<T> field) {
+  public final <T> T getFieldValue(final Field<T> field) {
     return field.getValue(this);
   }
 
-  public <T> void setFieldValue(final Field<T> field, final T value) {
+  public final <T> void setFieldValue(final Field<T> field, final T value) {
     field.setValue(this, value);
   }
 
@@ -49,7 +49,7 @@ public abstract class Entry {
     return readOnly;
   }
 
-  DBObject getObject() {
+  final DBObject getObject() {
     return object;
   }
 

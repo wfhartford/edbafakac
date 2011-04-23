@@ -18,11 +18,15 @@ public class Field<T> extends Entry {
   }
 
   public Type<T> getFieldType() {
-    return (Type<T>) getFieldValue(Fields.getFieldTypeField(getConfiguration()));
+    return (Type<T>) getFieldValue(BasicField.getFieldTypeField(getConfiguration()));
   }
 
   public T getValue(final Entry entry) {
-    return getFieldType().convertExternal(entry.getObject().get(getFieldKey()), entry.isReadOnly());
+    return getValue(entry.getObject(), entry.isReadOnly());
+  }
+
+  T getValue(final DBObject entry, final boolean readOnly) {
+    return getFieldType().convertExternal(entry.get(getFieldKey()), readOnly);
   }
 
   public void setValue(final Entry entry, final T value) {
@@ -32,6 +36,7 @@ public class Field<T> extends Entry {
   }
 
   protected String getFieldKey() {
-    return getFieldValue(Fields.getKeyField(getConfiguration()));
+    return getFieldValue(BasicField.getFieldKeyField(getConfiguration()));
   }
+
 }

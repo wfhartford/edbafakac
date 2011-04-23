@@ -123,14 +123,35 @@ public final class Database {
     @Override
     public Entry apply(final ObjectId input) {
       final DBObject entry = getEntriesCollection().findOne(input);
-      final DBObject typeObject = getEntriesCollection().findOne(entry.get(Fields.TYPE_FIELD_KEY));
-      final Type<Entry> type = Types.getType(typeObject, getConfiguration());
+      final Type<? extends Entry> type =
+          BasicField.getTypeField(getConfiguration()).getValue(entry, true).asEntryType();
       return type.convertExternal(entry, false);
     }
   };
 
-  public Entry get(final ObjectId objectId) {
-    return locked(getFunction, objectId);
+  public <T extends Entry> T get(final ObjectId objectId) {
+    return (T) locked(getFunction, objectId);
+  }
+
+  public <T extends Entry> T get(final String nameOrId) {
+    T entry;
+    if (ObjectId.isValid(nameOrId)) {
+      entry = get(new ObjectId(nameOrId));
+    }
+    else {
+      entry = locked(getByNameFunction, nameOrId);
+    }
+    return entry;
+  }
+
+  public Field<?> getField(final String name) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("getField has not been implemented");
+  }
+
+  public Field<?> getField(final ObjectId id) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("getField has not been implemented");
   }
 
 }
