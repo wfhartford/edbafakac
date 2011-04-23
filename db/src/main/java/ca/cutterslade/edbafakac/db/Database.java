@@ -6,11 +6,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.bson.types.ObjectId;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 import com.mongodb.MongoURI;
 
@@ -58,15 +61,7 @@ public final class Database {
 
   private final DB mongoDb;
 
-  private final DBCollection usersCollection;
-
-  private final DBCollection typesCollection;
-
-  private final DBCollection fieldsCollection;
-
-  private final DBCollection actionsCollection;
-
-  private final DBCollection itemsCollection;
+  private final DBCollection entriesCollection;
 
   private final DBCollection logCollection;
 
@@ -74,11 +69,7 @@ public final class Database {
     this.configuration = configuration;
     mongo = new Mongo(new MongoURI(configuration.getMongoUri()));
     mongoDb = mongo.getDB(configuration.getDbName());
-    usersCollection = mongoDb.getCollection(configuration.getUsersCollection());
-    typesCollection = mongoDb.getCollection(configuration.getTypesCollection());
-    fieldsCollection = mongoDb.getCollection(configuration.getFieldsCollection());
-    actionsCollection = mongoDb.getCollection(configuration.getActionsCollection());
-    itemsCollection = mongoDb.getCollection(configuration.getItemsCollection());
+    entriesCollection = mongoDb.getCollection(configuration.getEntriesCollection());
     logCollection = mongoDb.getCollection(configuration.getLogCollection());
   }
 
@@ -107,6 +98,39 @@ public final class Database {
 
   public Configuration getConfiguration() {
     return configuration;
+  }
+
+  public DBCollection getEntriesCollection() {
+    return entriesCollection;
+  }
+
+  private final Function<Entry, Void> saveFunction = new Function<Entry, Void>() {
+
+    @Override
+    public Void apply(final Entry entry) {
+      Preconditions.checkArgument(!entry.isReadOnly());
+      getEntriesCollection().save(entry.getObject());
+      return null;
+    }
+  };
+
+  public void save(final Entry entry) {
+    locked(saveFunction, entry);
+  }
+
+  private final Function<ObjectId, Entry> getFunction = new Function<ObjectId, Entry>() {
+
+    @Override
+    public Entry apply(final ObjectId input) {
+      final DBObject entry = getEntriesCollection().findOne(input);
+      final DBObject typeObject = getEntriesCollection().findOne(entry.get(Fields.TYPE_FIELD_KEY));
+      final Type<Entry> type = Types.getType(typeObject, getConfiguration());
+      return type.convertExternal(entry, false);
+    }
+  };
+
+  public Entry get(final ObjectId objectId) {
+    return locked(getFunction, objectId);
   }
 
 }

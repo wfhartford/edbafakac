@@ -6,15 +6,7 @@ public final class Configuration {
 
   public static final String DFLT_DB_NAME = "edbafakac";
 
-  public static final String DFLT_USER_COLLECTION = "users";
-
-  public static final String DFLT_TYPES_COLLECTION = "types";
-
-  public static final String DFLT_FIELDS_COLLECTION = "fields";
-
-  public static final String DFLT_ACTIONS_COLLECTION = "actions";
-
-  public static final String DFLT_ITEMS_COLLECTION = "items";
+  public static final String DFLT_ENTRIES_COLLECTION = "entries";
 
   public static final String DFLT_LOG_COLLECTION = "log";
 
@@ -24,15 +16,7 @@ public final class Configuration {
 
     private String dbName;
 
-    private String usersCollection;
-
-    private String typesCollection;
-
-    private String fieldsCollection;
-
-    private String actionsCollection;
-
-    private String itemsCollection;
+    private String entriesCollection;
 
     private String logCollection;
 
@@ -46,28 +30,8 @@ public final class Configuration {
       return this;
     }
 
-    public Builder setUsersCollection(final String usersCollection) {
-      this.usersCollection = usersCollection;
-      return this;
-    }
-
-    public Builder setTypesCollection(final String typesCollection) {
-      this.typesCollection = typesCollection;
-      return this;
-    }
-
-    public Builder setFieldsCollection(final String fieldsCollection) {
-      this.fieldsCollection = fieldsCollection;
-      return this;
-    }
-
-    public Builder setActionsCollection(final String actionsCollection) {
-      this.actionsCollection = actionsCollection;
-      return this;
-    }
-
-    public Builder setItemsCollection(final String itemsCollection) {
-      this.itemsCollection = itemsCollection;
+    public Builder setItemsCollection(final String entriesCollection) {
+      this.entriesCollection = entriesCollection;
       return this;
     }
 
@@ -84,24 +48,8 @@ public final class Configuration {
       return null == dbName ? DFLT_DB_NAME : dbName;
     }
 
-    public String getUsersCollection() {
-      return null == usersCollection ? DFLT_USER_COLLECTION : usersCollection;
-    }
-
-    public String getTypesCollection() {
-      return null == typesCollection ? DFLT_TYPES_COLLECTION : typesCollection;
-    }
-
-    public String getFieldsCollection() {
-      return null == fieldsCollection ? DFLT_FIELDS_COLLECTION : fieldsCollection;
-    }
-
-    public String getActionsCollection() {
-      return null == actionsCollection ? DFLT_ACTIONS_COLLECTION : actionsCollection;
-    }
-
     public String getItemsCollection() {
-      return null == itemsCollection ? DFLT_ITEMS_COLLECTION : itemsCollection;
+      return null == entriesCollection ? DFLT_ENTRIES_COLLECTION : entriesCollection;
     }
 
     public String getLogCollection() {
@@ -117,15 +65,7 @@ public final class Configuration {
 
   private final String dbName;
 
-  private final String usersCollection;
-
-  private final String typesCollection;
-
-  private final String fieldsCollection;
-
-  private final String actionsCollection;
-
-  private final String itemsCollection;
+  private final String entriesCollection;
 
   private final String logCollection;
 
@@ -136,11 +76,7 @@ public final class Configuration {
   Configuration(final Builder builder) {
     mongoUri = builder.getMongoUri();
     dbName = builder.getDBName();
-    usersCollection = builder.getUsersCollection();
-    typesCollection = builder.getTypesCollection();
-    fieldsCollection = builder.getFieldsCollection();
-    actionsCollection = builder.getActionsCollection();
-    itemsCollection = builder.getItemsCollection();
+    entriesCollection = builder.getItemsCollection();
     logCollection = builder.getLogCollection();
   }
 
@@ -152,24 +88,8 @@ public final class Configuration {
     return dbName;
   }
 
-  public String getUsersCollection() {
-    return usersCollection;
-  }
-
-  public String getTypesCollection() {
-    return typesCollection;
-  }
-
-  public String getFieldsCollection() {
-    return fieldsCollection;
-  }
-
-  public String getActionsCollection() {
-    return actionsCollection;
-  }
-
-  public String getItemsCollection() {
-    return itemsCollection;
+  public String getEntriesCollection() {
+    return entriesCollection;
   }
 
   public String getLogCollection() {

@@ -16,14 +16,18 @@ public final class Type<T> extends Entry {
   }
 
   public Iterable<Field<?>> getTypeFields() {
-    return Fields.getFieldsField(getConfiguration()).getValue(this);
+    return getFieldValue(Fields.getFieldsField(getConfiguration()));
   }
 
   public Action<T> getConverter() {
-    return (Action<T>) Fields.getConverterField(getConfiguration()).getValue(this);
+    return (Action<T>) getFieldValue(Fields.getConverterField(getConfiguration()));
   }
 
-  public T convert(final Object object) {
-    return getConverter().apply(object);
+  public T convertExternal(final Object object, final boolean readOnly) {
+    return getConverter().perform(object, readOnly);
+  }
+
+  public Object convertInternal(final T value) {
+    return getConverter().undo(value);
   }
 }

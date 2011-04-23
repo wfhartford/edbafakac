@@ -41,7 +41,11 @@ public abstract class Entry {
     return field.getValue(this);
   }
 
-  public boolean isReadOnly() {
+  public <T> void setFieldValue(final Field<T> field, final T value) {
+    field.setValue(this, value);
+  }
+
+  public final boolean isReadOnly() {
     return readOnly;
   }
 

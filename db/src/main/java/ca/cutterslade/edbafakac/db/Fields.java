@@ -19,20 +19,27 @@ public final class Fields {
 
   static final String FIELD_TYPE_FIELD_KEY = "15dd12a8-46c9-45f7-a5cd-985a7a583c84";
 
+  static final String FIELD_SUB_TYPE_FIELD_KEY = "1327226d-0d55-44ce-a80c-a00180741996";
+
+  static final String TYPE_ID_FIELD_KEY = "ab7b25d5-bcfb-4940-830e-38fcb6638d68";
+
   private static final ImmutableMap<String, Object> ID_FIELD_VALUES =
-      getFieldValues(ID_FIELD_KEY, "Object ID", BasicType.OBJECT_ID);
+      getFieldValues("Object ID", BasicType.OBJECT_ID, ID_FIELD_KEY);
 
   private static final ImmutableMap<String, Object> NAME_FIELD_VALUES =
-      getFieldValues(NAME_FIELD_KEY, "Object Name", BasicType.STRING);
+      getFieldValues("Object Name", BasicType.STRING, NAME_FIELD_KEY);
 
   private static final ImmutableMap<String, Object> TYPE_FIELD_VALUES =
-      getFieldValues(TYPE_FIELD_KEY, "Object Type", BasicType.TYPE);
+      getFieldValues("Object Type", BasicType.TYPE, TYPE_FIELD_KEY);
 
   private static final ImmutableMap<String, Object> KEY_FIELD_VALUES =
-      getFieldValues(KEY_FIELD_KEY, "Key", BasicType.STRING);
+      getFieldValues("Key", BasicType.STRING, KEY_FIELD_KEY);
 
   private static final ImmutableMap<String, Object> FIELD_TYPE_FIELD_VALUES =
-      getFieldValues(FIELD_TYPE_FIELD_KEY, "Field Type", BasicType.TYPE);
+      getFieldValues("Field Type", BasicType.TYPE, FIELD_TYPE_FIELD_KEY);
+
+  private static final ImmutableMap<String, Object> TYPE_ID_FIELD_VALUES =
+      getFieldValues("Type Type", BasicType.STRING, TYPE_ID_FIELD_KEY);
 
   private static final Interner<Field<?>> FIELDS = Interners.newWeakInterner();
 
@@ -40,10 +47,12 @@ public final class Fields {
     throw new UnsupportedOperationException();
   }
 
-  static ImmutableMap<String, Object> getFieldValues(final String key, final String name, final BasicType type) {
+  private static ImmutableMap<String, Object> getFieldValues(final String name, final BasicType type,
+      final String key) {
     return ImmutableMap.<String, Object> builder()
         .put(NAME_FIELD_KEY, name)
-        .put(TYPE_FIELD_KEY, type.getId())
+        .put(TYPE_FIELD_KEY, BasicType.FIELD.getId())
+        .put(FIELD_TYPE_FIELD_KEY, type.getId())
         .put(KEY_FIELD_KEY, key)
         .build();
   }
@@ -70,6 +79,10 @@ public final class Fields {
 
   static Field<Type<?>> getFieldTypeField(final Configuration configuration) {
     return intern(Field.<Type<?>> base(FIELD_TYPE_FIELD_VALUES, configuration));
+  }
+
+  static Field<String> getTypeIDField(final Configuration configuration) {
+    return intern(Field.<String> base(TYPE_ID_FIELD_VALUES, configuration));
   }
 
   static Iterable<Field<?>> getBaseFields(final Configuration configuration) {

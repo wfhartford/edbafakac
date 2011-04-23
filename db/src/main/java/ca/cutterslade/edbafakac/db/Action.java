@@ -8,9 +8,14 @@ public class Action<T> extends Entry {
     super(object, configuration, readOnly);
   }
 
-  public T apply(final Object object) {
+  public T perform(final Object object, final boolean readOnly) {
     // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("apply has not been implemented");
+    throw new UnsupportedOperationException("perform has not been implemented");
+  }
+
+  public Object undo(final T value) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("undo has not been implemented");
   }
 
 }
