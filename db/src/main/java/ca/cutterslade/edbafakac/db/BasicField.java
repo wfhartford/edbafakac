@@ -8,16 +8,20 @@ import com.google.common.collect.ImmutableSet;
 
 public enum BasicField {
   ID(BasicType.OBJECT_ID, "_id"),
-  NAME(BasicType.STRING, "6e9d37d4-803f-4ab2-aee8-1455ad3b25d9"),
-  TYPE(BasicType.TYPE, "cbc1377a-549f-42ec-9962-d9585073765e"),
-  FIELD_TYPE(BasicType.TYPE, "ca2f68ce-ea4a-42f9-994e-acbe39859b6b"),
-  FIELD_KEY(BasicType.STRING, "420eddc0-d69b-48f6-af89-9038c54c5a1b"),
-  TYPE_FIELDS(BasicType.COLLECTION, "d5df529c-ad4a-4497-b85d-e3bf55e1ab66"),
-  CONVERTER(BasicType.ACTION, "93fb8764-26dd-4ebb-ba9f-86e6a47050df");
+  NAME(BasicType.STRING),
+  TYPE(BasicType.TYPE),
+  FIELD_TYPE(BasicType.TYPE),
+  FIELD_KEY(BasicType.STRING),
+  TYPE_FIELDS(BasicType.COLLECTION),
+  CONVERTER(BasicType.ACTION);
 
   private final BasicType type;
 
   private final String key;
+
+  private BasicField(final BasicType type) {
+    this(type, null);
+  }
 
   private BasicField(final BasicType type, final String key) {
     this.type = type;
@@ -33,7 +37,7 @@ public enum BasicField {
   }
 
   public String getKey() {
-    return key;
+    return null == key ? name() : key;
   }
 
   @Override

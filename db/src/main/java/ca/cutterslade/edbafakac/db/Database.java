@@ -11,6 +11,7 @@ import org.bson.types.ObjectId;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.MapMaker;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -89,6 +90,7 @@ public final class Database {
   private <F, T> T locked(final Function<F, T> function, final F input) {
     readLock.lock();
     try {
+      Preconditions.checkState(!closed);
       return function.apply(input);
     }
     finally {
@@ -118,14 +120,25 @@ public final class Database {
     locked(saveFunction, entry);
   }
 
+  private final Function<DBObject, Entry> getEntryFunction = new Function<DBObject, Entry>() {
+
+    @Override
+    public Entry apply(final DBObject input) {
+      final Type<? extends Entry> type =
+          BasicField.getTypeField(getConfiguration()).getValue(input, true).asEntryType();
+      return type.convertExternal(input, false);
+    }
+  };
+
+  public Entry getEntry(final DBObject object) {
+    return locked(getEntryFunction, object);
+  }
+
   private final Function<ObjectId, Entry> getFunction = new Function<ObjectId, Entry>() {
 
     @Override
     public Entry apply(final ObjectId input) {
-      final DBObject entry = getEntriesCollection().findOne(input);
-      final Type<? extends Entry> type =
-          BasicField.getTypeField(getConfiguration()).getValue(entry, true).asEntryType();
-      return type.convertExternal(entry, false);
+      return getEntry(getEntriesCollection().findOne(input));
     }
   };
 
@@ -133,25 +146,38 @@ public final class Database {
     return (T) locked(getFunction, objectId);
   }
 
-  public <T extends Entry> T get(final String nameOrId) {
-    T entry;
-    if (ObjectId.isValid(nameOrId)) {
-      entry = get(new ObjectId(nameOrId));
+  private final Function<DBObject, Object> getQueryFunction = new Function<DBObject, Object>() {
+
+    @Override
+    public Object apply(final DBObject input) {
+      return getEntry(getEntriesCollection().findOne(input));
     }
-    else {
-      entry = locked(getByNameFunction, nameOrId);
-    }
-    return entry;
+  };
+
+  public <T extends Entry> T get(final DBObject query) {
+    return (T) locked(getQueryFunction, query);
+  }
+
+  private BasicDBObject getTypeNameQuery(final BasicType type, final String name) {
+    return new BasicDBObject()
+        .append(BasicField.TYPE.getKey(), type.name())
+        .append(BasicField.NAME.getKey(), name);
   }
 
   public Field<?> getField(final String name) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("getField has not been implemented");
+    return get(getTypeNameQuery(BasicType.FIELD, name));
   }
 
   public Field<?> getField(final ObjectId id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("getField has not been implemented");
+    return get(id);
+  }
+
+  public Type<?> getType(final String name) {
+    return get(getTypeNameQuery(BasicType.TYPE, name));
+  }
+
+  public Type<?> getType(final ObjectId id) {
+    return get(id);
   }
 
 }

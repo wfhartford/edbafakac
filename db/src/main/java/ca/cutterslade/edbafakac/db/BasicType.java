@@ -19,6 +19,7 @@ public enum BasicType {
   }
 
   public Type<?> getType(final Configuration configuration) {
+    return Database.getExistingInstance(configuration).getType(name());
 
   }
 
