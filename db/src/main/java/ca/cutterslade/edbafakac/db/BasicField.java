@@ -7,13 +7,21 @@ import org.bson.types.ObjectId;
 import com.google.common.collect.ImmutableSet;
 
 public enum BasicField {
+  // core fields
   ID(BasicType.OBJECT_ID, "_id"),
   NAME(BasicType.STRING),
   TYPE(BasicType.TYPE),
+
+  // field fields
   FIELD_TYPE(BasicType.TYPE),
   FIELD_KEY(BasicType.STRING),
+
+  // type fields
   TYPE_FIELDS(BasicType.COLLECTION),
-  CONVERTER(BasicType.ACTION);
+  CONVERTER(BasicType.ACTION),
+
+  // collection fields
+  COLLECTION_VALUES(BasicType.INTERNAL);
 
   private final BasicType type;
 
@@ -71,6 +79,10 @@ public enum BasicField {
 
   public static Field<Action<?>> getConverterField(final Configuration configuration) {
     return (Field<Action<?>>) CONVERTER.getField(configuration);
+  }
+
+  public static Field<Collection<?>> getCollectionValuesField(final Configuration configuration) {
+    return (Field<Collection<?>>) COLLECTION_VALUES.getField(configuration);
   }
 
   public static Iterable<Field<?>> getBaseFields(final Configuration configuration) {

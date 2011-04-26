@@ -130,15 +130,25 @@ public final class Database {
     }
   };
 
-  public Entry getEntry(final DBObject object) {
-    return locked(getEntryFunction, object);
+  private final Function<DBObject, Entry> getReadOnlyEntryFunction = new Function<DBObject, Entry>() {
+
+    @Override
+    public Entry apply(final DBObject input) {
+      final Type<? extends Entry> type =
+          BasicField.getTypeField(getConfiguration()).getValue(input, true).asEntryType();
+      return type.convertExternal(input, true);
+    }
+  };
+
+  public Entry getEntry(final DBObject object, final boolean readOnly) {
+    return locked(readOnly ? getReadOnlyEntryFunction : getEntryFunction, object);
   }
 
   private final Function<ObjectId, Entry> getFunction = new Function<ObjectId, Entry>() {
 
     @Override
     public Entry apply(final ObjectId input) {
-      return getEntry(getEntriesCollection().findOne(input));
+      return getEntry(getEntriesCollection().findOne(input), false);
     }
   };
 
@@ -150,7 +160,7 @@ public final class Database {
 
     @Override
     public Object apply(final DBObject input) {
-      return getEntry(getEntriesCollection().findOne(input));
+      return getEntry(getEntriesCollection().findOne(input), false);
     }
   };
 

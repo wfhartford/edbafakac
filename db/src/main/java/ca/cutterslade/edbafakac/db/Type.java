@@ -38,4 +38,13 @@ public final class Type<T> extends Entry {
     final Type<? extends Entry> entryType = (Type<? extends Entry>) this;
     return entryType;
   }
+  
+  boolean isInstance(Object o) {
+    if (BasicType.isEntryType(this)) {
+      return o instanceof Entry && equals(((Entry)o).getType());
+    }
+    else {
+      return  BasicType.valueOf(getName()).isInstance(o);
+    }
+  }
 }
