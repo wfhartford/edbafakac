@@ -1,9 +1,12 @@
 package ca.cutterslade.edbafakac.db.gae;
 
+import java.util.Map;
+
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 public class EntityEntry implements Entry {
@@ -40,6 +43,15 @@ public class EntityEntry implements Entry {
   @Override
   public void removeProperty(final String key) {
     entity.removeProperty(key);
+  }
+
+  @Override
+  public ImmutableMap<String, String> getProperties() {
+    final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
+    for (final Map.Entry<String, Object> entry : entity.getProperties().entrySet()) {
+      builder.put(entry.getKey(), (String) entry.getValue());
+    }
+    return builder.build();
   }
 
   @Override

@@ -24,8 +24,8 @@ public class StringValue extends Value {
     }
     else {
       setProperty(locale.toString(), value);
-      for (Locale parent = getParent(locale); null != parent; parent = getParent(locale)) {
-        setPropertyIfMissing(locale.toString(), value);
+      for (Locale parent = getParent(locale); null != parent; parent = getParent(parent)) {
+        setPropertyIfMissing(parent.toString(), value);
       }
       setPropertyIfMissing(BASE_VALUE_KEY, value);
     }
@@ -39,7 +39,7 @@ public class StringValue extends Value {
   public String getValue(final Locale locale) {
     String value = null;
     for (Locale loc = locale; null != loc && null == value; loc = getParent(loc)) {
-      value = (String) getProperty(loc.toString());
+      value = getProperty(loc.toString());
     }
     if (null == value) {
       value = getBaseValue();
@@ -48,15 +48,15 @@ public class StringValue extends Value {
   }
 
   public String getBaseValue() {
-    return (String) getProperty(BASE_VALUE_KEY);
+    return getProperty(BASE_VALUE_KEY);
   }
 
   private Locale getParent(final Locale locale) {
     final Locale parent;
-    if (null != locale.getVariant()) {
+    if (!locale.getVariant().isEmpty()) {
       parent = new Locale(locale.getLanguage(), locale.getCountry());
     }
-    else if (null != locale.getCountry()) {
+    else if (!locale.getCountry().isEmpty()) {
       parent = new Locale(locale.getLanguage());
     }
     else {

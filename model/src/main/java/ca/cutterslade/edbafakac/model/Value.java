@@ -3,10 +3,12 @@ package ca.cutterslade.edbafakac.model;
 import java.lang.reflect.InvocationTargetException;
 
 import ca.cutterslade.edbafakac.db.Entry;
+import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.EntryServiceFactory;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 
 public abstract class Value {
 
@@ -22,6 +24,8 @@ public abstract class Value {
   private static final String VALUE_CLASS_KEY = "c1923004-e4f0-499d-b923-5e4a850f4af4";
 
   private final Entry entry;
+
+  private final ImmutableMap<String, String> pristine;
 
   protected static final Value getInstance(final Entry entry) {
     try {
@@ -56,6 +60,7 @@ public abstract class Value {
     else {
       Preconditions.checkArgument(getClass().getName().equals(valueClass));
     }
+    pristine = entry.getProperties();
   }
 
   protected Value() {
@@ -91,6 +96,22 @@ public abstract class Value {
     if (!entry.hasProperty(propertyName)) {
       setProperty(propertyName, value);
     }
+  }
+
+  public final void save() {
+    ImmutableMap<String, String> current;
+    try {
+      current = getEntryService().getEntry(getKey()).getProperties();
+    }
+    catch (final EntryNotFoundException e) {
+      current = null;
+    }
+    onBeforeSave(pristine, current, entry.getProperties());
+    getEntryService().saveEntry(entry);
+  }
+
+  protected void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
+      final ImmutableMap<String, String> justRead, final ImmutableMap<String, String> toWrite) {
   }
 
 }

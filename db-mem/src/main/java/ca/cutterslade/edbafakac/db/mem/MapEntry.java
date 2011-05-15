@@ -57,7 +57,8 @@ public class MapEntry implements Entry {
     return service;
   }
 
-  public ImmutableMap<String, String> getMap() {
+  @Override
+  public ImmutableMap<String, String> getProperties() {
     return ImmutableMap.copyOf(map);
   }
 

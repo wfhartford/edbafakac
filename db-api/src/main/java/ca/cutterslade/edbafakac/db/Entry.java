@@ -1,5 +1,6 @@
 package ca.cutterslade.edbafakac.db;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
 public interface Entry {
@@ -11,6 +12,8 @@ public interface Entry {
   String getProperty(String key);
 
   void removeProperty(String key);
+
+  ImmutableMap<String, String> getProperties();
 
   ImmutableSet<String> getPropertyKeys();
 

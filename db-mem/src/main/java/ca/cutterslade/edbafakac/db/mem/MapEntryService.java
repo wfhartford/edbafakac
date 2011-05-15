@@ -31,12 +31,16 @@ public class MapEntryService implements EntryService {
 
   @Override
   public void saveEntry(final Entry entry) {
-    entries.put(entry.getKey(), ((MapEntry) entry).getMap());
+    entries.put(entry.getKey(), entry.getProperties());
   }
 
   @Override
   public void removeEntry(final String key) {
     entries.remove(key);
+  }
+
+  public void clear() {
+    entries.clear();
   }
 
 }
