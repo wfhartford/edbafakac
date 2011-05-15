@@ -13,6 +13,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ca.cutterslade.edbafakac.db.Entry;
+import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
@@ -60,6 +61,7 @@ public class DBImplsTest {
     Assert.assertNotNull(entry);
     Assert.assertNotNull(entry.getKey());
     Assert.assertTrue(entry.getPropertyKeys().isEmpty());
+    Assert.assertNull(entry.getProperty(KEY));
     entry.setProperty(KEY, VALUE);
     Assert.assertEquals(VALUE, entry.getProperty(KEY));
   }
@@ -71,5 +73,21 @@ public class DBImplsTest {
     entryService.saveEntry(entry);
     entry = entryService.getEntry(entry.getKey());
     Assert.assertEquals(VALUE, entry.getProperty(KEY));
+  }
+
+  @Test(expected = EntryNotFoundException.class)
+  public void noSaveEntryTest() {
+    final Entry entry = entryService.getNewEntry();
+    entryService.getEntry(entry.getKey());
+  }
+
+  @Test
+  public void noSeveModificationTest() {
+    Entry entry = entryService.getNewEntry();
+    entryService.saveEntry(entry);
+    entry.setProperty(KEY, VALUE);
+    entry = entryService.getEntry(entry.getKey());
+    Assert.assertFalse(entry.hasProperty(KEY));
+    Assert.assertNull(entry.getProperty(KEY));
   }
 }
