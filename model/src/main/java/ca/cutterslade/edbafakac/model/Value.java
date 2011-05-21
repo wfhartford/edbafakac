@@ -5,21 +5,11 @@ import java.lang.reflect.InvocationTargetException;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
-import ca.cutterslade.edbafakac.db.EntryServiceFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 public abstract class Value {
-
-  private static final class ServiceHolder {
-
-    private static final EntryService entryService = EntryServiceFactory.INSTANCE.getEntryService();
-
-    public static EntryService getEntryService() {
-      return entryService;
-    }
-  }
 
   private static final String VALUE_CLASS_KEY = "c1923004-e4f0-499d-b923-5e4a850f4af4";
 
@@ -64,10 +54,10 @@ public abstract class Value {
   }
 
   protected Value() {
-    this(ServiceHolder.getEntryService().getNewEntry());
+    this(Values.getNewEntry());
   }
 
-  protected final EntryService getEntryService() {
+  private final EntryService getEntryService() {
     return entry.getEntryService();
   }
 
@@ -84,12 +74,8 @@ public abstract class Value {
   }
 
   protected final void setProperty(final String propertyName, final String value) {
-    if (null == value) {
-      removeProperty(propertyName);
-    }
-    else {
-      entry.setProperty(propertyName, value);
-    }
+    Preconditions.checkArgument(null != value);
+    entry.setProperty(propertyName, value);
   }
 
   protected final void setPropertyIfMissing(final String propertyName, final String value) {
@@ -112,6 +98,11 @@ public abstract class Value {
 
   protected void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
       final ImmutableMap<String, String> justRead, final ImmutableMap<String, String> toWrite) {
+  }
+
+  public boolean isInstance(final TypeValue type) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("isInstance has not been implemented");
   }
 
 }

@@ -12,4 +12,9 @@ public abstract class RecordValue extends Value {
     super(entry);
   }
 
+  public TypeValue getType() {
+    // TODO
+    throw new UnsupportedOperationException("getType has not been implemented");
+  }
+
 }

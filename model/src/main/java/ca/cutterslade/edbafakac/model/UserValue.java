@@ -2,13 +2,13 @@ package ca.cutterslade.edbafakac.model;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-public final class FieldValue extends RecordValue {
+public class UserValue extends RecordValue {
 
-  public FieldValue() {
+  public UserValue() {
     super();
   }
 
-  FieldValue(final Entry entry) {
+  UserValue(final Entry entry) {
     super(entry);
   }
 
