@@ -53,14 +53,14 @@ public class StringValue extends Value {
 
   private Locale getParent(final Locale locale) {
     final Locale parent;
-    if (!locale.getVariant().isEmpty()) {
-      parent = new Locale(locale.getLanguage(), locale.getCountry());
+    if (locale.getCountry().isEmpty()) {
+      parent = null;
     }
-    else if (!locale.getCountry().isEmpty()) {
+    else if (locale.getVariant().isEmpty()) {
       parent = new Locale(locale.getLanguage());
     }
     else {
-      parent = null;
+      parent = new Locale(locale.getLanguage(), locale.getCountry());
     }
     return parent;
   }

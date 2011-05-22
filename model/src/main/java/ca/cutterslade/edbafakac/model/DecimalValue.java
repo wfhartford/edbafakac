@@ -26,7 +26,7 @@ public class DecimalValue extends Value {
   }
 
   public BigDecimal getValue() {
-    final String value = (String) getProperty(VALUE_KEY);
+    final String value = getProperty(VALUE_KEY);
     return null == value ? null : new BigDecimal(value);
   }
 }

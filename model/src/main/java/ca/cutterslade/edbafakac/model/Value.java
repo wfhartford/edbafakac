@@ -57,7 +57,7 @@ public abstract class Value {
     this(Values.getNewEntry());
   }
 
-  private final EntryService getEntryService() {
+  private EntryService getEntryService() {
     return entry.getEntryService();
   }
 

@@ -10,12 +10,12 @@ public final class Values {
     throw new UnsupportedOperationException();
   }
 
-  private static final class ServiceHolder {
+  private abstract static class ServiceHolder {
 
-    private static final EntryService entryService = EntryServiceFactory.INSTANCE.getEntryService();
+    private static final EntryService ENTRY_SERVICE = EntryServiceFactory.INSTANCE.getEntryService();
 
     public static EntryService getEntryService() {
-      return entryService;
+      return ENTRY_SERVICE;
     }
   }
 

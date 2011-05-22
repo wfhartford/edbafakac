@@ -24,7 +24,7 @@ public class BooleanValue extends Value {
   }
 
   public Boolean getValue() {
-    final String value = (String) getProperty(VALUE_KEY);
+    final String value = getProperty(VALUE_KEY);
     return null == value ? null : Boolean.valueOf(value);
   }
 }

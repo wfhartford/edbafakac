@@ -398,9 +398,6 @@
   <rule ref="rulesets/design.xml/AvoidInstanceofChecksInCatchClause">
     <priority>4</priority>
   </rule>
-  <rule ref="rulesets/design.xml/AbstractClassWithoutAbstractMethod">
-    <priority>3</priority>
-  </rule>
   <rule ref="rulesets/design.xml/SimplifyConditional">
     <priority>3</priority>
   </rule>

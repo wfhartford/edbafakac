@@ -41,12 +41,12 @@ public class DateValue extends Value {
   }
 
   public Date getDate() {
-    final String value = (String) getProperty(TIME_KEY);
+    final String value = getProperty(TIME_KEY);
     return null == value ? null : new Date(Long.valueOf(value));
   }
 
   public TimeZone getZone() {
-    final String value = (String) getProperty(ZONE_KEY);
+    final String value = getProperty(ZONE_KEY);
     return null == value ? null : TimeZone.getTimeZone(value);
   }
 
