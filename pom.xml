@@ -64,7 +64,7 @@
           <sourceEncoding>utf-8</sourceEncoding>
           <targetJdk>1.6</targetJdk>
           <rulesets>
-            <ruleset>/home/wesley/devel/edbafakac/pmd.xml</ruleset>
+            <ruleset>https://github.com/wfhartford/edbafakac/raw/master/pmd.xml</ruleset>
           </rulesets>
         </configuration>
       </plugin>

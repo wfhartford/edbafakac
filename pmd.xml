@@ -203,9 +203,6 @@
   <rule ref="rulesets/design.xml/SingularField">
     <priority>4</priority>
   </rule>
-  <rule ref="rulesets/controversial.xml/DefaultPackage">
-    <priority>4</priority>
-  </rule>
   <rule ref="rulesets/coupling.xml/CouplingBetweenObjects">
     <priority>3</priority>
   </rule>

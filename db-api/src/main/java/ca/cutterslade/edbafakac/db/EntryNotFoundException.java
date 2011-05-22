@@ -4,20 +4,31 @@ public class EntryNotFoundException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
+  private final String key;
+
   public EntryNotFoundException(final String key) {
     super();
+    this.key = key;
   }
 
-  public EntryNotFoundException(final String key, final String message, final Throwable cause) {
+  public EntryNotFoundException(final String key, final String message,
+      final Throwable cause) {
     super(message, cause);
+    this.key = key;
   }
 
   public EntryNotFoundException(final String key, final String message) {
     super(message);
+    this.key = key;
   }
 
   public EntryNotFoundException(final String key, final Throwable cause) {
     super(cause);
+    this.key = key;
+  }
+
+  public String getKey() {
+    return key;
   }
 
 }
