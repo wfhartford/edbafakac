@@ -11,15 +11,13 @@ import com.google.common.collect.ImmutableMap;
 
 public abstract class Value {
 
-  private static final String VALUE_CLASS_KEY = "c1923004-e4f0-499d-b923-5e4a850f4af4";
-
   private final Entry entry;
 
   private final ImmutableMap<String, String> pristine;
 
   protected static final Value getInstance(final Entry entry) {
     try {
-      final String valueClass = entry.getProperty(VALUE_CLASS_KEY);
+      final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
       Preconditions.checkArgument(null != valueClass);
       final Class<? extends Value> clazz = Class.forName(valueClass).asSubclass(Value.class);
       return clazz.getConstructor(Entry.class).newInstance(entry);
@@ -43,9 +41,9 @@ public abstract class Value {
 
   protected Value(final Entry entry) {
     this.entry = entry;
-    final String valueClass = entry.getProperty(VALUE_CLASS_KEY);
+    final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
     if (null == valueClass) {
-      entry.setProperty(VALUE_CLASS_KEY, getClass().getName());
+      entry.setProperty(BaseField.VALUE_CLASS.getKey(), getClass().getName());
     }
     else {
       Preconditions.checkArgument(getClass().getName().equals(valueClass));
@@ -63,6 +61,10 @@ public abstract class Value {
 
   public final String getKey() {
     return entry.getKey();
+  }
+
+  public final TypeValue getType() {
+    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this);
   }
 
   protected final String getProperty(final String propertyName) {
@@ -101,8 +103,7 @@ public abstract class Value {
   }
 
   public boolean isInstance(final TypeValue type) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("isInstance has not been implemented");
+    return getType().equals(type);
   }
 
 }

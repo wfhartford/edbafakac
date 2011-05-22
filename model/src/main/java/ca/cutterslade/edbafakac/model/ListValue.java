@@ -31,7 +31,7 @@ public class ListValue extends Value {
     return size;
   }
 
-  public void setType(final TypeValue type) {
+  public void setValueType(final TypeValue type) {
     if (null == type) {
       removeProperty(TYPE_KEY);
     }
@@ -41,7 +41,7 @@ public class ListValue extends Value {
     }
   }
 
-  public TypeValue getType() {
+  public TypeValue getValueType() {
     final String typeKey = getProperty(TYPE_KEY);
     return null == typeKey ? null : Values.getValue(typeKey, TypeValue.class);
   }

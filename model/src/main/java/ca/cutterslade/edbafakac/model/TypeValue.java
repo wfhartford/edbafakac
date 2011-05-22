@@ -12,4 +12,13 @@ public class TypeValue extends RecordValue {
     super(entry);
   }
 
+  public Class<? extends Value> getTypeClass() {
+    try {
+      return Class.forName(BaseField.TYPE_CLASS.getField().getRawValue(this)).asSubclass(Value.class);
+    }
+    catch (final ClassNotFoundException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+
 }

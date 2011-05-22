@@ -27,7 +27,20 @@ public final class Values {
     return getEntryService().getNewEntry();
   }
 
+  public static Value getNewValue(final TypeValue type) {
+    final Entry entry = getNewEntry();
+    entry.setProperty(BaseField.VALUE_TYPE.getKey(), type.getKey());
+    entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getField().getRawValue(type));
+    return Value.getInstance(entry);
+  }
+
   public static <T> T getValue(final String key, final Class<T> clazz) {
+    // TODO
     return null;
+  }
+
+  public static <T> T getValue(final String key, final Class<T> clazz, final String defaultResource) {
+    // TODO
+    return getValue(key, clazz);
   }
 }

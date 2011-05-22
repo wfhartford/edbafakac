@@ -16,6 +16,10 @@ import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
 
 public class BasicStoreTest {
 
+  private static final String TEST_STRING = "yam";
+
+  private static final int TEST_LIMIT = 10;
+
   private final LocalServiceTestHelper helper =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
@@ -36,11 +40,13 @@ public class BasicStoreTest {
 
   // run this test twice to prove we're not leaking any state across tests
   private void doTest() {
-    final DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-    Assert.assertEquals(0, ds.prepare(new Query("yam")).countEntities(FetchOptions.Builder.withLimit(10)));
-    ds.put(new Entity("yam"));
-    ds.put(new Entity("yam"));
-    Assert.assertEquals(2, ds.prepare(new Query("yam")).countEntities(FetchOptions.Builder.withLimit(10)));
+    final DatastoreService service = DatastoreServiceFactory.getDatastoreService();
+    Assert.assertEquals(0,
+        service.prepare(new Query(TEST_STRING)).countEntities(FetchOptions.Builder.withLimit(TEST_LIMIT)));
+    service.put(new Entity(TEST_STRING));
+    service.put(new Entity(TEST_STRING));
+    Assert.assertEquals(2,
+        service.prepare(new Query(TEST_STRING)).countEntities(FetchOptions.Builder.withLimit(TEST_LIMIT)));
   }
 
   @Test

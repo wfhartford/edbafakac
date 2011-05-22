@@ -1,6 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
 public enum BaseType {
+  RAW("0361bf6b-2203-4ea4-ae82-762a01eb4ead"),
   STRING("9fc6d0a8-5988-48a1-88a1-a90aea3f6fd3"),
   INTEGER("ccdf477d-b1c8-4910-b017-891a1ca53030"),
   DECIMAL("1ed1046e-c171-4cf7-86ee-6fe45e35c8a7"),
@@ -8,8 +9,7 @@ public enum BaseType {
   BOOLEAN("f13b77e7-212b-4afa-8ae4-4433d020a846"),
   LIST("ef61a2c8-a213-48bb-8400-24bde59f1c24"),
   FIELD("874c4eff-f577-4367-9e08-7dc6dc5f8949"),
-  TYPE("4823897a-3f19-402e-99b2-42d43d71e399"),
-  USER("b0b54b69-90b5-4101-b6dc-5df04241a9cd");
+  TYPE("4823897a-3f19-402e-99b2-42d43d71e399");
 
   private final String key;
 
@@ -18,6 +18,6 @@ public enum BaseType {
   }
 
   public TypeValue getType() {
-    return Values.getValue(key, TypeValue.class);
+    return Values.getValue(key, TypeValue.class, BaseType.class.getSimpleName() + '.' + toString());
   }
 }

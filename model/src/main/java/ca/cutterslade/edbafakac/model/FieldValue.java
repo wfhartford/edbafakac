@@ -12,4 +12,19 @@ public final class FieldValue extends RecordValue {
     super(entry);
   }
 
+  public String getFieldKey() {
+    return getProperty(BaseField.FIELD_KEY.getKey());
+  }
+
+  public TypeValue getFieldType() {
+    return (TypeValue) BaseField.FIELD_TYPE.getField().getValue(this);
+  }
+
+  public Value getValue(final Value value) {
+    return Values.getValue(getRawValue(value), getFieldType().getTypeClass());
+  }
+
+  public String getRawValue(final Value value) {
+    return getProperty(getFieldKey());
+  }
 }
