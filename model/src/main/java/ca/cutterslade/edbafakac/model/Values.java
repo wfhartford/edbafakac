@@ -31,6 +31,24 @@ public final class Values {
     }
   }
 
+  private static final Object MUTEX = new Object();
+
+  private static boolean initialized;
+
+  private static void init() {
+    synchronized (MUTEX) {
+      if (!initialized) {
+        initialized = true;
+        for (final BaseType type : BaseType.values()) {
+          type.getType();
+        }
+        for (final BaseField field : BaseField.values()) {
+          field.getField();
+        }
+      }
+    }
+  }
+
   private static EntryService getEntryService() {
     return ServiceHolder.getEntryService();
   }
@@ -50,6 +68,7 @@ public final class Values {
   }
 
   public static Value getValue(final String key, final boolean readOnly) {
+    init();
     Value value = BASE_VALUES.get(key);
     if (null == value) {
       value = Value.getInstance(getEntryService().getEntry(key), readOnly);
@@ -97,6 +116,11 @@ public final class Values {
         final String value = null == BaseField.getBaseField(fieldKey).getResolver() ? ent.getValue() :
             BaseFieldResolver.UNRESOLVED_PREFIX + ent.getValue();
         entry.setProperty(fieldKey, value);
+      }
+      if (BaseType.TYPE.getKey().equals(entry.getProperty(BaseField.VALUE_TYPE.getKey())) &&
+          !entry.hasProperty(BaseField.TYPE_FIELDS.getKey())) {
+        entry.setProperty(BaseField.TYPE_FIELDS.getKey(), BaseFieldResolver.UNRESOLVED_PREFIX +
+            BaseField.VALUE_NAME.getKey() + ',' + BaseField.VALUE_TYPE.getKey() + ',' + BaseField.VALUE_CLASS.getKey());
       }
       return entry;
     }

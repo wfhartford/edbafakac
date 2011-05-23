@@ -10,7 +10,7 @@ public class StringValue extends Value {
 
   private static final String BASE_VALUE_KEY = "7090a2fc-9ea1-4f2e-9ad0-4c27e789f3db";
 
-  protected StringValue(final Entry entry, final boolean readOnly) {
+  StringValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
 

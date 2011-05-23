@@ -22,7 +22,7 @@ public enum BaseField {
     @Override
     String resolve(final String value) {
       final ListValue resolvedValue = (ListValue) BaseType.LIST.getType().getNewValue();
-      resolvedValue.setValueType(BaseType.TYPE.getType());
+      resolvedValue.setValueType(BaseType.FIELD.getType());
       for (final String typeKey : getUnresolvedValue(value).split(",")) {
         final String trimmedKey = typeKey.trim();
         if (!trimmedKey.isEmpty()) {
@@ -33,7 +33,6 @@ public enum BaseField {
       return resolvedValue.getKey();
     }
   }),
-  TYPE_TYPE("5408cc31-e755-4f48-a161-77796e0f70b4", null),
   TYPE_CLASS("1c979df8-f291-4d1e-b020-8ec7f77e04b4", null);
 
   private static final ImmutableMap<String, BaseField> FIELDS_BY_KEY;

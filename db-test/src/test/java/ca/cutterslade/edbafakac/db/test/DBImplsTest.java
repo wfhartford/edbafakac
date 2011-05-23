@@ -3,6 +3,7 @@ package ca.cutterslade.edbafakac.db.test;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ServiceLoader;
+import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -13,6 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ca.cutterslade.edbafakac.db.Entry;
+import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 
@@ -36,7 +38,7 @@ public class DBImplsTest {
   public static Collection<Object[]> getParameters() {
     final ImmutableList.Builder<Object[]> builder = ImmutableList.builder();
     for (final Iterator<EntryService> it = ServiceLoader.load(EntryService.class).iterator(); it.hasNext();) {
-      builder.add(new Object[] { it.next() });
+      builder.add(new Object[]{ it.next() });
     }
     return builder.build();
   }
@@ -82,12 +84,29 @@ public class DBImplsTest {
   }
 
   @Test
-  public void noSeveModificationTest() {
+  public void noSaveModificationTest() {
     Entry entry = entryService.getNewEntry();
     entryService.saveEntry(entry);
     entry.setProperty(KEY, VALUE);
     entry = entryService.getEntry(entry.getKey());
     Assert.assertFalse(entry.hasProperty(KEY));
     Assert.assertNull(entry.getProperty(KEY));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullPropertyKeyTest() {
+    entryService.getNewEntry().setProperty(null, UUID.randomUUID().toString());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullPropertyValueTest() {
+    entryService.getNewEntry().setProperty(UUID.randomUUID().toString(), null);
+  }
+
+  @Test(expected = EntryAlreadyExistsException.class)
+  public void newEntryWithUsedKeyTest() {
+    final Entry entry = entryService.getNewEntry();
+    entryService.saveEntry(entry);
+    entryService.getNewEntry(entry.getKey());
   }
 }

@@ -2,9 +2,11 @@ package ca.cutterslade.edbafakac.model;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
+import com.google.common.base.Preconditions;
+
 public final class FieldValue extends RecordValue {
 
-  protected FieldValue(final Entry entry, final boolean readOnly) {
+  FieldValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
 
@@ -17,7 +19,10 @@ public final class FieldValue extends RecordValue {
   }
 
   public Value getValue(final Value value, final boolean readOnly) {
-    return Values.getValue(getRawValue(value), readOnly);
+    Preconditions.checkArgument(readOnly || !value.isReadOnly(),
+        "Cannot provide writable field value from read only value");
+    final String rawValue = getRawValue(value);
+    return null == rawValue ? null : Values.getValue(rawValue, readOnly);
   }
 
   public String getRawValue(final Value value) {

@@ -10,7 +10,7 @@ public class ListValue extends Value {
 
   private static final String TYPE_KEY = "56ab8c1e-f86a-4617-b342-45a98926a814";
 
-  protected ListValue(final Entry entry, final boolean readOnly) {
+  ListValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
 
@@ -37,9 +37,9 @@ public class ListValue extends Value {
     }
   }
 
-  public TypeValue getValueType() {
+  public TypeValue getValueType(final boolean readOnly) {
     final String typeKey = getProperty(TYPE_KEY);
-    return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, isReadOnly()));
+    return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, readOnly));
   }
 
   public Value get(final long position) {
@@ -63,12 +63,12 @@ public class ListValue extends Value {
   }
 
   public void add(final Value value) {
-    setProperty(getProperty(SIZE_KEY), value.getKey());
+    setProperty(String.valueOf(getSize()), value.getKey());
     setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
 
   void addRawValue(final String value) {
-    setProperty(getProperty(SIZE_KEY), value);
+    setProperty(String.valueOf(getSize()), value);
     setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
 

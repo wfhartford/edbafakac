@@ -42,6 +42,7 @@ public abstract class Value {
   }
 
   protected Value(final Entry entry, final boolean readOnly) {
+    Preconditions.checkArgument(null != entry);
     this.entry = entry;
     this.readOnly = readOnly;
     final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
@@ -137,4 +138,18 @@ public abstract class Value {
     return null != BaseField.getBaseField(getKey()) || null != BaseType.getBaseType(getKey());
   }
 
+  @Override
+  public final int hashCode() {
+    return getKey().hashCode();
+  }
+
+  @Override
+  public final boolean equals(final Object obj) {
+    return this == obj || (null != obj && getClass() == obj.getClass() && getKey().equals(((Value) obj).getKey()));
+  }
+
+  @Override
+  public final String toString() {
+    return getClass().getSimpleName() + " [key=" + getKey() + ']';
+  }
 }

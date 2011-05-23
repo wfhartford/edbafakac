@@ -2,7 +2,7 @@ package ca.cutterslade.edbafakac.model;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-public class TypeValue extends RecordValue {
+public final class TypeValue extends RecordValue {
 
   TypeValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
@@ -21,4 +21,7 @@ public class TypeValue extends RecordValue {
     return Values.getNewValue(this);
   }
 
+  public ListValue getTypeFields(final boolean readOnly) {
+    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(this, readOnly);
+  }
 }

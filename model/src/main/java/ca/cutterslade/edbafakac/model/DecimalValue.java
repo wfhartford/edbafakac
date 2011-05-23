@@ -8,7 +8,7 @@ public class DecimalValue extends Value {
 
   private static final String VALUE_KEY = "a3340c4a-2e1a-4f3e-b9c0-32ca213f14d0";
 
-  protected DecimalValue(final Entry entry, final boolean readOnly) {
+  DecimalValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
 

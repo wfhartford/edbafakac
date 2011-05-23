@@ -5,7 +5,7 @@ abstract class BaseFieldResolver {
   public static final String UNRESOLVED_PREFIX = "unresolved:";
 
   boolean isUnresolved(final String value) {
-    return value.startsWith(UNRESOLVED_PREFIX);
+    return null != value && value.startsWith(UNRESOLVED_PREFIX);
   }
 
   String getUnresolvedValue(final String value) {

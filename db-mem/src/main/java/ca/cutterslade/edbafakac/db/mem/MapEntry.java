@@ -5,6 +5,7 @@ import java.util.Map;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -29,6 +30,8 @@ public class MapEntry implements Entry {
 
   @Override
   public void setProperty(final String key, final String value) {
+    Preconditions.checkArgument(null != key, "Cannot set property with null key");
+    Preconditions.checkArgument(null != value, "Cannot set property with null value");
     map.put(key, value);
   }
 
