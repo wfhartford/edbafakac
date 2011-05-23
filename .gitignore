@@ -3,5 +3,7 @@ mongo/target
 model/target
 db-api/target
 db-gae/target
+db-gae/WEB-INF
 db-mem/target
 db-test/target
+db-test/WEB-INF
