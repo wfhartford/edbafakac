@@ -15,12 +15,14 @@ public abstract class Value {
 
   private final ImmutableMap<String, String> pristine;
 
-  protected static final Value getInstance(final Entry entry) {
+  private final boolean readOnly;
+
+  protected static final Value getInstance(final Entry entry, final boolean readOnly) {
     try {
       final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
       Preconditions.checkArgument(null != valueClass);
       final Class<? extends Value> clazz = Class.forName(valueClass).asSubclass(Value.class);
-      return clazz.getConstructor(Entry.class).newInstance(entry);
+      return clazz.getDeclaredConstructor(Entry.class, boolean.class).newInstance(entry, readOnly);
     }
     catch (final ClassNotFoundException e) {
       throw new IllegalArgumentException(e);
@@ -39,8 +41,9 @@ public abstract class Value {
     }
   }
 
-  protected Value(final Entry entry) {
+  protected Value(final Entry entry, final boolean readOnly) {
     this.entry = entry;
+    this.readOnly = readOnly;
     final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
     if (null == valueClass) {
       entry.setProperty(BaseField.VALUE_CLASS.getKey(), getClass().getName());
@@ -51,10 +54,6 @@ public abstract class Value {
     pristine = entry.getProperties();
   }
 
-  protected Value() {
-    this(Values.getNewEntry());
-  }
-
   private EntryService getEntryService() {
     return entry.getEntryService();
   }
@@ -63,30 +62,46 @@ public abstract class Value {
     return entry.getKey();
   }
 
-  public final TypeValue getType() {
-    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this);
+  public final TypeValue getType(final boolean readOnly) {
+    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this, readOnly);
   }
 
   protected final String getProperty(final String propertyName) {
-    return entry.getProperty(propertyName);
+    String value = entry.getProperty(propertyName);
+    if (isBaseValue()) {
+      final BaseFieldResolver resolver = BaseField.getBaseField(propertyName).getResolver();
+      if (null != resolver && resolver.isUnresolved(value)) {
+        value = resolver.resolve(value);
+        entry.setProperty(propertyName, value);
+      }
+    }
+    return value;
+  }
+
+  private void checkWritable() {
+    Preconditions.checkState(!readOnly, "Value is read only");
   }
 
   protected final void removeProperty(final String propertyName) {
+    checkWritable();
     entry.removeProperty(propertyName);
   }
 
   protected final void setProperty(final String propertyName, final String value) {
+    checkWritable();
     Preconditions.checkArgument(null != value);
     entry.setProperty(propertyName, value);
   }
 
   protected final void setPropertyIfMissing(final String propertyName, final String value) {
+    checkWritable();
     if (!entry.hasProperty(propertyName)) {
       setProperty(propertyName, value);
     }
   }
 
   public final void save() {
+    checkWritable();
     ImmutableMap<String, String> current;
     try {
       current = getEntryService().getEntry(getKey()).getProperties();
@@ -103,7 +118,23 @@ public abstract class Value {
   }
 
   public boolean isInstance(final TypeValue type) {
-    return getType().equals(type);
+    return getType(true).getKey().equals(type.getKey());
+  }
+
+  public boolean isReadOnly() {
+    return readOnly;
+  }
+
+  public Value asReadOnly() {
+    return readOnly ? this : Values.getValue(getKey(), true);
+  }
+
+  public StringValue getName() {
+    return (StringValue) BaseField.VALUE_NAME.getField().getValue(this, true);
+  }
+
+  public boolean isBaseValue() {
+    return null != BaseField.getBaseField(getKey()) || null != BaseType.getBaseType(getKey());
   }
 
 }

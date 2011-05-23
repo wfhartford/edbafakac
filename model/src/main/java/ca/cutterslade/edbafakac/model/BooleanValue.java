@@ -6,12 +6,8 @@ public class BooleanValue extends Value {
 
   private static final String VALUE_KEY = "4ce36559-c679-42cd-8531-b7d89aa5213a";
 
-  public BooleanValue() {
-    super();
-  }
-
-  BooleanValue(final Entry entry) {
-    super(entry);
+  protected BooleanValue(final Entry entry, final boolean readOnly) {
+    super(entry, readOnly);
   }
 
   public void setValue(final Boolean value) {
@@ -26,5 +22,10 @@ public class BooleanValue extends Value {
   public Boolean getValue() {
     final String value = getProperty(VALUE_KEY);
     return null == value ? null : Boolean.valueOf(value);
+  }
+
+  public boolean getValue(final boolean dflt) {
+    final Boolean value = getValue();
+    return null == value ? dflt : value;
   }
 }

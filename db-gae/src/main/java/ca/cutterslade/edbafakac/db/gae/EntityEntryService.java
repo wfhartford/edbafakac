@@ -3,6 +3,7 @@ package ca.cutterslade.edbafakac.db.gae;
 import java.util.UUID;
 
 import ca.cutterslade.edbafakac.db.Entry;
+import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 
@@ -19,6 +20,19 @@ public class EntityEntryService implements EntryService {
   @Override
   public Entry getNewEntry() {
     return new EntityEntry(new Entity(EntityEntry.class.getName(), UUID.randomUUID().toString()), this);
+  }
+
+  @Override
+  public Entry getNewEntry(final String key) {
+    try {
+      datastoreService.get(KeyFactory.createKey(EntityEntry.class.getName(), key));
+      throw new EntryAlreadyExistsException(key);
+    }
+    catch (final EntityNotFoundException e) {
+      final EntityEntry newEntry = new EntityEntry(new Entity(EntityEntry.class.getName(), key), this);
+      datastoreService.put(newEntry.getEntity());
+      return newEntry;
+    }
   }
 
   @Override

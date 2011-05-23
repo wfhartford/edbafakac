@@ -16,12 +16,8 @@ public class DateValue extends Value {
 
   private static final String ZONE_KEY = "999a2b99-c0bb-4bcb-912d-02a3f043f3e2";
 
-  public DateValue() {
-    super();
-  }
-
-  DateValue(final Entry entry) {
-    super(entry);
+  protected DateValue(final Entry entry, final boolean readOnly) {
+    super(entry, readOnly);
   }
 
   public void setValue(final Date date, final TimeZone zone) {

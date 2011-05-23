@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
+import com.google.common.collect.ImmutableMap;
+
 public enum BaseType {
   RAW("0361bf6b-2203-4ea4-ae82-762a01eb4ead"),
   STRING("9fc6d0a8-5988-48a1-88a1-a90aea3f6fd3"),
@@ -11,13 +13,30 @@ public enum BaseType {
   FIELD("874c4eff-f577-4367-9e08-7dc6dc5f8949"),
   TYPE("4823897a-3f19-402e-99b2-42d43d71e399");
 
+  private static final ImmutableMap<String, BaseType> TYPES_BY_KEY;
+  static {
+    final ImmutableMap.Builder<String, BaseType> builder = ImmutableMap.builder();
+    for (final BaseType type : values()) {
+      builder.put(type.getKey(), type);
+    }
+    TYPES_BY_KEY = builder.build();
+  }
+
   private final String key;
 
   private BaseType(final String key) {
     this.key = key;
   }
 
+  public String getKey() {
+    return key;
+  }
+
   public TypeValue getType() {
-    return Values.getValue(key, TypeValue.class, BaseType.class.getSimpleName() + '.' + toString());
+    return (TypeValue) Values.getValue(key, BaseType.class.getSimpleName() + '.' + toString() + ".properties");
+  }
+
+  static BaseType getBaseType(final String key) {
+    return TYPES_BY_KEY.get(key);
   }
 }

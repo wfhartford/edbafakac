@@ -4,12 +4,8 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 public class TypeValue extends RecordValue {
 
-  public TypeValue() {
-    super();
-  }
-
-  TypeValue(final Entry entry) {
-    super(entry);
+  TypeValue(final Entry entry, final boolean readOnly) {
+    super(entry, readOnly);
   }
 
   public Class<? extends Value> getTypeClass() {
@@ -19,6 +15,10 @@ public class TypeValue extends RecordValue {
     catch (final ClassNotFoundException e) {
       throw new IllegalStateException(e);
     }
+  }
+
+  public Value getNewValue() {
+    return Values.getNewValue(this);
   }
 
 }

@@ -13,7 +13,7 @@ public class StringValueTest {
 
   @Test
   public void simpleHelloTest() {
-    final StringValue value = new StringValue();
+    final StringValue value = (StringValue) BaseType.STRING.getType().getNewValue();
     value.setValue(HELLO_WORLD, Locale.CANADA);
     Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
     Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));

@@ -4,12 +4,8 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 public abstract class RecordValue extends Value {
 
-  protected RecordValue() {
-    super();
-  }
-
-  RecordValue(final Entry entry) {
-    super(entry);
+  protected RecordValue(final Entry entry, final boolean readOnly) {
+    super(entry, readOnly);
   }
 
 }

@@ -10,12 +10,8 @@ public class StringValue extends Value {
 
   private static final String BASE_VALUE_KEY = "7090a2fc-9ea1-4f2e-9ad0-4c27e789f3db";
 
-  public StringValue() {
-    super();
-  }
-
-  StringValue(final Entry entry) {
-    super(entry);
+  protected StringValue(final Entry entry, final boolean readOnly) {
+    super(entry, readOnly);
   }
 
   public void setValue(final String value, final Locale locale) {

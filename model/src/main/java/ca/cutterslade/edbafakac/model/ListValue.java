@@ -10,12 +10,8 @@ public class ListValue extends Value {
 
   private static final String TYPE_KEY = "56ab8c1e-f86a-4617-b342-45a98926a814";
 
-  public ListValue() {
-    super();
-  }
-
-  ListValue(final Entry entry) {
-    super(entry);
+  protected ListValue(final Entry entry, final boolean readOnly) {
+    super(entry, readOnly);
   }
 
   public long getSize() {
@@ -43,13 +39,13 @@ public class ListValue extends Value {
 
   public TypeValue getValueType() {
     final String typeKey = getProperty(TYPE_KEY);
-    return null == typeKey ? null : Values.getValue(typeKey, TypeValue.class);
+    return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, isReadOnly()));
   }
 
   public Value get(final long position) {
     checkIndex(position);
     final String key = getProperty(String.valueOf(position));
-    return Values.getValue(key, Value.class);
+    return Values.getValue(key, isReadOnly());
   }
 
   public void set(final long position, final Value value) {
@@ -60,7 +56,7 @@ public class ListValue extends Value {
 
   private void checkValue(final Value value) {
     Preconditions.checkArgument(null != value);
-    final TypeValue type = getType();
+    final TypeValue type = getType(true);
     if (null != type) {
       Preconditions.checkArgument(value.isInstance(type));
     }
@@ -68,6 +64,11 @@ public class ListValue extends Value {
 
   public void add(final Value value) {
     setProperty(getProperty(SIZE_KEY), value.getKey());
+    setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
+  }
+
+  void addRawValue(final String value) {
+    setProperty(getProperty(SIZE_KEY), value);
     setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
 

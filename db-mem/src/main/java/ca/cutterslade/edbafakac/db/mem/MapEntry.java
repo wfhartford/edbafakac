@@ -62,4 +62,9 @@ public class MapEntry implements Entry {
     return ImmutableMap.copyOf(map);
   }
 
+  @Override
+  public String toString() {
+    return "MapEntry " + entryKey + ": " + map + "]";
+  }
+
 }
