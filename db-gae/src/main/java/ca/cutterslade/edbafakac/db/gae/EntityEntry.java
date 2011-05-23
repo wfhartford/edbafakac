@@ -16,7 +16,9 @@ public class EntityEntry implements Entry {
 
   private final EntityEntryService service;
 
-  public EntityEntry(final Entity entity, final EntityEntryService service) {
+  EntityEntry(final Entity entity, final EntityEntryService service) {
+    Preconditions.checkArgument(null != entity);
+    Preconditions.checkArgument(null != service);
     this.entity = entity;
     this.service = service;
   }
@@ -40,11 +42,13 @@ public class EntityEntry implements Entry {
 
   @Override
   public boolean hasProperty(final String key) {
+    Preconditions.checkArgument(null != key, "Cannot test for existance of a property with null key");
     return entity.hasProperty(key);
   }
 
   @Override
   public void removeProperty(final String key) {
+    Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
     entity.removeProperty(key);
   }
 

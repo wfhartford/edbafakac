@@ -17,7 +17,10 @@ public class MapEntry implements Entry {
 
   private final String entryKey;
 
-  public MapEntry(final String entryKey, final Map<String, String> map, final EntryService service) {
+  MapEntry(final String entryKey, final Map<String, String> map, final EntryService service) {
+    Preconditions.checkArgument(null != entryKey);
+    Preconditions.checkArgument(null != map);
+    Preconditions.checkArgument(null != service);
     this.entryKey = entryKey;
     this.map = map;
     this.service = service;
@@ -37,12 +40,25 @@ public class MapEntry implements Entry {
 
   @Override
   public String getProperty(final String key) {
+    Preconditions.checkArgument(null != key, "Cannot retrieve a property with null key");
     return map.get(key);
   }
 
   @Override
+  public boolean hasProperty(final String key) {
+    Preconditions.checkArgument(null != key, "Cannot test for existance of a property with null key");
+    return map.containsKey(key);
+  }
+
+  @Override
   public void removeProperty(final String key) {
+    Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
     map.remove(key);
+  }
+
+  @Override
+  public ImmutableMap<String, String> getProperties() {
+    return ImmutableMap.copyOf(map);
   }
 
   @Override
@@ -51,18 +67,8 @@ public class MapEntry implements Entry {
   }
 
   @Override
-  public boolean hasProperty(final String key) {
-    return map.containsKey(key);
-  }
-
-  @Override
   public EntryService getEntryService() {
     return service;
-  }
-
-  @Override
-  public ImmutableMap<String, String> getProperties() {
-    return ImmutableMap.copyOf(map);
   }
 
   @Override

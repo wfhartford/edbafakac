@@ -24,28 +24,26 @@ public final class Values {
 
   private abstract static class ServiceHolder {
 
-    private static final EntryService ENTRY_SERVICE = EntryServiceFactory.INSTANCE.getEntryService();
+    private static final EntryService ENTRY_SERVICE = EntryServiceFactory.getInstance().getEntryService();
 
     public static EntryService getEntryService() {
       return ENTRY_SERVICE;
     }
   }
 
-  private static final Object MUTEX = new Object();
+  private abstract static class Initializer {
 
-  private static boolean initialized;
-
-  private static void init() {
-    synchronized (MUTEX) {
-      if (!initialized) {
-        initialized = true;
-        for (final BaseType type : BaseType.values()) {
-          type.getType();
-        }
-        for (final BaseField field : BaseField.values()) {
-          field.getField();
-        }
+    static {
+      for (final BaseType type : BaseType.values()) {
+        type.getType();
       }
+      for (final BaseField field : BaseField.values()) {
+        field.getField();
+      }
+    }
+
+    public static void init() {
+      // method does nothing, just serves as a way to access this class so that the static block will be invoked once
     }
   }
 
@@ -68,16 +66,14 @@ public final class Values {
   }
 
   public static Value getValue(final String key, final boolean readOnly) {
-    init();
+    Initializer.init();
     Value value = BASE_VALUES.get(key);
     if (null == value) {
       value = Value.getInstance(getEntryService().getEntry(key), readOnly);
       if (value.isBaseValue()) {
         Preconditions.checkArgument(readOnly, "Cannot provide writable value of %s", value.getName().getBaseValue());
         final Value oldValue = BASE_VALUES.putIfAbsent(key, value);
-        if (null != oldValue) {
-          value = oldValue;
-        }
+        value = null == oldValue ? value : oldValue;
       }
     }
     else {
