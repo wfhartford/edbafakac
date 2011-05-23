@@ -11,12 +11,12 @@ public class EntryNotFoundException extends RuntimeException {
 
   private final String key;
 
-  EntryNotFoundException(final String key) {
+  public EntryNotFoundException(final String key) {
     super("Attempted to retrieve missing entry with key '" + key + "'");
     this.key = key;
   }
 
-  EntryNotFoundException(final String key, final Throwable cause) {
+  public EntryNotFoundException(final String key, final Throwable cause) {
     super("Attempted to retrieve missing entry with key '" + key + "'", cause);
     this.key = key;
   }
