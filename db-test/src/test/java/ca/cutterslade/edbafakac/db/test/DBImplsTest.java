@@ -3,7 +3,6 @@ package ca.cutterslade.edbafakac.db.test;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ServiceLoader;
-import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -21,6 +20,9 @@ import ca.cutterslade.edbafakac.db.EntryService;
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 @RunWith(Parameterized.class)
 public class DBImplsTest {
@@ -95,12 +97,12 @@ public class DBImplsTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void nullPropertyKeyTest() {
-    entryService.getNewEntry().setProperty(null, UUID.randomUUID().toString());
+    entryService.getNewEntry().setProperty(null, VALUE);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void nullPropertyValueTest() {
-    entryService.getNewEntry().setProperty(UUID.randomUUID().toString(), null);
+    entryService.getNewEntry().setProperty(KEY, null);
   }
 
   @Test(expected = EntryAlreadyExistsException.class)
@@ -108,5 +110,77 @@ public class DBImplsTest {
     final Entry entry = entryService.getNewEntry();
     entryService.saveEntry(entry);
     entryService.getNewEntry(entry.getKey());
+  }
+
+  @Test(expected = EntryNotFoundException.class)
+  public void removeTest() {
+    final Entry entry = entryService.getNewEntry();
+    entryService.saveEntry(entry);
+    entryService.removeEntry(entry.getKey());
+    entryService.getEntry(entry.getKey());
+  }
+
+  @Test
+  public void presetKeyTest() {
+    final Entry entry = entryService.getNewEntry(KEY);
+    Assert.assertEquals(KEY, entry.getKey());
+    Assert.assertNotNull(entryService.getEntry(entry.getKey()));
+  }
+
+  @Test
+  public void presetKeyNotSavedTest() {
+    final Entry entry = entryService.getNewEntry();
+    // this does not throw an exception because the first entry was never saved
+    Assert.assertEquals(entry.getKey(), entryService.getNewEntry(entry.getKey()).getKey());
+  }
+
+  @Test(expected = EntryAlreadyExistsException.class)
+  public void presetKeySavedTest() {
+    final Entry entry = entryService.getNewEntry();
+    entryService.saveEntry(entry);
+    entryService.getNewEntry(entry.getKey());
+  }
+
+  @Test
+  public void presetKeyAfterRemoveTest() {
+    final Entry entry = entryService.getNewEntry();
+    entryService.saveEntry(entry);
+    entryService.removeEntry(entry.getKey());
+    Assert.assertEquals(entry.getKey(), entryService.getNewEntry(entry.getKey()).getKey());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullPresetKeyTest() {
+    entryService.getNewEntry(null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullRemovePropertyTest() {
+    entryService.getNewEntry().removeProperty(null);
+  }
+
+  @Test
+  public void hasPropertyTest() {
+    final Entry entry = entryService.getNewEntry();
+    entry.setProperty(KEY, VALUE);
+    Assert.assertTrue(entry.hasProperty(KEY));
+  }
+
+  @Test
+  public void getPropertiesTest() {
+    final Entry entry = entryService.getNewEntry();
+    entry.setProperty(KEY, VALUE);
+    final ImmutableMap<String, String> properties = entry.getProperties();
+    Assert.assertEquals(1, properties.size());
+    Assert.assertEquals(VALUE, properties.get(KEY));
+  }
+
+  @Test
+  public void getPropertyKeysTest() {
+    final Entry entry = entryService.getNewEntry();
+    entry.setProperty(KEY, VALUE);
+    final ImmutableSet<String> propertyKeys = entry.getPropertyKeys();
+    Assert.assertEquals(1, propertyKeys.size());
+    Assert.assertEquals(KEY, Iterables.getOnlyElement(propertyKeys));
   }
 }
