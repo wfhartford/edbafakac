@@ -14,6 +14,12 @@ public final class StringValue extends Value {
     super(entry, readOnly);
   }
 
+  public static StringValue withBase(final String baseValue) {
+    final StringValue newValue = (StringValue) BaseType.STRING.getType().getNewValue(null);
+    newValue.setBaseValue(baseValue);
+    return newValue;
+  }
+
   public void setValue(final String value, final Locale locale) {
     if (null == value) {
       removeProperty(locale.toString());

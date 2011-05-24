@@ -2,12 +2,12 @@ package ca.cutterslade.edbafakac.model;
 
 import com.google.common.collect.ImmutableMap;
 
-public enum BaseField {
+enum BaseField {
   VALUE_NAME("619c10d4-6d66-43d3-ab50-35713f603426", new BaseFieldResolver() {
 
     @Override
     String resolve(final String value) {
-      final StringValue resolvedValue = (StringValue) BaseType.STRING.getType().getNewValue();
+      final StringValue resolvedValue = (StringValue) BaseType.STRING.getType().getNewValue(null);
       resolvedValue.setBaseValue(getUnresolvedValue(value));
       resolvedValue.save();
       return resolvedValue.getKey();
@@ -21,7 +21,7 @@ public enum BaseField {
 
     @Override
     String resolve(final String value) {
-      final ListValue resolvedValue = (ListValue) BaseType.LIST.getType().getNewValue();
+      final ListValue resolvedValue = (ListValue) BaseType.LIST.getType().getNewValue(null);
       resolvedValue.setValueType(BaseType.FIELD.getType());
       for (final String typeKey : getUnresolvedValue(value).split(",")) {
         final String trimmedKey = typeKey.trim();
@@ -68,6 +68,11 @@ public enum BaseField {
 
   static BaseField getBaseField(final String key) {
     return FIELDS_BY_KEY.get(key);
+  }
+
+  static BaseFieldResolver getResolver(final String key) {
+    final BaseField baseField = FIELDS_BY_KEY.get(key);
+    return null == baseField ? null : baseField.getResolver();
   }
 
   BaseFieldResolver getResolver() {

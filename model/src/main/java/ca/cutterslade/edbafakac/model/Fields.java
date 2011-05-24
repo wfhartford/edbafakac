@@ -5,4 +5,5 @@ public final class Fields {
   private Fields() {
     throw new UnsupportedOperationException();
   }
+
 }

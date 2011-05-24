@@ -14,6 +14,14 @@ public final class ListValue extends Value {
     super(entry, readOnly);
   }
 
+  public static ListValue ofValues(final Value... values) {
+    final ListValue newValue = (ListValue) BaseType.LIST.getType().getNewValue(null);
+    for (final Value value : values) {
+      newValue.add(value);
+    }
+    return newValue;
+  }
+
   public long getSize() {
     final String value = getProperty(SIZE_KEY);
     return null == value ? 0 : Long.parseLong(value);

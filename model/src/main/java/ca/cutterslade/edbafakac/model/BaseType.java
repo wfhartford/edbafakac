@@ -2,7 +2,7 @@ package ca.cutterslade.edbafakac.model;
 
 import com.google.common.collect.ImmutableMap;
 
-public enum BaseType {
+enum BaseType {
   RAW("0361bf6b-2203-4ea4-ae82-762a01eb4ead"),
   STRING("9fc6d0a8-5988-48a1-88a1-a90aea3f6fd3"),
   INTEGER("ccdf477d-b1c8-4910-b017-891a1ca53030"),

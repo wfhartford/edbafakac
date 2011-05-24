@@ -70,7 +70,7 @@ public abstract class Value {
   protected final String getProperty(final String propertyName) {
     String value = entry.getProperty(propertyName);
     if (isBaseValue()) {
-      final BaseFieldResolver resolver = BaseField.getBaseField(propertyName).getResolver();
+      final BaseFieldResolver resolver = BaseField.getResolver(propertyName);
       if (null != resolver && resolver.isUnresolved(value)) {
         value = resolver.resolve(value);
         entry.setProperty(propertyName, value);
@@ -135,11 +135,13 @@ public abstract class Value {
   }
 
   public boolean isBaseValue() {
-    return null != BaseField.getBaseField(getKey()) || null != BaseType.getBaseType(getKey());
+    return null != BaseField.getBaseField(getKey()) ||
+        null != BaseType.getBaseType(getKey()) ||
+        null != BaseValue.getBaseValue(getKey());
   }
 
-  public ListValue getFields(final boolean readOnly) {
-    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(readOnly), readOnly);
+  public ListValue getFields() {
+    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(true), true);
   }
 
   @Override

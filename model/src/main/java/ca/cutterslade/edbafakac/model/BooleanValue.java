@@ -10,6 +10,18 @@ public final class BooleanValue extends Value {
     super(entry, readOnly);
   }
 
+  public static BooleanValue get(final boolean value) {
+    return value ? getTrue() : getFalse();
+  }
+
+  public static BooleanValue getFalse() {
+    return (BooleanValue) BaseValue.BOOLEAN_FALSE.getValue();
+  }
+
+  public static BooleanValue getTrue() {
+    return (BooleanValue) BaseValue.BOOLEAN_TRUE.getValue();
+  }
+
   public void setValue(final Boolean value) {
     if (null == value) {
       removeProperty(VALUE_KEY);
@@ -27,5 +39,25 @@ public final class BooleanValue extends Value {
   public boolean getValue(final boolean dflt) {
     final Boolean value = getValue();
     return null == value ? dflt : value;
+  }
+
+  public boolean isTrue() {
+    return getValue(false);
+  }
+
+  public boolean isNotTrue() {
+    return !getValue(false);
+  }
+
+  public boolean isFalse() {
+    return !getValue(true);
+  }
+
+  public boolean isNotFalse() {
+    return getValue(false);
+  }
+
+  public boolean isNull() {
+    return null == getValue();
   }
 }

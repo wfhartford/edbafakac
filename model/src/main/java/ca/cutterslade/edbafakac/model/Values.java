@@ -40,6 +40,9 @@ final class Values {
       for (final BaseField field : BaseField.values()) {
         field.getField();
       }
+      for (final BaseValue value : BaseValue.values()) {
+        value.getValue();
+      }
     }
 
     public static void init() {
@@ -107,7 +110,7 @@ final class Values {
       final Entry entry = getEntryService().getNewEntry(key);
       for (final Map.Entry<String, String> ent : values.entrySet()) {
         final String fieldKey = ent.getKey();
-        final String value = null == BaseField.getBaseField(fieldKey).getResolver() ? ent.getValue() :
+        final String value = null == BaseField.getResolver(fieldKey) ? ent.getValue() :
             BaseFieldResolver.UNRESOLVED_PREFIX + ent.getValue();
         entry.setProperty(fieldKey, value);
       }

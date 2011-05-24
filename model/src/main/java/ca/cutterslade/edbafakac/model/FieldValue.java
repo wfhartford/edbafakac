@@ -25,7 +25,16 @@ public final class FieldValue extends Value {
     return null == rawValue ? null : Values.getValue(rawValue, readOnly);
   }
 
+  public void setValue(final Value targetValue, final Value fieldValue) {
+    setRawValue(targetValue, fieldValue.getKey());
+  }
+
   public String getRawValue(final Value value) {
     return value.getProperty(getFieldKey());
+  }
+
+  public void setRawValue(final Value targetValue, final String rawValue) {
+    Preconditions.checkArgument(!targetValue.isReadOnly(), "Cannot set field value on read only value");
+    targetValue.setProperty(getFieldKey(), rawValue);
   }
 }
