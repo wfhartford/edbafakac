@@ -4,7 +4,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
-public final class FieldValue extends RecordValue {
+public final class FieldValue extends Value {
 
   FieldValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);

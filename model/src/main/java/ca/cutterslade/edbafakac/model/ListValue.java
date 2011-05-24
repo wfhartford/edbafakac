@@ -4,7 +4,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
-public class ListValue extends Value {
+public final class ListValue extends Value {
 
   private static final String SIZE_KEY = "f90cb18e-413d-4f00-864a-4235da06f642";
 
@@ -56,7 +56,7 @@ public class ListValue extends Value {
 
   private void checkValue(final Value value) {
     Preconditions.checkArgument(null != value);
-    final TypeValue type = getType(true);
+    final TypeValue type = getValueType(true);
     if (null != type) {
       Preconditions.checkArgument(value.isInstance(type));
     }

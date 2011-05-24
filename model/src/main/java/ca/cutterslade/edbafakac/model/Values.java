@@ -14,7 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.MapMaker;
 
-public final class Values {
+final class Values {
 
   private static final ConcurrentMap<String, Value> BASE_VALUES = new MapMaker().makeMap();
 
@@ -60,12 +60,12 @@ public final class Values {
     return entry;
   }
 
-  public static Value getNewValue(final TypeValue type) {
+  static Value getNewValue(final TypeValue type) {
     final Entry entry = getNewEntry(type.getKey(), BaseField.TYPE_CLASS.getField().getRawValue(type));
     return Value.getInstance(entry, false);
   }
 
-  public static Value getValue(final String key, final boolean readOnly) {
+  static Value getValue(final String key, final boolean readOnly) {
     Initializer.init();
     Value value = BASE_VALUES.get(key);
     if (null == value) {
@@ -76,15 +76,13 @@ public final class Values {
         value = null == oldValue ? value : oldValue;
       }
     }
-    else {
-      if (!readOnly) {
-        throw new IllegalArgumentException("Cannot provide writable value of " + value.getName().getBaseValue());
-      }
+    else if (!readOnly) {
+      throw new IllegalArgumentException("Cannot provide writable value of " + value.getName().getBaseValue());
     }
     return value;
   }
 
-  public static Value getValue(final String key, final String defaultResource) {
+  static Value getValue(final String key, final String defaultResource) {
     Value value;
     try {
       value = getValue(key, true);
@@ -115,6 +113,7 @@ public final class Values {
       }
       if (BaseType.TYPE.getKey().equals(entry.getProperty(BaseField.VALUE_TYPE.getKey())) &&
           !entry.hasProperty(BaseField.TYPE_FIELDS.getKey())) {
+        // set the core set of fields for the base types that did not have them set in their properties file
         entry.setProperty(BaseField.TYPE_FIELDS.getKey(), BaseFieldResolver.UNRESOLVED_PREFIX +
             BaseField.VALUE_NAME.getKey() + ',' + BaseField.VALUE_TYPE.getKey() + ',' + BaseField.VALUE_CLASS.getKey());
       }

@@ -6,7 +6,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
-public class StringValue extends Value {
+public final class StringValue extends Value {
 
   private static final String BASE_VALUE_KEY = "7090a2fc-9ea1-4f2e-9ad0-4c27e789f3db";
 

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-public class DecimalValue extends Value {
+public final class DecimalValue extends Value {
 
   private static final String VALUE_KEY = "a3340c4a-2e1a-4f3e-b9c0-32ca213f14d0";
 

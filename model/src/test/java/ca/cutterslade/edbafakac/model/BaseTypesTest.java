@@ -20,7 +20,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -40,7 +41,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -60,7 +62,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -80,7 +83,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -100,7 +104,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -120,7 +125,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -140,7 +146,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -160,7 +167,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
@@ -180,7 +188,8 @@ public class BaseTypesTest {
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
-    for (long i = 0, size = fields.getSize(); i < size; i++) {
+    final long size = fields.getSize();
+    for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));

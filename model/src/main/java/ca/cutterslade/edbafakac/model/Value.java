@@ -41,7 +41,7 @@ public abstract class Value {
     }
   }
 
-  protected Value(final Entry entry, final boolean readOnly) {
+  Value(final Entry entry, final boolean readOnly) {
     Preconditions.checkArgument(null != entry);
     this.entry = entry;
     this.readOnly = readOnly;
@@ -138,6 +138,10 @@ public abstract class Value {
     return null != BaseField.getBaseField(getKey()) || null != BaseType.getBaseType(getKey());
   }
 
+  public ListValue getFields(final boolean readOnly) {
+    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(readOnly), readOnly);
+  }
+
   @Override
   public final int hashCode() {
     return getKey().hashCode();
@@ -152,4 +156,5 @@ public abstract class Value {
   public final String toString() {
     return getClass().getSimpleName() + " [key=" + getKey() + ']';
   }
+
 }

@@ -24,6 +24,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
+@SuppressWarnings("PMD")
 @RunWith(Parameterized.class)
 public class DBImplsTest {
 
@@ -31,7 +32,7 @@ public class DBImplsTest {
 
   private static final String VALUE = "b4124b63-d57b-40f4-935a-e751bcca07da";
 
-  private static final LocalServiceTestHelper helper =
+  private static final LocalServiceTestHelper HELPER =
       new LocalServiceTestHelper(new LocalDatastoreServiceTestConfig());
 
   private final EntryService entryService;
@@ -51,12 +52,12 @@ public class DBImplsTest {
 
   @BeforeClass
   public static void setUp() {
-    helper.setUp();
+    HELPER.setUp();
   }
 
   @AfterClass
   public static void tearDown() {
-    helper.tearDown();
+    HELPER.tearDown();
   }
 
   @Test

@@ -2,7 +2,7 @@ package ca.cutterslade.edbafakac.model;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-public final class TypeValue extends RecordValue {
+public final class TypeValue extends Value {
 
   TypeValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
