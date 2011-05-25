@@ -30,16 +30,16 @@ public final class Types {
     return BaseType.STRING.getType();
   }
 
-  public static TypeValue getRawType() {
-    return BaseType.RAW.getType();
-  }
-
   public static TypeValue getFieldType() {
     return BaseType.FIELD.getType();
   }
 
   public static TypeValue getTypeType() {
     return BaseType.TYPE.getType();
+  }
+
+  public static TypeValue getType(final String key, final boolean readOnly) {
+    return (TypeValue) Values.getValue(key, readOnly);
   }
 
   public static TypeValue getNewType(final StringValue name) {

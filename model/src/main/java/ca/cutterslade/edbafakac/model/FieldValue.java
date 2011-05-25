@@ -26,6 +26,11 @@ public final class FieldValue extends Value {
   }
 
   public void setValue(final Value targetValue, final Value fieldValue) {
+    final TypeValue fieldType = getFieldType(true);
+    if (!fieldValue.isInstance(fieldType)) {
+      throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName().getBaseValue() +
+          " field to a " + fieldValue.getType().getName().getBaseValue());
+    }
     setRawValue(targetValue, fieldValue.getKey());
   }
 
@@ -34,7 +39,6 @@ public final class FieldValue extends Value {
   }
 
   public void setRawValue(final Value targetValue, final String rawValue) {
-    Preconditions.checkArgument(!targetValue.isReadOnly(), "Cannot set field value on read only value");
     targetValue.setProperty(getFieldKey(), rawValue);
   }
 }

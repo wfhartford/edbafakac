@@ -1,6 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 enum BaseField {
   VALUE_NAME("619c10d4-6d66-43d3-ab50-35713f603426", new BaseFieldResolver() {
@@ -68,6 +69,10 @@ enum BaseField {
 
   static BaseField getBaseField(final String key) {
     return FIELDS_BY_KEY.get(key);
+  }
+
+  static ImmutableSet<String> getBaseFieldKeys() {
+    return FIELDS_BY_KEY.keySet();
   }
 
   static BaseFieldResolver getResolver(final String key) {

@@ -4,10 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
-import ca.cutterslade.edbafakac.db.EntryService;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 
 public abstract class Value {
 
@@ -17,7 +19,7 @@ public abstract class Value {
 
   private final boolean readOnly;
 
-  protected static final Value getInstance(final Entry entry, final boolean readOnly) {
+  static final Value getInstance(final Entry entry, final boolean readOnly) {
     try {
       final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
       Preconditions.checkArgument(null != valueClass);
@@ -55,19 +57,11 @@ public abstract class Value {
     pristine = entry.getProperties();
   }
 
-  private EntryService getEntryService() {
-    return entry.getEntryService();
-  }
-
   public final String getKey() {
     return entry.getKey();
   }
 
-  public final TypeValue getType(final boolean readOnly) {
-    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this, readOnly);
-  }
-
-  protected final String getProperty(final String propertyName) {
+  final String getProperty(final String propertyName) {
     String value = entry.getProperty(propertyName);
     if (isBaseValue()) {
       final BaseFieldResolver resolver = BaseField.getResolver(propertyName);
@@ -79,22 +73,31 @@ public abstract class Value {
     return value;
   }
 
-  private void checkWritable() {
+  final Iterable<String> getUnknownPropertyKeys(final String... ignore) {
+    final ImmutableSet.Builder<String> notIncluded = ImmutableSet.builder();
+    if (null != ignore) {
+      notIncluded.add(ignore);
+    }
+    notIncluded.addAll(BaseField.getBaseFieldKeys());
+    return ImmutableList.copyOf(Sets.difference(entry.getPropertyKeys(), notIncluded.build()));
+  }
+
+  void checkWritable() {
     Preconditions.checkState(!readOnly, "Value is read only");
   }
 
-  protected final void removeProperty(final String propertyName) {
+  final void removeProperty(final String propertyName) {
     checkWritable();
     entry.removeProperty(propertyName);
   }
 
-  protected final void setProperty(final String propertyName, final String value) {
+  final void setProperty(final String propertyName, final String value) {
     checkWritable();
     Preconditions.checkArgument(null != value);
     entry.setProperty(propertyName, value);
   }
 
-  protected final void setPropertyIfMissing(final String propertyName, final String value) {
+  final void setPropertyIfMissing(final String propertyName, final String value) {
     checkWritable();
     if (!entry.hasProperty(propertyName)) {
       setProperty(propertyName, value);
@@ -105,43 +108,47 @@ public abstract class Value {
     checkWritable();
     ImmutableMap<String, String> current;
     try {
-      current = getEntryService().getEntry(getKey()).getProperties();
+      current = entry.getEntryService().getEntry(getKey()).getProperties();
     }
     catch (final EntryNotFoundException e) {
       current = null;
     }
     onBeforeSave(pristine, current, entry.getProperties());
-    getEntryService().saveEntry(entry);
+    entry.getEntryService().saveEntry(entry);
   }
 
-  protected void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
+  void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
       final ImmutableMap<String, String> justRead, final ImmutableMap<String, String> toWrite) {
   }
 
-  public boolean isInstance(final TypeValue type) {
-    return getType(true).getKey().equals(type.getKey());
+  public final boolean isInstance(final TypeValue type) {
+    return getType().getKey().equals(type.getKey());
   }
 
-  public boolean isReadOnly() {
+  public final boolean isReadOnly() {
     return readOnly;
   }
 
-  public Value asReadOnly() {
+  public final Value asReadOnly() {
     return readOnly ? this : Values.getValue(getKey(), true);
   }
 
-  public StringValue getName() {
+  public final StringValue getName() {
     return (StringValue) BaseField.VALUE_NAME.getField().getValue(this, true);
   }
 
-  public boolean isBaseValue() {
+  public final TypeValue getType() {
+    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this, true);
+  }
+
+  public final ListValue getFields() {
+    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(), true);
+  }
+
+  final boolean isBaseValue() {
     return null != BaseField.getBaseField(getKey()) ||
         null != BaseType.getBaseType(getKey()) ||
         null != BaseValue.getBaseValue(getKey());
-  }
-
-  public ListValue getFields() {
-    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(true), true);
   }
 
   @Override

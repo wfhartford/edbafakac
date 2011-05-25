@@ -10,18 +10,44 @@ public final class StringValue extends Value {
 
   private static final String BASE_VALUE_KEY = "7090a2fc-9ea1-4f2e-9ad0-4c27e789f3db";
 
+  private static final String SIMPLE_KEY = "9492132b-233c-4e62-8155-61f9c7e23c3a";
+
   StringValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
 
-  public static StringValue withBase(final String baseValue) {
+  public static StringValue withBase(final String baseValue, final boolean simple) {
     final StringValue newValue = (StringValue) BaseType.STRING.getType().getNewValue(null);
+    newValue.setSimple(simple);
     newValue.setBaseValue(baseValue);
     return newValue;
   }
 
+  public void setSimple(final boolean simple) {
+    checkWritable();
+    if (simple) {
+      final boolean wasSimple = Boolean.parseBoolean(getProperty(SIMPLE_KEY));
+      if (!wasSimple) {
+        setProperty(SIMPLE_KEY, String.valueOf(true));
+        for (final String key : getUnknownPropertyKeys(BASE_VALUE_KEY, SIMPLE_KEY)) {
+          removeProperty(key);
+        }
+      }
+    }
+    else {
+      removeProperty(SIMPLE_KEY);
+    }
+  }
+
+  public boolean isSimple() {
+    return Boolean.parseBoolean(getProperty(SIMPLE_KEY));
+  }
+
   public void setValue(final String value, final Locale locale) {
-    if (null == value) {
+    if (isSimple()) {
+      setBaseValue(value);
+    }
+    else if (null == value) {
       removeProperty(locale.toString());
     }
     else {
@@ -40,8 +66,10 @@ public final class StringValue extends Value {
 
   public String getValue(final Locale locale) {
     String value = null;
-    for (Locale loc = locale; null != loc && null == value; loc = getParent(loc)) {
-      value = getProperty(loc.toString());
+    if (!isSimple()) {
+      for (Locale loc = locale; null != loc && null == value; loc = getParent(loc)) {
+        value = getProperty(loc.toString());
+      }
     }
     if (null == value) {
       value = getBaseValue();
