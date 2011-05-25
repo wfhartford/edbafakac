@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentMap;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
-import ca.cutterslade.edbafakac.db.EntryServiceFactory;
+import ca.cutterslade.edbafakac.db.ServiceFactory;
 import ca.cutterslade.utilities.PropertiesUtils;
 
 import com.google.common.base.Preconditions;
@@ -24,7 +24,7 @@ final class Values {
 
   private abstract static class ServiceHolder {
 
-    private static final EntryService ENTRY_SERVICE = EntryServiceFactory.getInstance().getEntryService();
+    private static final EntryService ENTRY_SERVICE = ServiceFactory.getInstance().getEntryService();
 
     public static EntryService getEntryService() {
       return ENTRY_SERVICE;

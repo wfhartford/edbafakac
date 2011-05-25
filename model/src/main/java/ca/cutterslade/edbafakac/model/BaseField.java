@@ -8,10 +8,7 @@ enum BaseField {
 
     @Override
     String resolve(final String value) {
-      final StringValue resolvedValue = (StringValue) BaseType.STRING.getType().getNewValue(null);
-      resolvedValue.setBaseValue(getUnresolvedValue(value));
-      resolvedValue.save();
-      return resolvedValue.getKey();
+      return StringValue.withBase(getUnresolvedValue(value), false).save().getKey();
     }
   }),
   VALUE_TYPE("bb1ba5f1-0914-474f-94d9-3e2372a88012", null),
@@ -30,8 +27,7 @@ enum BaseField {
           resolvedValue.addRawValue(trimmedKey);
         }
       }
-      resolvedValue.save();
-      return resolvedValue.getKey();
+      return resolvedValue.save().getKey();
     }
   }),
   TYPE_CLASS("1c979df8-f291-4d1e-b020-8ec7f77e04b4", null);

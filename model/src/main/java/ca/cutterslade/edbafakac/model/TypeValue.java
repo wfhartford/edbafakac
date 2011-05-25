@@ -30,13 +30,11 @@ public final class TypeValue extends Value {
     else if (!equals(BaseType.LIST.getType())) {
       BaseField.VALUE_NAME.getField().setValue(newValue, name);
     }
-    BaseField.VALUE_TYPE.getField().setRawValue(newValue, getKey());
     if (equals(BaseType.TYPE.getType())) {
-      BaseField.VALUE_CLASS.getField().setRawValue(newValue, RecordValue.class.getName());
+      BaseField.TYPE_CLASS.getField().setRawValue(newValue, RecordValue.class.getName());
     }
-    else {
-      BaseField.VALUE_CLASS.getField().setRawValue(newValue, BaseField.VALUE_CLASS.getField().getRawValue(this));
-    }
+    BaseField.VALUE_TYPE.getField().setRawValue(newValue, getKey());
+    BaseField.VALUE_CLASS.getField().setRawValue(newValue, BaseField.TYPE_CLASS.getField().getRawValue(this));
     return newValue;
   }
 

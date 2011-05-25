@@ -104,7 +104,7 @@ public abstract class Value {
     }
   }
 
-  public final void save() {
+  public final Value save() {
     checkWritable();
     ImmutableMap<String, String> current;
     try {
@@ -115,6 +115,7 @@ public abstract class Value {
     }
     onBeforeSave(pristine, current, entry.getProperties());
     entry.getEntryService().saveEntry(entry);
+    return this;
   }
 
   void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
