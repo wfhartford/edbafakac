@@ -14,7 +14,6 @@ enum BaseField {
   VALUE_TYPE("bb1ba5f1-0914-474f-94d9-3e2372a88012", null),
   VALUE_CLASS("4da490d4-74ee-450b-ba78-5ec4c34182df", null),
   FIELD_TYPE("ca6ef65b-368e-4daf-a671-75ccefea814e", null),
-  FIELD_KEY("80262551-d526-4efb-84c8-dfe6093af7b4", null),
   TYPE_FIELDS("57cf2358-235f-43f4-8a56-436b419029be", new BaseFieldResolver() {
 
     @Override

@@ -10,10 +10,6 @@ public final class FieldValue extends Value {
     super(entry, readOnly);
   }
 
-  public String getFieldKey() {
-    return getProperty(BaseField.FIELD_KEY.getKey());
-  }
-
   public TypeValue getFieldType(final boolean readOnly) {
     return (TypeValue) BaseField.FIELD_TYPE.getField().getValue(this, readOnly);
   }
@@ -34,11 +30,11 @@ public final class FieldValue extends Value {
     setRawValue(targetValue, fieldValue.getKey());
   }
 
-  public String getRawValue(final Value value) {
-    return value.getProperty(getFieldKey());
+  String getRawValue(final Value value) {
+    return value.getProperty(getKey());
   }
 
-  public void setRawValue(final Value targetValue, final String rawValue) {
-    targetValue.setProperty(getFieldKey(), rawValue);
+  void setRawValue(final Value targetValue, final String rawValue) {
+    targetValue.setProperty(getKey(), rawValue);
   }
 }

@@ -20,8 +20,12 @@ public final class TypeValue extends Value {
   }
 
   public Value getNewValue(final StringValue name) {
-    Preconditions.checkArgument(null != name || equals(BaseType.STRING.getType()) || equals(BaseType.LIST.getType()),
-        "Only strings and lists can be created without a name");
+    if (equals(BaseType.STRING.getType()) || equals(BaseType.LIST.getType())) {
+      Preconditions.checkArgument(null == name, "Strings and lists must not have a name");
+    }
+    else {
+      Preconditions.checkArgument(null != name, "Only strings and lists can be created without a name");
+    }
     final Value newValue = Values.getNewValue(this);
     if (equals(BaseType.STRING.getType())) {
       // A string value is its own name
@@ -33,15 +37,12 @@ public final class TypeValue extends Value {
     if (equals(BaseType.TYPE.getType())) {
       BaseField.TYPE_CLASS.getField().setRawValue(newValue, RecordValue.class.getName());
     }
-    BaseField.VALUE_TYPE.getField().setRawValue(newValue, getKey());
-    BaseField.VALUE_CLASS.getField().setRawValue(newValue, BaseField.TYPE_CLASS.getField().getRawValue(this));
     return newValue;
   }
 
   public FieldValue getNewField(final StringValue name) {
     final FieldValue value = (FieldValue) BaseType.FIELD.getType().getNewValue(name);
     BaseField.FIELD_TYPE.getField().setValue(value, this);
-    BaseField.FIELD_KEY.getField().setRawValue(value, value.getKey());
     return value;
   }
 
