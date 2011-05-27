@@ -74,13 +74,14 @@ final class Values {
     if (null == value) {
       value = Value.getInstance(getEntryService().getEntry(key), readOnly);
       if (value.isBaseValue()) {
-        Preconditions.checkArgument(readOnly, "Cannot provide writable value of %s", value.getName().getBaseValue());
+        Preconditions.checkArgument(readOnly,
+            "Cannot provide writable value of %s", value.getName(true).getBaseValue());
         final Value<?> oldValue = BASE_VALUES.putIfAbsent(key, value);
         value = null == oldValue ? value : oldValue;
       }
     }
     else if (!readOnly) {
-      throw new IllegalArgumentException("Cannot provide writable value of " + value.getName().getBaseValue());
+      throw new IllegalArgumentException("Cannot provide writable value of " + value.getName(true).getBaseValue());
     }
     return value;
   }

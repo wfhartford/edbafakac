@@ -14,8 +14,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -25,7 +25,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -35,8 +35,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -46,7 +46,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -56,8 +56,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -67,7 +67,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -77,8 +77,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -88,7 +88,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -98,8 +98,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -109,7 +109,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -119,8 +119,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -130,7 +130,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -140,8 +140,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -151,7 +151,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -161,8 +161,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -172,7 +172,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 
@@ -182,8 +182,8 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getType();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName());
-    assertEquals(getName(baseType), type.getName().getBaseValue());
+    assertNotNull(type.getName(true));
+    assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
     assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
@@ -193,7 +193,7 @@ public class BaseTypesTest {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
       assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName());
+      assertNotNull(field.getName(true));
     }
   }
 

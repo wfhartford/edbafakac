@@ -24,8 +24,8 @@ public final class FieldValue extends Value<FieldValue> {
   public FieldValue setValue(final Value<?> targetValue, final Value<?> fieldValue) {
     final TypeValue fieldType = getFieldType(true);
     if (!fieldValue.isInstance(fieldType)) {
-      throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName().getBaseValue() +
-          " field to a " + fieldValue.getType().getName().getBaseValue());
+      throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName(true).getBaseValue() +
+          " field to a " + fieldValue.getType(true).getName(true).getBaseValue());
     }
     return setRawValue(targetValue, fieldValue.getKey());
   }

@@ -129,7 +129,7 @@ public abstract class Value<T extends Value<T>> {
   }
 
   public final boolean isInstance(final TypeValue type) {
-    return getType().getKey().equals(type.getKey());
+    return getType(true).getKey().equals(type.getKey());
   }
 
   public final boolean isReadOnly() {
@@ -143,16 +143,16 @@ public abstract class Value<T extends Value<T>> {
     return asReadOnly;
   }
 
-  public final StringValue getName() {
-    return (StringValue) BaseField.VALUE_NAME.getField().getValue(this, true);
+  public final StringValue getName(final boolean readOnly) {
+    return (StringValue) BaseField.VALUE_NAME.getField().getValue(this, readOnly);
   }
 
-  public final TypeValue getType() {
-    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this, true);
+  public final TypeValue getType(final boolean readOnly) {
+    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this, readOnly);
   }
 
-  public final ListValue getFields() {
-    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(), true);
+  public final ListValue getFields(final boolean readOnly) {
+    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(true), readOnly);
   }
 
   public final Value<?> getFieldValue(final FieldValue field, final boolean readOnly) {

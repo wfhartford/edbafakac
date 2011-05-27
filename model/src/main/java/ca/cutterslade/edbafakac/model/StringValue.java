@@ -66,7 +66,7 @@ public final class StringValue extends Value<StringValue> {
   }
 
   public StringValue setBaseValue(final String value) {
-    Preconditions.checkArgument(null != value && !isSimple(), "Base value cannot be unset");
+    Preconditions.checkArgument(null != value || isSimple(), "Base value cannot be unset");
     return null == value ? removeProperty(BASE_VALUE_KEY) : setProperty(BASE_VALUE_KEY, value);
   }
 

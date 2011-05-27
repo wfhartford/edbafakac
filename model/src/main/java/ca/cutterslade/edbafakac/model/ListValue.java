@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
+import java.util.Arrays;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
@@ -14,12 +16,28 @@ public final class ListValue extends Value<ListValue> {
     super(entry, readOnly);
   }
 
+  public static ListValue ofValues() {
+    return (ListValue) BaseType.LIST.getType().getNewValue(null);
+  }
+
+  public static ListValue ofType(final TypeValue type) {
+    return ofValues().setValueType(type);
+  }
+
   public static ListValue ofValues(final Value<?>... values) {
-    final ListValue newValue = (ListValue) BaseType.LIST.getType().getNewValue(null);
-    for (final Value<?> value : values) {
-      newValue.add(value);
-    }
-    return newValue;
+    return ofValues().addAll(values);
+  }
+
+  public static ListValue ofValues(final TypeValue type, final Value<?>... values) {
+    return ofType(type).addAll(values);
+  }
+
+  public static ListValue ofValues(final Iterable<? extends Value<?>> values) {
+    return ofValues().addAll(values);
+  }
+
+  public static ListValue ofValues(final TypeValue type, final Iterable<? extends Value<?>> values) {
+    return ofType(type).addAll(values);
   }
 
   public long getSize() {
@@ -74,6 +92,18 @@ public final class ListValue extends Value<ListValue> {
   public ListValue add(final Value<?> value) {
     return setProperty(String.valueOf(getSize()), value.getKey()).
         setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
+  }
+
+  public ListValue addAll(final Value<?>... values) {
+    return addAll(Arrays.asList(values));
+  }
+
+  public ListValue addAll(final Iterable<? extends Value<?>> values) {
+    long size = getSize();
+    for (final Value<?> value : values) {
+      setProperty(String.valueOf(size++), value.getKey());
+    }
+    return setProperty(SIZE_KEY, String.valueOf(size));
   }
 
   ListValue addRawValue(final String value) {
