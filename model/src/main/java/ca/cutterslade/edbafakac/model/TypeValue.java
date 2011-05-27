@@ -54,7 +54,11 @@ public final class TypeValue extends Value<TypeValue> {
   }
 
   public TypeValue addField(final StringValue name, final TypeValue type) {
-    getTypeFields(false).add(type.getNewField(name));
+    return addField(type.getNewField(name));
+  }
+
+  public TypeValue addField(final FieldValue field) {
+    getTypeFields(false).add(field);
     return this;
   }
 
