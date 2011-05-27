@@ -1,5 +1,8 @@
 package ca.cutterslade.edbafakac.db.test;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.ServiceLoader;
@@ -16,6 +19,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
+import ca.cutterslade.edbafakac.db.jdbc.JdbcEntryService;
 
 import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -53,6 +57,17 @@ public class DBImplsTest {
   @BeforeClass
   public static void setUp() {
     HELPER.setUp();
+  }
+
+  @BeforeClass
+  public static void jdbcSetup() throws SQLException {
+    final Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:edbafakac", "sa", "");
+    try {
+      JdbcEntryService.createTable(connection);
+    }
+    finally {
+      connection.close();
+    }
   }
 
   @AfterClass
@@ -156,6 +171,11 @@ public class DBImplsTest {
   }
 
   @Test(expected = IllegalArgumentException.class)
+  public void nullGetEntryTest() {
+    entryService.getEntry(null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
   public void nullRemovePropertyTest() {
     entryService.getNewEntry().removeProperty(null);
   }
@@ -183,5 +203,15 @@ public class DBImplsTest {
     final ImmutableSet<String> propertyKeys = entry.getPropertyKeys();
     Assert.assertEquals(1, propertyKeys.size());
     Assert.assertEquals(KEY, Iterables.getOnlyElement(propertyKeys));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullSaveEntryTest() {
+    entryService.saveEntry(null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void nullRemoveEntryTest() {
+    entryService.removeEntry(null);
   }
 }
