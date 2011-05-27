@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public abstract class Value {
+public abstract class Value<T extends Value<?>> {
 
   private final Entry entry;
 
@@ -19,11 +19,13 @@ public abstract class Value {
 
   private final boolean readOnly;
 
-  static final Value getInstance(final Entry entry, final boolean readOnly) {
+  static final Value<?> getInstance(final Entry entry, final boolean readOnly) {
     try {
       final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
       Preconditions.checkArgument(null != valueClass);
-      final Class<? extends Value> clazz = Class.forName(valueClass).asSubclass(Value.class);
+      @SuppressWarnings("unchecked")
+      final Class<? extends Value<?>> clazz =
+          (Class<? extends Value<?>>) Class.forName(valueClass).asSubclass(Value.class);
       return clazz.getDeclaredConstructor(Entry.class, boolean.class).newInstance(entry, readOnly);
     }
     catch (final ClassNotFoundException e) {
@@ -82,29 +84,46 @@ public abstract class Value {
     return ImmutableList.copyOf(Sets.difference(entry.getPropertyKeys(), notIncluded.build()));
   }
 
-  void checkWritable() {
+  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+  T checkWritable() {
     Preconditions.checkState(!readOnly, "Value is read only");
+    @SuppressWarnings("unchecked")
+    final T thiz = (T) this;
+    return thiz;
   }
 
-  final void removeProperty(final String propertyName) {
+  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+  final T removeProperty(final String propertyName) {
     checkWritable();
     entry.removeProperty(propertyName);
+    @SuppressWarnings("unchecked")
+    final T thiz = (T) this;
+    return thiz;
   }
 
-  final void setProperty(final String propertyName, final String value) {
+  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+  final T setProperty(final String propertyName, final String value) {
     checkWritable();
     Preconditions.checkArgument(null != value);
     entry.setProperty(propertyName, value);
+    @SuppressWarnings("unchecked")
+    final T thiz = (T) this;
+    return thiz;
   }
 
-  final void setPropertyIfMissing(final String propertyName, final String value) {
+  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+  final T setPropertyIfMissing(final String propertyName, final String value) {
     checkWritable();
     if (!entry.hasProperty(propertyName)) {
       setProperty(propertyName, value);
     }
+    @SuppressWarnings("unchecked")
+    final T thiz = (T) this;
+    return thiz;
   }
 
-  public final Value save() {
+  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+  public final T save() {
     checkWritable();
     ImmutableMap<String, String> current;
     try {
@@ -115,7 +134,9 @@ public abstract class Value {
     }
     onBeforeSave(pristine, current, entry.getProperties());
     entry.getEntryService().saveEntry(entry);
-    return this;
+    @SuppressWarnings("unchecked")
+    final T thiz = (T) this;
+    return thiz;
   }
 
   void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
@@ -130,8 +151,11 @@ public abstract class Value {
     return readOnly;
   }
 
-  public final Value asReadOnly() {
-    return readOnly ? this : Values.getValue(getKey(), true);
+  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
+  public final T asReadOnly() {
+    @SuppressWarnings("unchecked")
+    final T asReadOnly = (T) (readOnly ? this : Values.getValue(getKey(), true));
+    return asReadOnly;
   }
 
   public final StringValue getName() {
@@ -159,7 +183,7 @@ public abstract class Value {
 
   @Override
   public final boolean equals(final Object obj) {
-    return this == obj || (null != obj && getClass() == obj.getClass() && getKey().equals(((Value) obj).getKey()));
+    return this == obj || (null != obj && getClass() == obj.getClass() && getKey().equals(((Value<?>) obj).getKey()));
   }
 
   @Override

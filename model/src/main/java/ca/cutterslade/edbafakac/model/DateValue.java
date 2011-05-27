@@ -10,7 +10,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
-public final class DateValue extends Value {
+public final class DateValue extends Value<DateValue> {
 
   private static final String TIME_KEY = "b61a1f11-f434-4d1f-952e-97dfaba65af1";
 

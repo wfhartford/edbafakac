@@ -16,7 +16,7 @@ import com.google.common.collect.MapMaker;
 
 final class Values {
 
-  private static final ConcurrentMap<String, Value> BASE_VALUES = new MapMaker().makeMap();
+  private static final ConcurrentMap<String, Value<?>> BASE_VALUES = new MapMaker().makeMap();
 
   private Values() {
     throw new UnsupportedOperationException();
@@ -63,19 +63,19 @@ final class Values {
     return entry;
   }
 
-  static Value getNewValue(final TypeValue type) {
+  static Value<?> getNewValue(final TypeValue type) {
     final Entry entry = getNewEntry(type.getKey(), BaseField.TYPE_CLASS.getField().getRawValue(type));
     return Value.getInstance(entry, false);
   }
 
-  static Value getValue(final String key, final boolean readOnly) {
+  static Value<?> getValue(final String key, final boolean readOnly) {
     Initializer.init();
-    Value value = BASE_VALUES.get(key);
+    Value<?> value = BASE_VALUES.get(key);
     if (null == value) {
       value = Value.getInstance(getEntryService().getEntry(key), readOnly);
       if (value.isBaseValue()) {
         Preconditions.checkArgument(readOnly, "Cannot provide writable value of %s", value.getName().getBaseValue());
-        final Value oldValue = BASE_VALUES.putIfAbsent(key, value);
+        final Value<?> oldValue = BASE_VALUES.putIfAbsent(key, value);
         value = null == oldValue ? value : oldValue;
       }
     }
@@ -85,15 +85,15 @@ final class Values {
     return value;
   }
 
-  static Value getValue(final String key, final String defaultResource) {
-    Value value;
+  static Value<?> getValue(final String key, final String defaultResource) {
+    Value<?> value;
     try {
       value = getValue(key, true);
     }
     catch (final EntryNotFoundException e) {
       final Entry entry = readBaseEntry(key, defaultResource);
       value = Value.getInstance(entry, true);
-      final Value oldValue = BASE_VALUES.putIfAbsent(key, value);
+      final Value<?> oldValue = BASE_VALUES.putIfAbsent(key, value);
       if (null == oldValue) {
         getEntryService().saveEntry(entry);
       }

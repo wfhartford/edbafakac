@@ -4,29 +4,32 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
-public final class TypeValue extends Value {
+public final class TypeValue extends Value<TypeValue> {
 
   TypeValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
 
-  public Class<? extends Value> getTypeClass() {
+  public Class<? extends Value<?>> getTypeClass() {
     try {
-      return Class.forName(BaseField.TYPE_CLASS.getField().getRawValue(this)).asSubclass(Value.class);
+      @SuppressWarnings("unchecked")
+      final Class<? extends Value<?>> clazz = (Class<? extends Value<?>>)
+          Class.forName(BaseField.TYPE_CLASS.getField().getRawValue(this)).asSubclass(Value.class);
+      return clazz;
     }
     catch (final ClassNotFoundException e) {
       throw new IllegalStateException(e);
     }
   }
 
-  public Value getNewValue(final StringValue name) {
+  public Value<?> getNewValue(final StringValue name) {
     if (equals(BaseType.STRING.getType()) || equals(BaseType.LIST.getType())) {
       Preconditions.checkArgument(null == name, "Strings and lists must not have a name");
     }
     else {
       Preconditions.checkArgument(null != name, "Only strings and lists can be created without a name");
     }
-    final Value newValue = Values.getNewValue(this);
+    final Value<?> newValue = Values.getNewValue(this);
     if (equals(BaseType.STRING.getType())) {
       // A string value is its own name
       BaseField.VALUE_NAME.getField().setValue(newValue, newValue);

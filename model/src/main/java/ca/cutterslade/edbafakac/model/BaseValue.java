@@ -25,7 +25,7 @@ enum BaseValue {
     return key;
   }
 
-  public Value getValue() {
+  public Value<?> getValue() {
     return Values.getValue(key, BaseValue.class.getSimpleName() + '.' + toString() + ".properties");
   }
 

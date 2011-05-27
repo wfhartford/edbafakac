@@ -2,7 +2,7 @@ package ca.cutterslade.edbafakac.model;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-public final class BooleanValue extends Value {
+public final class BooleanValue extends Value<BooleanValue> {
 
   private static final String VALUE_KEY = "4ce36559-c679-42cd-8531-b7d89aa5213a";
 

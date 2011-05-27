@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-public final class IntegerValue extends Value {
+public final class IntegerValue extends Value<IntegerValue> {
 
   private static final String VALUE_KEY = "61b1d125-2e3d-41e0-93c8-1df3a3a4ddd3";
 

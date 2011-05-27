@@ -4,7 +4,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
-public final class ListValue extends Value {
+public final class ListValue extends Value<ListValue> {
 
   private static final String SIZE_KEY = "f90cb18e-413d-4f00-864a-4235da06f642";
 
@@ -14,9 +14,9 @@ public final class ListValue extends Value {
     super(entry, readOnly);
   }
 
-  public static ListValue ofValues(final Value... values) {
+  public static ListValue ofValues(final Value<?>... values) {
     final ListValue newValue = (ListValue) BaseType.LIST.getType().getNewValue(null);
-    for (final Value value : values) {
+    for (final Value<?> value : values) {
       newValue.add(value);
     }
     return newValue;
@@ -50,19 +50,19 @@ public final class ListValue extends Value {
     return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, readOnly));
   }
 
-  public Value get(final long position) {
+  public Value<?> get(final long position) {
     checkIndex(position);
     final String key = getProperty(String.valueOf(position));
     return Values.getValue(key, isReadOnly());
   }
 
-  public void set(final long position, final Value value) {
+  public void set(final long position, final Value<?> value) {
     checkIndex(position);
     checkValue(value);
     setProperty(String.valueOf(position), value.getKey());
   }
 
-  private void checkValue(final Value value) {
+  private void checkValue(final Value<?> value) {
     Preconditions.checkArgument(null != value);
     final TypeValue type = getValueType(true);
     if (null != type) {
@@ -70,7 +70,7 @@ public final class ListValue extends Value {
     }
   }
 
-  public void add(final Value value) {
+  public void add(final Value<?> value) {
     setProperty(String.valueOf(getSize()), value.getKey());
     setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
@@ -80,7 +80,7 @@ public final class ListValue extends Value {
     setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
 
-  public void insert(final long position, final Value value) {
+  public void insert(final long position, final Value<?> value) {
     final long size = getSize();
     if (0 > position || position > size) {
       throw new IndexOutOfBoundsException(String.valueOf(position));
