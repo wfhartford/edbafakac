@@ -20,20 +20,15 @@ public final class DateValue extends Value<DateValue> {
     super(entry, readOnly);
   }
 
-  public void setValue(final Date date, final TimeZone zone) {
+  public DateValue setValue(final Date date, final TimeZone zone) {
     Preconditions.checkArgument(null == date || null != zone, "Zone must be set when date is set");
-    if (null == date) {
-      removeProperty(TIME_KEY);
-      removeProperty(ZONE_KEY);
-    }
-    else {
-      setProperty(TIME_KEY, String.valueOf(date.getTime()));
-      setProperty(ZONE_KEY, zone.getID());
-    }
+    return null == date ?
+        removeProperty(TIME_KEY).removeProperty(ZONE_KEY) :
+          setProperty(TIME_KEY, String.valueOf(date.getTime())).setProperty(ZONE_KEY, zone.getID());
   }
 
-  public void setValue(final Calendar calendar) {
-    setValue(calendar.getTime(), calendar.getTimeZone());
+  public DateValue setValue(final Calendar calendar) {
+    return setValue(calendar.getTime(), calendar.getTimeZone());
   }
 
   public Date getDate() {

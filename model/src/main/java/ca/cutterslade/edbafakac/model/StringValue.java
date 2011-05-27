@@ -17,13 +17,17 @@ public final class StringValue extends Value<StringValue> {
   }
 
   public static StringValue withBase(final String baseValue, final boolean simple) {
-    final StringValue newValue = (StringValue) BaseType.STRING.getType().getNewValue(null);
-    newValue.setSimple(simple);
-    newValue.setBaseValue(baseValue);
-    return newValue;
+    return ((StringValue) BaseType.STRING.getType().getNewValue(null))
+        .setSimple(simple)
+        .setBaseValue(baseValue);
   }
 
-  public void setSimple(final boolean simple) {
+  public static StringValue withValue(final String value, final Locale locale) {
+    return ((StringValue) BaseType.STRING.getType().getNewValue(null))
+        .setValue(value, locale);
+  }
+
+  public StringValue setSimple(final boolean simple) {
     checkWritable();
     if (simple) {
       final boolean wasSimple = Boolean.parseBoolean(getProperty(SIMPLE_KEY));
@@ -37,13 +41,14 @@ public final class StringValue extends Value<StringValue> {
     else {
       removeProperty(SIMPLE_KEY);
     }
+    return this;
   }
 
   public boolean isSimple() {
     return Boolean.parseBoolean(getProperty(SIMPLE_KEY));
   }
 
-  public void setValue(final String value, final Locale locale) {
+  public StringValue setValue(final String value, final Locale locale) {
     if (isSimple()) {
       setBaseValue(value);
     }
@@ -57,11 +62,12 @@ public final class StringValue extends Value<StringValue> {
       }
       setPropertyIfMissing(BASE_VALUE_KEY, value);
     }
+    return this;
   }
 
-  public void setBaseValue(final String value) {
-    Preconditions.checkArgument(null != value, "Base value cannot be unset");
-    setProperty(BASE_VALUE_KEY, value);
+  public StringValue setBaseValue(final String value) {
+    Preconditions.checkArgument(null != value && !isSimple(), "Base value cannot be unset");
+    return null == value ? removeProperty(BASE_VALUE_KEY) : setProperty(BASE_VALUE_KEY, value);
   }
 
   public String getValue(final Locale locale) {

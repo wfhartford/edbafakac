@@ -35,7 +35,7 @@ public final class ListValue extends Value<ListValue> {
     return size;
   }
 
-  public void setValueType(final TypeValue type) {
+  public ListValue setValueType(final TypeValue type) {
     if (null == type) {
       removeProperty(TYPE_KEY);
     }
@@ -43,6 +43,7 @@ public final class ListValue extends Value<ListValue> {
       Preconditions.checkState(0 == getSize(), "Type may only be set on an empty list");
       setProperty(TYPE_KEY, type.getKey());
     }
+    return this;
   }
 
   public TypeValue getValueType(final boolean readOnly) {
@@ -56,31 +57,31 @@ public final class ListValue extends Value<ListValue> {
     return Values.getValue(key, isReadOnly());
   }
 
-  public void set(final long position, final Value<?> value) {
+  public ListValue set(final long position, final Value<?> value) {
     checkIndex(position);
-    checkValue(value);
-    setProperty(String.valueOf(position), value.getKey());
+    return checkValue(value).setProperty(String.valueOf(position), value.getKey());
   }
 
-  private void checkValue(final Value<?> value) {
+  private ListValue checkValue(final Value<?> value) {
     Preconditions.checkArgument(null != value);
     final TypeValue type = getValueType(true);
     if (null != type) {
       Preconditions.checkArgument(value.isInstance(type));
     }
+    return this;
   }
 
-  public void add(final Value<?> value) {
-    setProperty(String.valueOf(getSize()), value.getKey());
-    setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
+  public ListValue add(final Value<?> value) {
+    return setProperty(String.valueOf(getSize()), value.getKey()).
+        setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
 
-  void addRawValue(final String value) {
-    setProperty(String.valueOf(getSize()), value);
-    setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
+  ListValue addRawValue(final String value) {
+    return setProperty(String.valueOf(getSize()), value).
+        setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
   }
 
-  public void insert(final long position, final Value<?> value) {
+  public ListValue insert(final long position, final Value<?> value) {
     final long size = getSize();
     if (0 > position || position > size) {
       throw new IndexOutOfBoundsException(String.valueOf(position));
@@ -88,15 +89,15 @@ public final class ListValue extends Value<ListValue> {
     for (long move = size; move > position; move--) {
       setProperty(String.valueOf(move), getProperty(String.valueOf(move - 1)));
     }
-    setProperty(String.valueOf(position), value.getKey());
-    setProperty(SIZE_KEY, String.valueOf(size + 1));
+    return setProperty(String.valueOf(position), value.getKey()).
+        setProperty(SIZE_KEY, String.valueOf(size + 1));
   }
 
-  public void remove(final long position) {
+  public ListValue remove(final long position) {
     final long size = checkIndex(position);
     for (long move = size - 1; move >= position; move--) {
       setProperty(String.valueOf(move - 1), getProperty(String.valueOf(move)));
     }
-    setProperty(SIZE_KEY, String.valueOf(size - 1));
+    return setProperty(SIZE_KEY, String.valueOf(size - 1));
   }
 }

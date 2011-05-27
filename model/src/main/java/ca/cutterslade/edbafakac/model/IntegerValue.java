@@ -12,13 +12,8 @@ public final class IntegerValue extends Value<IntegerValue> {
     super(entry, readOnly);
   }
 
-  public void setValue(final BigInteger value) {
-    if (null == value) {
-      removeProperty(VALUE_KEY);
-    }
-    else {
-      setProperty(VALUE_KEY, value.toString());
-    }
+  public IntegerValue setValue(final BigInteger value) {
+    return null == value ? removeProperty(VALUE_KEY) : setProperty(VALUE_KEY, value.toString());
   }
 
   public BigInteger getValue() {

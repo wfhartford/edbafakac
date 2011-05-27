@@ -12,13 +12,8 @@ public final class DecimalValue extends Value<DecimalValue> {
     super(entry, readOnly);
   }
 
-  public void setValue(final BigDecimal value) {
-    if (null == value) {
-      removeProperty(VALUE_KEY);
-    }
-    else {
-      setProperty(VALUE_KEY, value.toString());
-    }
+  public DecimalValue setValue(final BigDecimal value) {
+    return null == value ? removeProperty(VALUE_KEY) : setProperty(VALUE_KEY, value.toString());
   }
 
   public BigDecimal getValue() {

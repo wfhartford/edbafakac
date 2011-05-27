@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
-public abstract class Value<T extends Value<?>> {
+public abstract class Value<T extends Value<T>> {
 
   private final Entry entry;
 
@@ -84,45 +84,32 @@ public abstract class Value<T extends Value<?>> {
     return ImmutableList.copyOf(Sets.difference(entry.getPropertyKeys(), notIncluded.build()));
   }
 
-  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   T checkWritable() {
     Preconditions.checkState(!readOnly, "Value is read only");
-    @SuppressWarnings("unchecked")
-    final T thiz = (T) this;
-    return thiz;
+    return getThis();
   }
 
-  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   final T removeProperty(final String propertyName) {
     checkWritable();
     entry.removeProperty(propertyName);
-    @SuppressWarnings("unchecked")
-    final T thiz = (T) this;
-    return thiz;
+    return getThis();
   }
 
-  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   final T setProperty(final String propertyName, final String value) {
     checkWritable();
     Preconditions.checkArgument(null != value);
     entry.setProperty(propertyName, value);
-    @SuppressWarnings("unchecked")
-    final T thiz = (T) this;
-    return thiz;
+    return getThis();
   }
 
-  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   final T setPropertyIfMissing(final String propertyName, final String value) {
     checkWritable();
     if (!entry.hasProperty(propertyName)) {
       setProperty(propertyName, value);
     }
-    @SuppressWarnings("unchecked")
-    final T thiz = (T) this;
-    return thiz;
+    return getThis();
   }
 
-  @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   public final T save() {
     checkWritable();
     ImmutableMap<String, String> current;
@@ -134,9 +121,7 @@ public abstract class Value<T extends Value<?>> {
     }
     onBeforeSave(pristine, current, entry.getProperties());
     entry.getEntryService().saveEntry(entry);
-    @SuppressWarnings("unchecked")
-    final T thiz = (T) this;
-    return thiz;
+    return getThis();
   }
 
   void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
@@ -170,10 +155,24 @@ public abstract class Value<T extends Value<?>> {
     return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(), true);
   }
 
+  public final Value<?> getFieldValue(final FieldValue field, final boolean readOnly) {
+    return field.getValue(this, readOnly);
+  }
+
+  public final T setFieldValue(final FieldValue field, final Value<?> value) {
+    field.setValue(this, value);
+    return getThis();
+  }
+
   final boolean isBaseValue() {
     return null != BaseField.getBaseField(getKey()) ||
         null != BaseType.getBaseType(getKey()) ||
         null != BaseValue.getBaseValue(getKey());
+  }
+
+  @SuppressWarnings("unchecked")
+  protected final T getThis() {
+    return (T) this;
   }
 
   @Override

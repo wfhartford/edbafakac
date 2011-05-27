@@ -22,13 +22,8 @@ public final class BooleanValue extends Value<BooleanValue> {
     return (BooleanValue) BaseValue.BOOLEAN_TRUE.getValue();
   }
 
-  public void setValue(final Boolean value) {
-    if (null == value) {
-      removeProperty(VALUE_KEY);
-    }
-    else {
-      setProperty(VALUE_KEY, value.toString());
-    }
+  public BooleanValue setValue(final Boolean value) {
+    return null == value ? removeProperty(VALUE_KEY) : setProperty(VALUE_KEY, value.toString());
   }
 
   public Boolean getValue() {

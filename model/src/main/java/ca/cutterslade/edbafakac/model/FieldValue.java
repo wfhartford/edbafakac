@@ -21,20 +21,21 @@ public final class FieldValue extends Value<FieldValue> {
     return null == rawValue ? null : Values.getValue(rawValue, readOnly);
   }
 
-  public void setValue(final Value<?> targetValue, final Value<?> fieldValue) {
+  public FieldValue setValue(final Value<?> targetValue, final Value<?> fieldValue) {
     final TypeValue fieldType = getFieldType(true);
     if (!fieldValue.isInstance(fieldType)) {
       throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName().getBaseValue() +
           " field to a " + fieldValue.getType().getName().getBaseValue());
     }
-    setRawValue(targetValue, fieldValue.getKey());
+    return setRawValue(targetValue, fieldValue.getKey());
   }
 
   String getRawValue(final Value<?> value) {
     return value.getProperty(getKey());
   }
 
-  void setRawValue(final Value<?> targetValue, final String rawValue) {
+  FieldValue setRawValue(final Value<?> targetValue, final String rawValue) {
     targetValue.setProperty(getKey(), rawValue);
+    return this;
   }
 }
