@@ -5,8 +5,11 @@ import java.util.Arrays;
 import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 
 public final class ListValue extends Value<ListValue> {
+
+  private static final String TOO_LARGE_MESSAGE = "List would have > Long.MAX_VALUE elements";
 
   private static final String SIZE_KEY = "f90cb18e-413d-4f00-864a-4235da06f642";
 
@@ -86,9 +89,11 @@ public final class ListValue extends Value<ListValue> {
   }
 
   public ListValue add(final Value<?> value) {
+    final long size = getSize();
+    Preconditions.checkState(Long.MAX_VALUE > size, TOO_LARGE_MESSAGE);
     return checkValue(value)
-        .setProperty(String.valueOf(getSize()), value.save().getKey())
-        .setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
+        .setProperty(String.valueOf(size), value.save().getKey())
+        .setProperty(SIZE_KEY, String.valueOf(size + 1));
   }
 
   public ListValue addAll(final Value<?>... values) {
@@ -97,6 +102,7 @@ public final class ListValue extends Value<ListValue> {
 
   public ListValue addAll(final Iterable<? extends Value<?>> values) {
     long size = getSize();
+    Preconditions.checkState(Long.MAX_VALUE - Iterables.size(values) > size, TOO_LARGE_MESSAGE);
     for (final Value<?> value : values) {
       checkValue(value);
     }
@@ -107,13 +113,16 @@ public final class ListValue extends Value<ListValue> {
   }
 
   ListValue addRawValue(final String value) {
-    return setProperty(String.valueOf(getSize()), value).
-        setProperty(SIZE_KEY, String.valueOf(getSize() + 1));
+    final long size = getSize();
+    Preconditions.checkArgument(Long.MAX_VALUE > size, TOO_LARGE_MESSAGE);
+    return setProperty(String.valueOf(size), value).
+        setProperty(SIZE_KEY, String.valueOf(size + 1));
   }
 
   public ListValue insert(final long position, final Value<?> value) {
-    checkValue(value);
     final long size = getSize();
+    Preconditions.checkArgument(Long.MAX_VALUE > size, TOO_LARGE_MESSAGE);
+    checkValue(value);
     if (0 > position || position > size) {
       throw new IndexOutOfBoundsException(String.valueOf(position));
     }
@@ -129,6 +138,6 @@ public final class ListValue extends Value<ListValue> {
     for (long move = position; move < size; move++) {
       setProperty(String.valueOf(move), getProperty(String.valueOf(move + 1)));
     }
-    return setProperty(SIZE_KEY, String.valueOf(size));
+    return removeProperty(String.valueOf(size)).setProperty(SIZE_KEY, String.valueOf(size));
   }
 }

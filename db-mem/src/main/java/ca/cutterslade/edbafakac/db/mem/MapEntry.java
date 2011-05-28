@@ -19,7 +19,8 @@ public class MapEntry implements Entry {
 
   private boolean dirty;
 
-  public MapEntry(final String entryKey, final Map<String, String> map, final EntryService service, final boolean dirty) {
+  public MapEntry(final String entryKey, final Map<String, String> map, final EntryService service,
+      final boolean dirty) {
     Preconditions.checkArgument(null != entryKey);
     Preconditions.checkArgument(null != map);
     Preconditions.checkArgument(null != service);
