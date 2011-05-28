@@ -74,7 +74,7 @@ public class MapEntry implements Entry {
   }
 
   @Override
-  public boolean isDrity() {
+  public boolean isDirty() {
     return dirty;
   }
 

@@ -83,27 +83,27 @@ public class DBImplsTest {
   @Test
   public void getEntryTest() {
     final Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     Assert.assertNotNull(entry);
     Assert.assertNotNull(entry.getKey());
     Assert.assertTrue(entry.getPropertyKeys().isEmpty());
     Assert.assertNull(entry.getProperty(KEY));
     entry.setProperty(KEY, VALUE);
     Assert.assertEquals(VALUE, entry.getProperty(KEY));
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
   }
 
   @Test
   public void saveEntryTest() {
     Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entry.setProperty(KEY, VALUE);
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entryService.saveEntry(entry);
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
     entry = entryService.getEntry(entry.getKey());
     Assert.assertEquals(VALUE, entry.getProperty(KEY));
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
   }
 
   @Test(expected = EntryNotFoundException.class)
@@ -115,13 +115,13 @@ public class DBImplsTest {
   @Test
   public void noSaveModificationTest() {
     Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entryService.saveEntry(entry);
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
     entry.setProperty(KEY, VALUE);
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entry = entryService.getEntry(entry.getKey());
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
     Assert.assertFalse(entry.hasProperty(KEY));
     Assert.assertNull(entry.getProperty(KEY));
   }
@@ -139,9 +139,9 @@ public class DBImplsTest {
   @Test(expected = EntryAlreadyExistsException.class)
   public void newEntryWithUsedKeyTest() {
     final Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entryService.saveEntry(entry);
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
     entryService.getNewEntry(entry.getKey());
   }
 
@@ -156,7 +156,7 @@ public class DBImplsTest {
   @Test
   public void presetKeyTest() {
     final Entry entry = entryService.getNewEntry(KEY);
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
     Assert.assertEquals(KEY, entry.getKey());
     Assert.assertNotNull(entryService.getEntry(entry.getKey()));
   }
@@ -178,9 +178,9 @@ public class DBImplsTest {
   @Test
   public void presetKeyAfterRemoveTest() {
     final Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entryService.saveEntry(entry);
-    Assert.assertFalse(entry.isDrity());
+    Assert.assertFalse(entry.isDirty());
     entryService.removeEntry(entry.getKey());
     Assert.assertEquals(entry.getKey(), entryService.getNewEntry(entry.getKey()).getKey());
   }
@@ -203,18 +203,18 @@ public class DBImplsTest {
   @Test
   public void hasPropertyTest() {
     final Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entry.setProperty(KEY, VALUE);
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     Assert.assertTrue(entry.hasProperty(KEY));
   }
 
   @Test
   public void getPropertiesTest() {
     final Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entry.setProperty(KEY, VALUE);
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     final ImmutableMap<String, String> properties = entry.getProperties();
     Assert.assertEquals(1, properties.size());
     Assert.assertEquals(VALUE, properties.get(KEY));
@@ -223,9 +223,9 @@ public class DBImplsTest {
   @Test
   public void getPropertyKeysTest() {
     final Entry entry = entryService.getNewEntry();
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     entry.setProperty(KEY, VALUE);
-    Assert.assertTrue(entry.isDrity());
+    Assert.assertTrue(entry.isDirty());
     final ImmutableSet<String> propertyKeys = entry.getPropertyKeys();
     Assert.assertEquals(1, propertyKeys.size());
     Assert.assertEquals(KEY, Iterables.getOnlyElement(propertyKeys));
@@ -244,20 +244,20 @@ public class DBImplsTest {
   @Test
   public void removePropertyTest() {
     Entry entry = entryService.getNewEntry();
-    assertTrue(entry.isDrity());
+    assertTrue(entry.isDirty());
     entryService.saveEntry(entry);
-    assertFalse(entry.isDrity());
+    assertFalse(entry.isDirty());
     entry = entryService.getEntry(entry.getKey());
-    assertFalse(entry.isDrity());
+    assertFalse(entry.isDirty());
     entry.setProperty(KEY, VALUE);
-    assertTrue(entry.isDrity());
+    assertTrue(entry.isDirty());
     entryService.saveEntry(entry);
-    assertFalse(entry.isDrity());
+    assertFalse(entry.isDirty());
     assertEquals(VALUE, entry.getProperty(KEY));
     entry = entryService.getEntry(entry.getKey());
-    assertFalse(entry.isDrity());
+    assertFalse(entry.isDirty());
     entry.removeProperty(KEY);
-    assertTrue(entry.isDrity());
+    assertTrue(entry.isDirty());
     assertFalse(entry.hasProperty(KEY));
     assertNull(entry.getProperty(KEY));
   }

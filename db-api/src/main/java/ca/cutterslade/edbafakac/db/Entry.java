@@ -83,7 +83,7 @@ public interface Entry {
    * 
    * @return {@code true} if this entry has been modified since it was saved, {@code false} if it has not been modified.
    */
-  boolean isDrity();
+  boolean isDirty();
 
   /**
    * Get the {@link EntryService} which produced this entry.
