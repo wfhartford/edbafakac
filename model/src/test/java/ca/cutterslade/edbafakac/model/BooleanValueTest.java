@@ -1,16 +1,18 @@
 package ca.cutterslade.edbafakac.model;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class BaseBooleanValuesTest {
+public class BooleanValueTest {
 
   @Test
   public void trueTest() {
     final BooleanValue booleanTrue = BooleanValue.getTrue();
     assertTrue(booleanTrue.getValue());
+    assertTrue(booleanTrue.getValue(true));
     assertTrue(booleanTrue.getValue(false));
     assertTrue(booleanTrue.isTrue());
     assertFalse(booleanTrue.isNotTrue());
@@ -24,11 +26,25 @@ public class BaseBooleanValuesTest {
     final BooleanValue booleanFalse = BooleanValue.getFalse();
     assertFalse(booleanFalse.getValue());
     assertFalse(booleanFalse.getValue(true));
+    assertFalse(booleanFalse.getValue(false));
     assertFalse(booleanFalse.isTrue());
     assertTrue(booleanFalse.isNotTrue());
     assertTrue(booleanFalse.isFalse());
     assertFalse(booleanFalse.isNotFalse());
     assertFalse(booleanFalse.isNull());
+  }
+
+  @Test
+  public void nullTest() {
+    final BooleanValue booleanNull = (BooleanValue) Types.getBooleanType().getNewValue(null);
+    assertNull(booleanNull.getValue());
+    assertTrue(booleanNull.getValue(true));
+    assertFalse(booleanNull.getValue(false));
+    assertFalse(booleanNull.isTrue());
+    assertTrue(booleanNull.isNotTrue());
+    assertFalse(booleanNull.isFalse());
+    assertTrue(booleanNull.isNotFalse());
+    assertTrue(booleanNull.isNull());
   }
 
   @Test(expected = IllegalStateException.class)

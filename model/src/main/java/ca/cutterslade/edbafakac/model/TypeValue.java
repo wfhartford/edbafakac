@@ -2,9 +2,17 @@ package ca.cutterslade.edbafakac.model;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 public final class TypeValue extends Value<TypeValue> {
+
+  private static final ImmutableSet<String> NAMELESS_TYPE_KEYS = ImmutableSet.of(
+      BaseType.LIST.getKey(),
+      BaseType.STRING.getKey(),
+      BaseType.DATE.getKey(),
+      BaseType.BOOLEAN.getKey(),
+      BaseType.DECIMAL.getKey(),
+      BaseType.INTEGER.getKey());
 
   TypeValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
@@ -23,18 +31,20 @@ public final class TypeValue extends Value<TypeValue> {
   }
 
   public Value<?> getNewValue(final StringValue name) {
-    if (equals(BaseType.STRING.getType()) || equals(BaseType.LIST.getType())) {
-      Preconditions.checkArgument(null == name, "Strings and lists must not have a name");
+    if (NAMELESS_TYPE_KEYS.contains(getKey())) {
+      if (null != name) {
+        throw new IllegalArgumentException(getName(true).getBaseValue() + " may not have a name");
+      }
     }
-    else {
-      Preconditions.checkArgument(null != name, "Only strings and lists can be created without a name");
+    else if (null == name) {
+      throw new IllegalArgumentException(getName(true).getBaseValue() + " must have a name");
     }
     final Value<?> newValue = Values.getNewValue(this);
     if (equals(BaseType.STRING.getType())) {
       // A string value is its own name
       BaseField.VALUE_NAME.getField().setValue(newValue, newValue);
     }
-    else if (!equals(BaseType.LIST.getType())) {
+    else if (null != name) {
       BaseField.VALUE_NAME.getField().setValue(newValue, name);
     }
     if (equals(BaseType.TYPE.getType())) {

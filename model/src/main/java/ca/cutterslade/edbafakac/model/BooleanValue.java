@@ -49,7 +49,7 @@ public final class BooleanValue extends Value<BooleanValue> {
   }
 
   public boolean isNotFalse() {
-    return getValue(false);
+    return getValue(true);
   }
 
   public boolean isNull() {
