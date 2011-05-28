@@ -111,7 +111,11 @@ public abstract class Value<T extends Value<T>> {
   }
 
   public final T save() {
-    if (isReadOnly()) {
+    return save(false);
+  }
+
+  final T save(final boolean saveReadOnly) {
+    if (!saveReadOnly && isReadOnly()) {
       Preconditions.checkState(!entry.isDirty(), "A dirty read-only values should be impossible");
     }
     else if (entry.isDirty()) {

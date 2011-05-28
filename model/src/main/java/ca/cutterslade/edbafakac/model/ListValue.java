@@ -63,6 +63,13 @@ public final class ListValue extends Value<ListValue> {
     return this;
   }
 
+  ListValue setValueTypeRaw(final String key) {
+    Preconditions.checkArgument(null != key);
+    Preconditions.checkArgument(BaseType.FIELD.getKey().equals(key));
+    Preconditions.checkState(0 == getSize(), "Type may only be set on an empty list");
+    return setProperty(TYPE_KEY, key);
+  }
+
   public TypeValue getValueType(final boolean readOnly) {
     final String typeKey = getProperty(TYPE_KEY);
     return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, readOnly));
@@ -140,4 +147,5 @@ public final class ListValue extends Value<ListValue> {
     }
     return removeProperty(String.valueOf(size)).setProperty(SIZE_KEY, String.valueOf(size));
   }
+
 }

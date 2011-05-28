@@ -54,17 +54,11 @@ final class Values {
     return ServiceHolder.getEntryService();
   }
 
-  private static Entry getNewEntry(final String typeKey, final String typeClass) {
-    Preconditions.checkArgument(null != typeKey);
-    Preconditions.checkArgument(null != typeClass, "No type class provided for new entry with type key %s", typeKey);
-    final Entry entry = getEntryService().getNewEntry();
-    entry.setProperty(BaseField.VALUE_TYPE.getKey(), typeKey);
-    entry.setProperty(BaseField.VALUE_CLASS.getKey(), typeClass);
-    return entry;
-  }
-
   static Value<?> getNewValue(final TypeValue type) {
-    final Entry entry = getNewEntry(type.getKey(), BaseField.TYPE_CLASS.getField().getRawValue(type));
+    Preconditions.checkArgument(null != type);
+    final Entry entry = getEntryService().getNewEntry();
+    entry.setProperty(BaseField.VALUE_TYPE.getKey(), type.getKey());
+    entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getField().getRawValue(type));
     return Value.getInstance(entry, false);
   }
 

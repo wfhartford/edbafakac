@@ -42,7 +42,7 @@ public final class TypeValue extends Value<TypeValue> {
     final Value<?> newValue = Values.getNewValue(this);
     if (equals(BaseType.STRING.getType())) {
       // A string value is its own name
-      BaseField.VALUE_NAME.getField().setValue(newValue, newValue);
+      BaseField.VALUE_NAME.getField().setRawValue(newValue, newValue.getKey());
     }
     else if (null != name) {
       BaseField.VALUE_NAME.getField().setValue(newValue, name);
