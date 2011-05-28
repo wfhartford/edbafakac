@@ -28,10 +28,6 @@ public final class ListValue extends Value<ListValue> {
     return ofValues().addAll(values);
   }
 
-  public static ListValue ofValues(final TypeValue type, final Value<?>... values) {
-    return ofType(type).addAll(values);
-  }
-
   public static ListValue ofValues(final Iterable<? extends Value<?>> values) {
     return ofValues().addAll(values);
   }
@@ -129,10 +125,10 @@ public final class ListValue extends Value<ListValue> {
   }
 
   public ListValue remove(final long position) {
-    final long size = checkIndex(position);
-    for (long move = size - 1; move >= position; move--) {
-      setProperty(String.valueOf(move - 1), getProperty(String.valueOf(move)));
+    final long size = checkIndex(position) - 1;
+    for (long move = position; move < size; move++) {
+      setProperty(String.valueOf(move), getProperty(String.valueOf(move + 1)));
     }
-    return setProperty(SIZE_KEY, String.valueOf(size - 1));
+    return setProperty(SIZE_KEY, String.valueOf(size));
   }
 }
