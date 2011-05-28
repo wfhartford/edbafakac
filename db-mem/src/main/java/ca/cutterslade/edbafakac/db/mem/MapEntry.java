@@ -19,6 +19,9 @@ public class MapEntry implements Entry {
 
   private boolean dirty;
 
+  // Long param list is better than an alternative
+  // this is just called by EntryService implementations
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public MapEntry(final String entryKey, final Map<String, String> map, final EntryService service,
       final boolean dirty) {
     Preconditions.checkArgument(null != entryKey);
