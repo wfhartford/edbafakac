@@ -22,12 +22,12 @@ public final class FieldValue extends Value<FieldValue> {
   }
 
   public FieldValue setValue(final Value<?> targetValue, final Value<?> fieldValue) {
-    final TypeValue fieldType = getFieldType(true);
+    final TypeValue fieldType = save().getFieldType(true);
     if (!fieldValue.isInstance(fieldType)) {
       throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName(true).getBaseValue() +
           " field to a " + fieldValue.getType(true).getName(true).getBaseValue());
     }
-    return setRawValue(targetValue, fieldValue.getKey());
+    return setRawValue(targetValue.save(), fieldValue.save().getKey());
   }
 
   String getRawValue(final Value<?> value) {
@@ -35,7 +35,7 @@ public final class FieldValue extends Value<FieldValue> {
   }
 
   FieldValue setRawValue(final Value<?> targetValue, final String rawValue) {
-    targetValue.setProperty(getKey(), rawValue);
+    targetValue.save().setProperty(getKey(), rawValue);
     return this;
   }
 }

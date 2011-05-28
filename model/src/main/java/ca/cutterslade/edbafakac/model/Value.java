@@ -84,7 +84,7 @@ public abstract class Value<T extends Value<T>> {
     return ImmutableList.copyOf(Sets.difference(entry.getPropertyKeys(), notIncluded.build()));
   }
 
-  T checkWritable() {
+  final T checkWritable() {
     Preconditions.checkState(!readOnly, "Value is read only");
     return getThis();
   }
@@ -111,16 +111,20 @@ public abstract class Value<T extends Value<T>> {
   }
 
   public final T save() {
-    checkWritable();
-    ImmutableMap<String, String> current;
-    try {
-      current = entry.getEntryService().getEntry(getKey()).getProperties();
+    if (isReadOnly()) {
+      Preconditions.checkState(!entry.isDirty(), "A dirty read-only values should be impossible");
     }
-    catch (final EntryNotFoundException e) {
-      current = null;
+    else if (entry.isDirty()) {
+      ImmutableMap<String, String> current;
+      try {
+        current = entry.getEntryService().getEntry(getKey()).getProperties();
+      }
+      catch (final EntryNotFoundException e) {
+        current = null;
+      }
+      onBeforeSave(pristine, current, entry.getProperties());
+      entry.getEntryService().saveEntry(entry);
     }
-    onBeforeSave(pristine, current, entry.getProperties());
-    entry.getEntryService().saveEntry(entry);
     return getThis();
   }
 
@@ -144,15 +148,15 @@ public abstract class Value<T extends Value<T>> {
   }
 
   public final StringValue getName(final boolean readOnly) {
-    return (StringValue) BaseField.VALUE_NAME.getField().getValue(this, readOnly);
+    return (StringValue) getFieldValue(Fields.getNameField(), readOnly);
   }
 
   public final TypeValue getType(final boolean readOnly) {
-    return (TypeValue) BaseField.VALUE_TYPE.getField().getValue(this, readOnly);
+    return (TypeValue) getFieldValue(Fields.getTypeField(), readOnly);
   }
 
   public final ListValue getFields(final boolean readOnly) {
-    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(getType(true), readOnly);
+    return (ListValue) getType(true).getFieldValue(Fields.getTypeFieldsField(), readOnly);
   }
 
   public final Value<?> getFieldValue(final FieldValue field, final boolean readOnly) {
@@ -160,7 +164,7 @@ public abstract class Value<T extends Value<T>> {
   }
 
   public final T setFieldValue(final FieldValue field, final Value<?> value) {
-    field.setValue(this, value);
+    field.setValue(this, value.save()).save();
     return getThis();
   }
 
