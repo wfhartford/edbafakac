@@ -147,7 +147,7 @@ public class JdbcEntryService implements EntryService {
 
   @Override
   public Entry getNewEntry() {
-    return new MapEntry(UUID.randomUUID().toString(), Maps.<String, String> newHashMap(), this);
+    return new MapEntry(UUID.randomUUID().toString(), Maps.<String, String> newHashMap(), this, true);
   }
 
   @Override
@@ -155,7 +155,7 @@ public class JdbcEntryService implements EntryService {
     Preconditions.checkArgument(null != key);
     try {
       saveEntry(key, ImmutableMap.<String, String> of(), true);
-      return new MapEntry(key, Maps.<String, String> newHashMap(), this);
+      return new MapEntry(key, Maps.<String, String> newHashMap(), this, false);
     }
     catch (final SQLException e) {
       throw new EntryStoreException(e);
@@ -179,7 +179,7 @@ public class JdbcEntryService implements EntryService {
             properties.put(prop.getKey(), prop.getValue());
           }
         }
-        return new MapEntry(key, properties, this);
+        return new MapEntry(key, properties, this, false);
       }
       finally {
         connection.close();
@@ -200,6 +200,7 @@ public class JdbcEntryService implements EntryService {
     Preconditions.checkArgument(null != entry);
     try {
       saveEntry(entry.getKey(), entry.getProperties(), false);
+      ((MapEntry) entry).saved();
     }
     catch (final SQLException e) {
       throw new EntryStoreException(e);

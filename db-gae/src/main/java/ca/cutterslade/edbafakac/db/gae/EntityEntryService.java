@@ -20,7 +20,7 @@ public class EntityEntryService implements EntryService {
 
   @Override
   public Entry getNewEntry() {
-    return new EntityEntry(new Entity(EntityEntry.class.getName(), UUID.randomUUID().toString()), this);
+    return new EntityEntry(new Entity(EntityEntry.class.getName(), UUID.randomUUID().toString()), this, true);
   }
 
   @Override
@@ -31,7 +31,7 @@ public class EntityEntryService implements EntryService {
       throw new EntryAlreadyExistsException(key);
     }
     catch (final EntityNotFoundException e) {
-      final EntityEntry newEntry = new EntityEntry(new Entity(EntityEntry.class.getName(), key), this);
+      final EntityEntry newEntry = new EntityEntry(new Entity(EntityEntry.class.getName(), key), this, false);
       datastoreService.put(newEntry.getEntity());
       return newEntry;
     }
@@ -41,7 +41,7 @@ public class EntityEntryService implements EntryService {
   public Entry getEntry(final String key) {
     Preconditions.checkArgument(null != key);
     try {
-      return new EntityEntry(datastoreService.get(KeyFactory.createKey(EntityEntry.class.getName(), key)), this);
+      return new EntityEntry(datastoreService.get(KeyFactory.createKey(EntityEntry.class.getName(), key)), this, false);
     }
     catch (final EntityNotFoundException e) {
       throw new EntryNotFoundException(key, e);
@@ -52,6 +52,7 @@ public class EntityEntryService implements EntryService {
   public void saveEntry(final Entry entry) {
     Preconditions.checkArgument(null != entry);
     datastoreService.put(((EntityEntry) entry).getEntity());
+    ((EntityEntry) entry).saved();
   }
 
   @Override

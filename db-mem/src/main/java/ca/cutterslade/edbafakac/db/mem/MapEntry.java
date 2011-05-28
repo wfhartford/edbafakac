@@ -17,13 +17,16 @@ public class MapEntry implements Entry {
 
   private final String entryKey;
 
-  public MapEntry(final String entryKey, final Map<String, String> map, final EntryService service) {
+  private boolean dirty;
+
+  public MapEntry(final String entryKey, final Map<String, String> map, final EntryService service, final boolean dirty) {
     Preconditions.checkArgument(null != entryKey);
     Preconditions.checkArgument(null != map);
     Preconditions.checkArgument(null != service);
     this.entryKey = entryKey;
     this.map = map;
     this.service = service;
+    this.dirty = dirty;
   }
 
   @Override
@@ -35,7 +38,9 @@ public class MapEntry implements Entry {
   public void setProperty(final String key, final String value) {
     Preconditions.checkArgument(null != key, "Cannot set property with null key");
     Preconditions.checkArgument(null != value, "Cannot set property with null value");
-    map.put(key, value);
+    if (!value.equals(map.put(key, value))) {
+      dirty = true;
+    }
   }
 
   @Override
@@ -53,7 +58,9 @@ public class MapEntry implements Entry {
   @Override
   public void removeProperty(final String key) {
     Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
-    map.remove(key);
+    if (null != map.remove(key)) {
+      dirty = true;
+    }
   }
 
   @Override
@@ -67,6 +74,11 @@ public class MapEntry implements Entry {
   }
 
   @Override
+  public boolean isDrity() {
+    return dirty;
+  }
+
+  @Override
   public EntryService getEntryService() {
     return service;
   }
@@ -74,6 +86,10 @@ public class MapEntry implements Entry {
   @Override
   public String toString() {
     return "MapEntry " + entryKey + ": " + map + "]";
+  }
+
+  public void saved() {
+    dirty = false;
   }
 
 }

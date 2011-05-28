@@ -79,6 +79,13 @@ public interface Entry {
   ImmutableSet<String> getPropertyKeys();
 
   /**
+   * Determine if this entry has been modified since it was last saved.
+   * 
+   * @return {@code true} if this entry has been modified since it was saved, {@code false} if it has not been modified.
+   */
+  boolean isDrity();
+
+  /**
    * Get the {@link EntryService} which produced this entry.
    * 
    * @return The {@link EntryService} which produced this entry

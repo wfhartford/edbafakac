@@ -19,13 +19,13 @@ public class MapEntryService implements EntryService {
 
   @Override
   public Entry getNewEntry() {
-    return new MapEntry(UUID.randomUUID().toString(), Maps.<String, String> newHashMap(), this);
+    return new MapEntry(UUID.randomUUID().toString(), Maps.<String, String> newHashMap(), this, true);
   }
 
   @Override
   public Entry getNewEntry(final String key) {
     Preconditions.checkArgument(null != key);
-    final MapEntry newEntry = new MapEntry(key, Maps.<String, String> newHashMap(), this);
+    final MapEntry newEntry = new MapEntry(key, Maps.<String, String> newHashMap(), this, false);
     if (null != entries.putIfAbsent(key, newEntry.getProperties())) {
       throw new EntryAlreadyExistsException(key);
     }
@@ -39,13 +39,14 @@ public class MapEntryService implements EntryService {
     if (null == entry) {
       throw new EntryNotFoundException(key);
     }
-    return new MapEntry(key, entry, this);
+    return new MapEntry(key, Maps.newHashMap(entry), this, false);
   }
 
   @Override
   public void saveEntry(final Entry entry) {
     Preconditions.checkArgument(null != entry);
     entries.put(entry.getKey(), entry.getProperties());
+    ((MapEntry) entry).saved();
   }
 
   @Override

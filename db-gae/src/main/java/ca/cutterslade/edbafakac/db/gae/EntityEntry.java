@@ -16,11 +16,14 @@ public class EntityEntry implements Entry {
 
   private final EntityEntryService service;
 
-  EntityEntry(final Entity entity, final EntityEntryService service) {
+  private boolean dirty;
+
+  EntityEntry(final Entity entity, final EntityEntryService service, final boolean dirty) {
     Preconditions.checkArgument(null != entity);
     Preconditions.checkArgument(null != service);
     this.entity = entity;
     this.service = service;
+    this.dirty = dirty;
   }
 
   @Override
@@ -32,7 +35,10 @@ public class EntityEntry implements Entry {
   public void setProperty(final String key, final String value) {
     Preconditions.checkArgument(null != key, "Cannot set property with null key");
     Preconditions.checkArgument(null != value, "Cannot set property with null value");
-    entity.setProperty(key, value);
+    if (!value.equals(entity.getProperty(key))) {
+      entity.setProperty(key, value);
+      dirty = true;
+    }
   }
 
   @Override
@@ -49,7 +55,10 @@ public class EntityEntry implements Entry {
   @Override
   public void removeProperty(final String key) {
     Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
-    entity.removeProperty(key);
+    if (entity.hasProperty(key)) {
+      entity.removeProperty(key);
+      dirty = true;
+    }
   }
 
   @Override
@@ -69,6 +78,15 @@ public class EntityEntry implements Entry {
   @Override
   public EntryService getEntryService() {
     return service;
+  }
+
+  @Override
+  public boolean isDrity() {
+    return dirty;
+  }
+
+  public void saved() {
+    dirty = false;
   }
 
   Entity getEntity() {
