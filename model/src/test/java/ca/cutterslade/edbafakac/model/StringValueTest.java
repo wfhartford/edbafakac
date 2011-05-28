@@ -1,8 +1,9 @@
 package ca.cutterslade.edbafakac.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Locale;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 public class StringValueTest {
@@ -15,22 +16,22 @@ public class StringValueTest {
   public void simpleHelloTest() {
     final StringValue value = (StringValue) BaseType.STRING.getType().getNewValue(null);
     value.setValue(HELLO_WORLD, Locale.CANADA);
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));
-    Assert.assertEquals(HELLO_WORLD, value.getBaseValue());
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.US));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.TRADITIONAL_CHINESE));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA_FRENCH));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.FRANCE));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.FRENCH));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));
+    assertEquals(HELLO_WORLD, value.getBaseValue());
+    assertEquals(HELLO_WORLD, value.getValue(Locale.US));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.TRADITIONAL_CHINESE));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA_FRENCH));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.FRANCE));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.FRENCH));
     value.setValue(HELLO_WORLD_FR, Locale.CANADA_FRENCH);
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));
-    Assert.assertEquals(HELLO_WORLD, value.getBaseValue());
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.US));
-    Assert.assertEquals(HELLO_WORLD, value.getValue(Locale.TRADITIONAL_CHINESE));
-    Assert.assertEquals(HELLO_WORLD_FR, value.getValue(Locale.CANADA_FRENCH));
-    Assert.assertEquals(HELLO_WORLD_FR, value.getValue(Locale.FRANCE));
-    Assert.assertEquals(HELLO_WORLD_FR, value.getValue(Locale.FRENCH));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));
+    assertEquals(HELLO_WORLD, value.getBaseValue());
+    assertEquals(HELLO_WORLD, value.getValue(Locale.US));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.TRADITIONAL_CHINESE));
+    assertEquals(HELLO_WORLD_FR, value.getValue(Locale.CANADA_FRENCH));
+    assertEquals(HELLO_WORLD_FR, value.getValue(Locale.FRANCE));
+    assertEquals(HELLO_WORLD_FR, value.getValue(Locale.FRENCH));
   }
 }

@@ -1,31 +1,32 @@
 package ca.cutterslade.edbafakac.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 
-import junit.framework.Assert;
-
 import org.junit.Test;
 
+// CSOFF: MagicNumber
+@SuppressWarnings("PMD.AvoidDuplicateLiterals")
 public class ListValueTest {
 
   @Test
   public void basicEmptyListTest() {
     final ListValue list = ListValue.ofValues();
-    Assert.assertNotNull(list);
-    Assert.assertEquals(BaseType.LIST.getType(), list.getType(true));
-    Assert.assertNull(list.getValueType(true));
-    Assert.assertEquals(0, list.getSize());
+    assertNotNull(list);
+    assertEquals(BaseType.LIST.getType(), list.getType(true));
+    assertNull(list.getValueType(true));
+    assertEquals(0, list.getSize());
   }
 
   @Test
   public void oneEntryTest() {
     final ListValue list = ListValue.ofValues(value("only"));
-    Assert.assertEquals(1, list.getSize());
-    Assert.assertEquals("only", value(list.get(0)));
-    Assert.assertNull(list.getValueType(true));
+    assertEquals(1, list.getSize());
+    assertEquals("only", value(list.get(0)));
+    assertNull(list.getValueType(true));
   }
 
   @Test
@@ -84,6 +85,11 @@ public class ListValueTest {
     assertEquals(2, list.getSize());
     assertEquals("one", value(list.get(0)));
     assertEquals("two", value(list.get(1)));
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void addNullTest() {
+    ListValue.ofValues().add(null);
   }
 
   private StringValue value(final String string) {
