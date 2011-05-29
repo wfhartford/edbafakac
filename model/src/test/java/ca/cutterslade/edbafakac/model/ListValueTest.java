@@ -3,6 +3,7 @@ package ca.cutterslade.edbafakac.model;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 
@@ -49,8 +50,7 @@ public class ListValueTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void typeRestrictedWrongTypeTest() {
-    final ListValue list = ListValue.ofType(Types.getIntegerType());
-    list.add(value("only"));
+    ListValue.ofType(Types.getIntegerType()).add(value("only"));
   }
 
   @Test
@@ -90,6 +90,21 @@ public class ListValueTest {
   @Test(expected = IllegalArgumentException.class)
   public void addNullTest() {
     ListValue.ofValues().add(null);
+  }
+
+  @Test
+  public void indexOfTest() {
+    final StringValue one = value("one");
+    final StringValue two = value("two");
+    final StringValue three = value("three");
+    final ListValue list = ListValue.ofValues(Types.getStringType(), Arrays.asList(one, two, three));
+    assertEquals(3, list.getSize());
+    assertTrue(list.contains(one));
+    assertEquals(0, list.indexOf(one));
+    assertTrue(list.contains(two));
+    assertEquals(1, list.indexOf(two));
+    assertTrue(list.contains(three));
+    assertEquals(2, list.indexOf(three));
   }
 
   private StringValue value(final String string) {

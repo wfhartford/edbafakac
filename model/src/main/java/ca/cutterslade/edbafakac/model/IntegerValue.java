@@ -8,6 +8,14 @@ public final class IntegerValue extends Value<IntegerValue> {
 
   private static final String VALUE_KEY = "61b1d125-2e3d-41e0-93c8-1df3a3a4ddd3";
 
+  public static IntegerValue withValue(final long value) {
+    return withValue(BigInteger.valueOf(value));
+  }
+
+  public static IntegerValue withValue(final BigInteger value) {
+    return ((IntegerValue) Types.getIntegerType().getNewValue(null)).setValue(value);
+  }
+
   IntegerValue(final Entry entry, final boolean readOnly) {
     super(entry, readOnly);
   }
