@@ -38,5 +38,6 @@ public class BaseFieldsTest {
     assertNotNull(field.getName(true));
     assertEquals(BaseTypesTest.getName(baseField), field.getName(true).getBaseValue());
     assertNotNull(field.getFieldType(true));
+    assertNotNull(BaseType.getBaseType(field.getFieldType(true).getKey()));
   }
 }

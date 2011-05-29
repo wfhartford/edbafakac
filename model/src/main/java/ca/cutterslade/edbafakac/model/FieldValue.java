@@ -39,6 +39,9 @@ public final class FieldValue extends Value<FieldValue> {
   public FieldValue setValue(final Value<?> targetValue, final Value<?> fieldValue) {
     checkValueFields(targetValue);
     final TypeValue fieldType = save().getFieldType(true);
+    if (getKey().equals(BaseField.VALUE_TYPE.getKey())) {
+      throw new IllegalArgumentException("Cannot set value of the value type field");
+    }
     if (!fieldValue.isInstance(fieldType)) {
       throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName(true).getBaseValue() +
           " field to a " + fieldValue.getType(true).getName(true).getBaseValue());
