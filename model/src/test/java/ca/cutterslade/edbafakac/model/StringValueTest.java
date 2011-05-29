@@ -13,9 +13,8 @@ public class StringValueTest {
   private static final String HELLO_WORLD_FR = "Bonjour tout le monde!";
 
   @Test
-  public void simpleHelloTest() {
-    final StringValue value = (StringValue) BaseType.STRING.getType().getNewValue(null);
-    value.setValue(HELLO_WORLD, Locale.CANADA);
+  public void twoLanguangeTest() {
+    final StringValue value = StringValue.withValue(HELLO_WORLD, Locale.CANADA);
     assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
     assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));
     assertEquals(HELLO_WORLD, value.getBaseValue());
@@ -24,6 +23,7 @@ public class StringValueTest {
     assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA_FRENCH));
     assertEquals(HELLO_WORLD, value.getValue(Locale.FRANCE));
     assertEquals(HELLO_WORLD, value.getValue(Locale.FRENCH));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.ROOT));
     value.setValue(HELLO_WORLD_FR, Locale.CANADA_FRENCH);
     assertEquals(HELLO_WORLD, value.getValue(Locale.CANADA));
     assertEquals(HELLO_WORLD, value.getValue(Locale.ENGLISH));
@@ -33,5 +33,6 @@ public class StringValueTest {
     assertEquals(HELLO_WORLD_FR, value.getValue(Locale.CANADA_FRENCH));
     assertEquals(HELLO_WORLD_FR, value.getValue(Locale.FRANCE));
     assertEquals(HELLO_WORLD_FR, value.getValue(Locale.FRENCH));
+    assertEquals(HELLO_WORLD, value.getValue(Locale.ROOT));
   }
 }

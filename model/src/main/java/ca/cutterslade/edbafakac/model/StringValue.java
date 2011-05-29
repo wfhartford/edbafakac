@@ -8,7 +8,7 @@ import com.google.common.base.Preconditions;
 
 public final class StringValue extends Value<StringValue> {
 
-  private static final String BASE_VALUE_KEY = "7090a2fc-9ea1-4f2e-9ad0-4c27e789f3db";
+  private static final String BASE_VALUE_KEY = Locale.ROOT.toString();
 
   private static final String SIMPLE_KEY = "9492132b-233c-4e62-8155-61f9c7e23c3a";
 
