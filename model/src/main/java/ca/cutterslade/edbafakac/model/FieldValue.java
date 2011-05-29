@@ -17,11 +17,27 @@ public final class FieldValue extends Value<FieldValue> {
   public Value<?> getValue(final Value<?> value, final boolean readOnly) {
     Preconditions.checkArgument(readOnly || !value.isReadOnly(),
         "Cannot provide writable field value from read only value");
+    checkValueFields(value);
     final String rawValue = getRawValue(value);
     return null == rawValue ? null : Values.getValue(rawValue, readOnly);
   }
 
+  private void checkValueFields(final Value<?> value) {
+    // Check that the value could possibly contain the field
+    // we have to omit a few things from this check because the could cause a stack overflow
+
+    // Everything has a VALUE_TYPE field
+    if (!equals(BaseField.VALUE_TYPE.getField()) &&
+        // Types all have the fields field
+        !(equals(BaseField.TYPE_FIELDS.getField()) && value.isInstance(BaseType.TYPE.getType())) &&
+        // Check that the value's list of fields contains this field
+        !value.getFields(true).contains(this)) {
+      throw new IllegalArgumentException("Value does not contain specified field");
+    }
+  }
+
   public FieldValue setValue(final Value<?> targetValue, final Value<?> fieldValue) {
+    checkValueFields(targetValue);
     final TypeValue fieldType = save().getFieldType(true);
     if (!fieldValue.isInstance(fieldType)) {
       throw new IllegalArgumentException("Cannot set value of a " + fieldType.getName(true).getBaseValue() +

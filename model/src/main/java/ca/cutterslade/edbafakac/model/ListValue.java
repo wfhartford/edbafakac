@@ -148,4 +148,20 @@ public final class ListValue extends Value<ListValue> {
     return removeProperty(String.valueOf(size)).setProperty(SIZE_KEY, String.valueOf(size));
   }
 
+  public long indexOf(final Value<?> value) {
+    final String key = value.getKey();
+    long index = -1;
+    final long size = getSize();
+    for (long i = 0; -1 == index && i < size; i++) {
+      if (key.equals(getProperty(String.valueOf(i)))) {
+        index = i;
+      }
+    }
+    return index;
+  }
+
+  public boolean contains(final Value<?> value) {
+    return -1 != indexOf(value);
+  }
+
 }
