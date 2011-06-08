@@ -1,25 +1,45 @@
 package ca.cutterslade.edbafakac.db.util;
 
+import java.io.IOException;
 import java.util.Map;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 
 public final class Entries {
 
   private static final char ESCAPE_CHAR = '\\';
 
+  private static final char VALUE_SEPERATOR = ',';
+
+  private static final char RECORD_SEPERATOR = '\n';
+
   private Entries() {
     throw new UnsupportedOperationException();
   }
 
-  public static String exportEntry(final Entry entry) {
-    return exportEntry(entry, new StringBuilder()).toString();
+  public static void exportEntries(final Iterable<? extends Entry> entries, final Appendable writer)
+      throws IOException {
+    for (final Entry entry : entries) {
+      exportEntry(entry, writer);
+      writer.append(RECORD_SEPERATOR);
+    }
   }
 
-  public static StringBuilder exportEntry(final Entry entry, final StringBuilder builder) {
+  public static String exportEntry(final Entry entry) {
+    try {
+      return exportEntry(entry, new StringBuilder()).toString();
+    }
+    catch (final IOException e) {
+      // Should not get an IOException appending to a string builder
+      throw Throwables.propagate(e);
+    }
+  }
+
+  public static <T extends Appendable> T exportEntry(final Entry entry, final T builder) throws IOException {
     toCsvValue(builder, entry.getKey());
     for (final Map.Entry<String, String> property : entry.getProperties().entrySet()) {
       builder.append(',');
@@ -31,15 +51,14 @@ public final class Entries {
   }
 
   @SuppressWarnings("PMD.MissingBreakInSwitch")
-  private static void toCsvValue(final StringBuilder builder, final String value) {
+  private static void toCsvValue(final Appendable builder, final String value) throws IOException {
     // CSOFF: ModifiedControlVariable
-    for (char cha : value.toCharArray()) {
+    for (final char cha : value.toCharArray()) {
       // CSOFF: FallThrough
       switch (cha) {
-        case '\n' :
-          cha = 'n';
+        case RECORD_SEPERATOR :
         case ESCAPE_CHAR :
-        case ',' :
+        case VALUE_SEPERATOR :
           builder.append(ESCAPE_CHAR);
         default :
           builder.append(cha);
@@ -70,22 +89,15 @@ public final class Entries {
     boolean escaped = false;
     int endPosition = -1;
     for (int position = startPosition; -1 == endPosition && position < entry.length(); position++) {
-      char cha = entry.charAt(position);
+      final char cha = entry.charAt(position);
       if (!escaped && ESCAPE_CHAR == cha) {
         escaped = true;
       }
+      else if (!escaped && (VALUE_SEPERATOR == cha || RECORD_SEPERATOR == cha)) {
+        endPosition = position;
+      }
       else {
-        if (escaped) {
-          escaped = false;
-          // CSOFF: NestedIfDepth
-          if ('n' == cha) {
-            cha = '\n';
-          }
-          // CSON: NestedIfDepth
-        }
-        else if (',' == cha) {
-          endPosition = position;
-        }
+        escaped = false;
         builder.append(cha);
       }
     }
