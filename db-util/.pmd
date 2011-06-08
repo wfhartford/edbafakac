@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd>
+    <useProjectRuleSet>false</useProjectRuleSet>
+    <ruleSetFile>/home/wesley/devel/edbafakac/pmd.xml</ruleSetFile>
+    <excludePatterns>
+        <excludePattern></excludePattern>
+    </excludePatterns>
+    <includeDerivedFiles>false</includeDerivedFiles>
+    <violationsAsErrors>true</violationsAsErrors>
+</pmd>

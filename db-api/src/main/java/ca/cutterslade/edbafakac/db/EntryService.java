@@ -19,7 +19,7 @@ public interface EntryService {
    * 
    * @param key
    *          The key to used for the new entry.
-   * @return A new entry with the specified key, with has been added to the database because of this method call
+   * @return A new entry with the specified key, which has been added to the database because of this method call
    * @throws EntryAlreadyExistsException
    *           If an entry already exists with the specified key
    */
@@ -45,7 +45,7 @@ public interface EntryService {
   void saveEntry(Entry entry);
 
   /**
-   * Remove an entry from the database, after being removed, the entry may be re-added by calling
+   * Remove an entry from the database. After being removed, the entry may be re-added by calling
    * {@link #saveEntry(Entry)}.
    * 
    * @param key

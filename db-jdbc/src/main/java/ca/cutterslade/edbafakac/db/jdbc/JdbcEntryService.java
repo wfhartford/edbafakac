@@ -51,6 +51,7 @@ public class JdbcEntryService implements EntryService {
             service.close();
           }
           catch (final SQLException e) {
+            throw Throwables.propagate(e);
           }
         }
       }
@@ -130,6 +131,7 @@ public class JdbcEntryService implements EntryService {
     dataSource = basicDataSource;
   }
 
+  @SuppressWarnings("PMD.ExcessiveParameterList")
   public JdbcEntryService(final String driver, final String url, final String user, final String pass)
       throws SQLException {
     final BasicDataSource basicDataSource = new BasicDataSource();
@@ -282,6 +284,8 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
+  @SuppressWarnings("PMD.ExcessiveParameterList")
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
   private <T> ImmutableList<T> getQueryResult(final Connection connection, final String query,
       final Iterable<?> params, final Function<ResultSet, T> resultTransformer) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(query);
@@ -339,10 +343,10 @@ public class JdbcEntryService implements EntryService {
         statement.close();
       }
     }
-    final boolean foundEntries = false;
+    boolean foundEntries = false;
     final ResultSet tables = metaData.getTables(null, "EDBAFAKAC", "ENTRIES", null);
     try {
-      foundEdbafakac = tables.next();
+      foundEntries = tables.next();
     }
     finally {
       tables.close();
@@ -368,9 +372,15 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
+  // CSOFF: NoFinalizer|IllegalThrows
   @Override
-  protected void finalize() throws SQLException {
-    close();
+  protected void finalize() throws Throwable {
+    try {
+      close();
+    }
+    finally {
+      super.finalize();
+    }
   }
-
+  // CSON: NoFinalizer|IllegalThrows
 }

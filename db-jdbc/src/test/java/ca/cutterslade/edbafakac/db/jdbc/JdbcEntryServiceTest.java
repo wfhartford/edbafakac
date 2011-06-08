@@ -17,6 +17,7 @@ import org.junit.Test;
 
 import ca.cutterslade.edbafakac.db.Entry;
 
+// CSOFF: NestedTryDepth
 public class JdbcEntryServiceTest {
 
   private JdbcEntryService service;

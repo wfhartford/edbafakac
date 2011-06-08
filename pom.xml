@@ -16,6 +16,7 @@
 
   <modules>
     <module>db-api</module>
+    <module>db-util</module>
     <module>db-gae</module>
     <module>db-mem</module>
     <module>db-jdbc</module>
