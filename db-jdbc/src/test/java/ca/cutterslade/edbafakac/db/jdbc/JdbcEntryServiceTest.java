@@ -16,8 +16,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.cutterslade.edbafakac.db.Entry;
+import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
-// CSOFF: NestedTryDepth
+// CSOFF: NestedTryDepth|MagicNumber
+@SuppressWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
 public class JdbcEntryServiceTest {
 
   private JdbcEntryService service;

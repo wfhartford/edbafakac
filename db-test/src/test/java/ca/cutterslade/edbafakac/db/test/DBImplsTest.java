@@ -65,6 +65,7 @@ public class DBImplsTest {
   }
 
   @BeforeClass
+  @edu.umd.cs.findbugs.annotations.SuppressWarnings("DMI_EMPTY_DB_PASSWORD")
   public static void jdbcSetup() throws SQLException {
     final Connection connection = DriverManager.getConnection("jdbc:hsqldb:mem:edbafakac", "sa", "");
     try {
