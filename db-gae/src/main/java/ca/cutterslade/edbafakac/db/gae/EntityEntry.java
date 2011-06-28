@@ -6,6 +6,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.Text;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -32,18 +33,19 @@ public class EntityEntry implements Entry {
   }
 
   @Override
-  public void setProperty(final String key, final String value) {
+  public EntityEntry setProperty(final String key, final String value) {
     Preconditions.checkArgument(null != key, "Cannot set property with null key");
     Preconditions.checkArgument(null != value, "Cannot set property with null value");
     if (!value.equals(entity.getProperty(key))) {
-      entity.setProperty(key, value);
+      entity.setProperty(key, new Text(value));
       dirty = true;
     }
+    return this;
   }
 
   @Override
   public String getProperty(final String key) {
-    return (String) entity.getProperty(key);
+    return ((Text) entity.getProperty(key)).getValue();
   }
 
   @Override
@@ -53,19 +55,20 @@ public class EntityEntry implements Entry {
   }
 
   @Override
-  public void removeProperty(final String key) {
+  public EntityEntry removeProperty(final String key) {
     Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
     if (entity.hasProperty(key)) {
       entity.removeProperty(key);
       dirty = true;
     }
+    return this;
   }
 
   @Override
   public ImmutableMap<String, String> getProperties() {
     final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
     for (final Map.Entry<String, Object> entry : entity.getProperties().entrySet()) {
-      builder.put(entry.getKey(), (String) entry.getValue());
+      builder.put(entry.getKey(), ((Text) entry.getValue()).getValue());
     }
     return builder.build();
   }

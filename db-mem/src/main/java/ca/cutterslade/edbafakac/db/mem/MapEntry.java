@@ -39,12 +39,13 @@ public class MapEntry implements Entry {
   }
 
   @Override
-  public void setProperty(final String key, final String value) {
+  public MapEntry setProperty(final String key, final String value) {
     Preconditions.checkArgument(null != key, "Cannot set property with null key");
     Preconditions.checkArgument(null != value, "Cannot set property with null value");
     if (!value.equals(map.put(key, value))) {
       dirty = true;
     }
+    return this;
   }
 
   @Override
@@ -60,11 +61,12 @@ public class MapEntry implements Entry {
   }
 
   @Override
-  public void removeProperty(final String key) {
+  public MapEntry removeProperty(final String key) {
     Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
     if (null != map.remove(key)) {
       dirty = true;
     }
+    return this;
   }
 
   @Override

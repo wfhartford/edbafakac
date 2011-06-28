@@ -27,10 +27,11 @@ public interface Entry {
    *          The key of the property to set
    * @param value
    *          The value of the property
+   * @return This entry, to enable chaining
    * @throws IllegalArgumentException
    *           if {@code key} or {@code value} is {@code null}
    */
-  void setProperty(String key, String value);
+  Entry setProperty(String key, String value);
 
   /**
    * Retrieve the value of a property.
@@ -59,10 +60,11 @@ public interface Entry {
    * 
    * @param key
    *          The key of the property to remove
+   * @return This entry, to enable chaining
    * @throws IllegalArgumentException
    *           if {@code key} is {@code null}
    */
-  void removeProperty(String key);
+  Entry removeProperty(String key);
 
   /**
    * Get all properties of this entry as a map.
