@@ -1,13 +1,23 @@
 package ca.cutterslade.edbafakac.db.util;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Map;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
+import com.google.common.io.InputSupplier;
+import com.google.common.io.OutputSupplier;
 
 public final class Entries {
 
@@ -21,11 +31,21 @@ public final class Entries {
     throw new UnsupportedOperationException();
   }
 
+  public static void exportEntries(final Iterable<? extends Entry> entries,
+      final OutputSupplier<? extends OutputStream> stream) throws IOException {
+    final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream.getOutput(), Charsets.UTF_8));
+    try {
+      exportEntries(entries, writer);
+    }
+    finally {
+      writer.close();
+    }
+  }
+
   public static void exportEntries(final Iterable<? extends Entry> entries, final Appendable writer)
       throws IOException {
     for (final Entry entry : entries) {
       exportEntry(entry, writer);
-      writer.append(RECORD_SEPERATOR);
     }
   }
 
@@ -47,6 +67,7 @@ public final class Entries {
       builder.append(',');
       toCsvValue(builder, property.getValue());
     }
+    builder.append(RECORD_SEPERATOR);
     return builder;
   }
 
@@ -66,6 +87,29 @@ public final class Entries {
       // CSON: FallThrough
     }
     // CSON: ModifiedControlVariable
+  }
+
+  public static ImmutableList<String> importEntries(final EntryService service,
+      final InputSupplier<? extends InputStream> stream) throws IOException {
+    final BufferedReader reader = new BufferedReader(new InputStreamReader(stream.getInput(), Charsets.UTF_8));
+    try {
+      final ImmutableList.Builder<String> builder = ImmutableList.builder();
+      for (String line = reader.readLine(); null != line; line = reader.readLine()) {
+        builder.add(importEntry(service, line).getKey());
+      }
+      return builder.build();
+    }
+    finally {
+      reader.close();
+    }
+  }
+
+  public static ImmutableList<String> importEntries(final EntryService service, final Iterable<String> entries) {
+    final ImmutableList.Builder<String> builder = ImmutableList.builder();
+    for (final String entry : entries) {
+      builder.add(importEntry(service, entry).getKey());
+    }
+    return builder.build();
   }
 
   public static Entry importEntry(final EntryService service, final String entry) {
@@ -93,8 +137,11 @@ public final class Entries {
       if (!escaped && ESCAPE_CHAR == cha) {
         escaped = true;
       }
-      else if (!escaped && (VALUE_SEPERATOR == cha || RECORD_SEPERATOR == cha)) {
-        endPosition = position;
+      else if (!escaped && (VALUE_SEPERATOR == cha)) {
+        endPosition = position + 1;
+      }
+      else if (!escaped && (RECORD_SEPERATOR == cha)) {
+        endPosition = -1;
       }
       else {
         escaped = false;
