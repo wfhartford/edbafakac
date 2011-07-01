@@ -183,6 +183,10 @@ public abstract class Value<T extends Value<T>> {
     return (T) this;
   }
 
+  public Long getWriteTime() {
+    return entry.getWriteTime();
+  }
+
   @Override
   public final int hashCode() {
     return getKey().hashCode();

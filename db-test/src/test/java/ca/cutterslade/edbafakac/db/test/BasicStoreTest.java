@@ -2,6 +2,7 @@ package ca.cutterslade.edbafakac.db.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -211,5 +212,16 @@ public class BasicStoreTest extends AvailableImplementationsTest {
     assertTrue(entry.isDirty());
     assertFalse(entry.hasProperty(KEY));
     assertNull(entry.getProperty(KEY));
+  }
+
+  @Test
+  public void testWriteTime() {
+    final Entry entry = getEntryService().getNewEntry();
+    assertNull(entry.getWriteTime());
+    final long writeTime = System.currentTimeMillis();
+    getEntryService().saveEntry(entry);
+    assertNotNull(entry.getWriteTime());
+    assertTrue(entry.getWriteTime().longValue() <= System.currentTimeMillis());
+    assertTrue(writeTime <= entry.getWriteTime().longValue());
   }
 }

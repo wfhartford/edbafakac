@@ -39,9 +39,22 @@ public class MapEntry implements Entry {
   }
 
   @Override
+  public Long getWriteTime() {
+    final String value = map.get(WRITE_TIME_KEY);
+    return null == value ? null : Long.valueOf(value);
+  }
+
+  @Override
+  public void setWriteTime(final long millis) {
+    map.put(WRITE_TIME_KEY, String.valueOf(millis));
+  }
+
+  @Override
   public MapEntry setProperty(final String key, final String value) {
     Preconditions.checkArgument(null != key, "Cannot set property with null key");
     Preconditions.checkArgument(null != value, "Cannot set property with null value");
+    Preconditions.checkArgument(!service.getReservedKeys().contains(key),
+        "EntryService %s has reserved the key %s", service.getClass().getName(), key);
     if (!value.equals(map.put(key, value))) {
       dirty = true;
     }

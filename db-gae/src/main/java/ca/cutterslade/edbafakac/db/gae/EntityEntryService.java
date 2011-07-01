@@ -13,8 +13,11 @@ import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.KeyFactory;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 
 public class EntityEntryService implements EntryService {
+
+  private static final ImmutableSet<String> RESERVED_KEYS = ImmutableSet.of(Entry.WRITE_TIME_KEY);
 
   private final DatastoreService datastoreService = DatastoreServiceFactory.getDatastoreService();
 
@@ -51,6 +54,16 @@ public class EntityEntryService implements EntryService {
   @Override
   public void saveEntry(final Entry entry) {
     Preconditions.checkArgument(null != entry);
+    ((EntityEntry) entry).setWriteTime(System.currentTimeMillis());
+    saveEntryWithoutUpdatingWriteTime(entry);
+    datastoreService.put(((EntityEntry) entry).getEntity());
+    ((EntityEntry) entry).saved();
+  }
+
+  @Override
+  public void saveEntryWithoutUpdatingWriteTime(final Entry entry) {
+    Preconditions.checkArgument(null != entry);
+    Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     datastoreService.put(((EntityEntry) entry).getEntity());
     ((EntityEntry) entry).saved();
   }
@@ -59,6 +72,11 @@ public class EntityEntryService implements EntryService {
   public void removeEntry(final String key) {
     Preconditions.checkArgument(null != key);
     datastoreService.delete(KeyFactory.createKey(EntityEntry.class.getName(), key));
+  }
+
+  @Override
+  public ImmutableSet<String> getReservedKeys() {
+    return RESERVED_KEYS;
   }
 
 }

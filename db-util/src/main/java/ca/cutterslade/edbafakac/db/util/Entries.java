@@ -116,15 +116,27 @@ public final class Entries {
     final StringBuilder builder = new StringBuilder();
     int position = fromCsvValue(entry, builder, 0);
     final Entry newEntry = service.getNewEntry(builder.toString());
+    Long writeTime = null;
     while (-1 != position) {
       builder.setLength(0);
       position = fromCsvValue(entry, builder, position);
       final String key = builder.toString();
       builder.setLength(0);
       position = fromCsvValue(entry, builder, position);
-      newEntry.setProperty(key, builder.toString());
+      if (Entry.WRITE_TIME_KEY.equals(key)) {
+        writeTime = Long.valueOf(builder.toString());
+      }
+      else {
+        newEntry.setProperty(key, builder.toString());
+      }
     }
-    service.saveEntry(newEntry);
+    if (null == writeTime) {
+      service.saveEntry(newEntry);
+    }
+    else {
+      newEntry.setWriteTime(writeTime);
+      service.saveEntryWithoutUpdatingWriteTime(newEntry);
+    }
     return newEntry;
   }
 

@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.db;
 
+import com.google.common.collect.ImmutableSet;
+
 /**
  * Main service for accessing database entries.
  * 
@@ -45,6 +47,14 @@ public interface EntryService {
   void saveEntry(Entry entry);
 
   /**
+   * Save an entry to the database without adjusting its write time;
+   * 
+   * @param entry
+   *          The entry to save
+   */
+  void saveEntryWithoutUpdatingWriteTime(Entry entry);
+
+  /**
    * Remove an entry from the database. After being removed, the entry may be re-added by calling
    * {@link #saveEntry(Entry)}.
    * 
@@ -52,5 +62,13 @@ public interface EntryService {
    *          The key of the entry to remove
    */
   void removeEntry(String key);
+
+  /**
+   * Get the {@link EntryService} implementation's reserved keys. This method must return the same set of keys over the
+   * lifetime of an application.
+   * 
+   * @return The keys reserved by the EntryService implementation, including {@link Entry#WRITE_TIME_KEY}
+   */
+  ImmutableSet<String> getReservedKeys();
 
 }

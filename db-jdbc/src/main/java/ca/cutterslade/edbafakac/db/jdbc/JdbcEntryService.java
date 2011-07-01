@@ -107,6 +107,8 @@ public class JdbcEntryService implements EntryService {
 
   private static final String DELETE_PROPERTIES = "delete from EDBAFAKAC.ENTRIES where ENTRY_KEY = ?";
 
+  private static final ImmutableSet<String> RESERVED_KEYS = ImmutableSet.of(Entry.WRITE_TIME_KEY, PLACEHOLDER_STRING);
+
   private final DataSource dataSource;
 
   public JdbcEntryService() throws SQLException, IOException {
@@ -200,6 +202,14 @@ public class JdbcEntryService implements EntryService {
   @Override
   public void saveEntry(final Entry entry) {
     Preconditions.checkArgument(null != entry);
+    ((MapEntry) entry).setWriteTime(System.currentTimeMillis());
+    saveEntryWithoutUpdatingWriteTime(entry);
+  }
+
+  @Override
+  public void saveEntryWithoutUpdatingWriteTime(final Entry entry) {
+    Preconditions.checkArgument(null != entry);
+    Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     try {
       saveEntry(entry.getKey(), entry.getProperties(), false);
       ((MapEntry) entry).saved();
@@ -364,6 +374,11 @@ public class JdbcEntryService implements EntryService {
         statement.close();
       }
     }
+  }
+
+  @Override
+  public ImmutableSet<String> getReservedKeys() {
+    return RESERVED_KEYS;
   }
 
   public void close() throws SQLException {

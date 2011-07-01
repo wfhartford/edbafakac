@@ -10,10 +10,13 @@ import ca.cutterslade.edbafakac.db.EntryService;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 
 public class MapEntryService implements EntryService {
+
+  private static final ImmutableSet<String> RESERVED_KEYS = ImmutableSet.of(Entry.WRITE_TIME_KEY);
 
   private final ConcurrentMap<String, ImmutableMap<String, String>> entries = new MapMaker().makeMap();
 
@@ -45,6 +48,14 @@ public class MapEntryService implements EntryService {
   @Override
   public void saveEntry(final Entry entry) {
     Preconditions.checkArgument(null != entry);
+    ((MapEntry) entry).setWriteTime(System.currentTimeMillis());
+    saveEntryWithoutUpdatingWriteTime(entry);
+  }
+
+  @Override
+  public void saveEntryWithoutUpdatingWriteTime(final Entry entry) {
+    Preconditions.checkArgument(null != entry);
+    Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     entries.put(entry.getKey(), entry.getProperties());
     ((MapEntry) entry).saved();
   }
@@ -53,6 +64,11 @@ public class MapEntryService implements EntryService {
   public void removeEntry(final String key) {
     Preconditions.checkArgument(null != key);
     entries.remove(key);
+  }
+
+  @Override
+  public ImmutableSet<String> getReservedKeys() {
+    return RESERVED_KEYS;
   }
 
   public void clear() {

@@ -1,5 +1,9 @@
 package ca.cutterslade.edbafakac.db.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.UUID;
 
 import org.junit.After;
@@ -9,8 +13,6 @@ import org.junit.Test;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.util.Entries;
-
-import com.google.common.collect.Iterables;
 
 public class ImportExportTest extends AvailableImplementationsTest {
 
@@ -49,17 +51,16 @@ public class ImportExportTest extends AvailableImplementationsTest {
   public void exportTest() {
     final Entry entry = getEntryService().getNewEntry(ENTRY_KEY);
     entry.setProperty(PROPERTY_KEY, PROPERTY_VALUE);
-    getEntryService().saveEntry(entry);
     final String exported = Entries.exportEntry(entry);
-    Assert.assertEquals(EXPORTED_FORM, exported);
+    assertEquals(EXPORTED_FORM, exported);
   }
 
   @Test
   public void importTest() {
     final Entry entry = Entries.importEntry(getEntryService(), EXPORTED_FORM);
-    Assert.assertEquals(ENTRY_KEY, entry.getKey());
-    Assert.assertEquals(PROPERTY_KEY, Iterables.getOnlyElement(entry.getPropertyKeys()));
-    Assert.assertEquals(PROPERTY_VALUE, entry.getProperty(PROPERTY_KEY));
+    assertEquals(ENTRY_KEY, entry.getKey());
+    assertTrue(entry.getPropertyKeys().contains(PROPERTY_KEY));
+    assertEquals(PROPERTY_VALUE, entry.getProperty(PROPERTY_KEY));
   }
 
   @Test
@@ -71,26 +72,34 @@ public class ImportExportTest extends AvailableImplementationsTest {
     final String exported =
         Entries.exportEntry(entry);
     entry = Entries.importEntry(getEntryService(), exported);
-    Assert.assertEquals(entryKey, entry.getKey());
-    Assert.assertEquals(1, entry.getPropertyKeys().size());
-    Assert.assertEquals(propertyKey, Iterables.getOnlyElement(entry.getPropertyKeys()));
-    Assert.assertEquals(propertyValue, entry.getProperty(propertyKey));
+    assertEquals(entryKey, entry.getKey());
+    assertTrue(entry.getPropertyKeys().contains(propertyKey));
+    assertEquals(propertyValue, entry.getProperty(propertyKey));
   }
 
   @Test
-  public void randomEntryImportExportTest() {
-    final String exported =
-        UUID.randomUUID().toString() + ',' + UUID.randomUUID().toString() + ',' + UUID.randomUUID().toString() + '\n';
-    final Entry entry = Entries.importEntry(getEntryService(), exported);
-    final String reExported = Entries.exportEntry(entry);
-    Assert.assertEquals(exported, reExported);
+  public void randomEntryImportExportImportTest() {
+    final String entryKey = UUID.randomUUID().toString();
+    final String propertyKey = UUID.randomUUID().toString();
+    final String propertyValue = UUID.randomUUID().toString();
+    final String exported = entryKey + ',' + propertyKey + ',' + propertyValue + '\n';
+    Entry entry = Entries.importEntry(getEntryService(), exported);
+    final Long writeTime = entry.getWriteTime();
+    assertNotNull(writeTime);
+    getEntryService().removeEntry(entryKey);
+    entry = Entries.importEntry(getEntryService(),
+        Entries.exportEntry(entry));
+    assertEquals(entryKey, entry.getKey());
+    assertEquals(writeTime, entry.getWriteTime());
+    assertTrue(entry.getPropertyKeys().contains(propertyKey));
+    assertEquals(propertyValue, entry.getProperty(propertyKey));
   }
 
   @Test
   public void nastyValueTest() {
     final Entry entry = Entries.importEntry(getEntryService(),
         Entries.exportEntry(getEntryService().getNewEntry().setProperty(PROPERTY_KEY, NASTY_VALUE)));
-    Assert.assertEquals(NASTY_VALUE, entry.getProperty(PROPERTY_KEY));
+    assertEquals(NASTY_VALUE, entry.getProperty(PROPERTY_KEY));
   }
 
   @Test
@@ -99,15 +108,18 @@ public class ImportExportTest extends AvailableImplementationsTest {
     for (int i = 0; i < 1024 * 8; i++) {
       entry.setProperty(UUID.randomUUID().toString(), UUID.randomUUID().toString());
     }
+    getEntryService().saveEntry(entry);
+    getEntryService().removeEntry(entry.getKey());
     final Entry rebuilt = Entries.importEntry(getEntryService(), Entries.exportEntry(entry));
-    Assert.assertEquals(entry.getKey(), rebuilt.getKey());
-    Assert.assertEquals(entry.getProperties(), rebuilt.getProperties());
+    assertEquals(entry.getKey(), rebuilt.getKey());
+    assertEquals(entry.getProperties(), rebuilt.getProperties());
   }
 
   @Test
   public void largeValueTest() {
     Entry entry = getEntryService().getNewEntry().setProperty(PROPERTY_KEY, LONG_STRING);
     entry = Entries.importEntry(getEntryService(), Entries.exportEntry(entry));
-    Assert.assertEquals(LONG_STRING, entry.getProperty(PROPERTY_KEY));
+    assertEquals(LONG_STRING, entry.getProperty(PROPERTY_KEY));
+    assertNotNull(entry.getWriteTime());
   }
 }

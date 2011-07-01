@@ -11,6 +11,8 @@ import com.google.common.collect.ImmutableSet;
  */
 public interface Entry {
 
+  String WRITE_TIME_KEY = "88f07fea-f2b0-4762-aee0-0ccfd61ed091";
+
   /**
    * Get the key of this entry, the key may not be modified once an entry exists. When an entry is created by the
    * {@link EntryService#getNewEntry()} method, it is assigned a random, unused key. A pre-set key can be specified when
@@ -19,6 +21,24 @@ public interface Entry {
    * @return The key of this entry
    */
   String getKey();
+
+  /**
+   * Get the time (in milliseconds) since this entry was last written; the write time must be maintained by the
+   * {@link EntryService}.
+   * 
+   * @return The last modification time, or {@code null} if the entry has not been written and the write time has not
+   *         been set via the {@link #setWriteTime(long)}
+   */
+  Long getWriteTime();
+
+  /**
+   * Set the entry's last write time; the write time is maintained by the EntryService, so this is only needed under
+   * rare circumstances.
+   * 
+   * @param millis
+   *          The time (in milliseconds) to set the write time to
+   */
+  void setWriteTime(long millis);
 
   /**
    * Set a property, overwriting the current value if one exists.

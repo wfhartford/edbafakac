@@ -33,9 +33,22 @@ public class EntityEntry implements Entry {
   }
 
   @Override
+  public Long getWriteTime() {
+    final Text value = (Text) entity.getProperty(WRITE_TIME_KEY);
+    return null == value ? null : Long.valueOf(value.getValue());
+  }
+
+  @Override
+  public void setWriteTime(final long millis) {
+    entity.setProperty(WRITE_TIME_KEY, new Text(String.valueOf(millis)));
+  }
+
+  @Override
   public EntityEntry setProperty(final String key, final String value) {
     Preconditions.checkArgument(null != key, "Cannot set property with null key");
     Preconditions.checkArgument(null != value, "Cannot set property with null value");
+    Preconditions.checkArgument(!service.getReservedKeys().contains(key),
+        "EntryService %s has reserved the key %s", service.getClass().getName(), key);
     if (!value.equals(entity.getProperty(key))) {
       entity.setProperty(key, new Text(value));
       dirty = true;
@@ -45,7 +58,8 @@ public class EntityEntry implements Entry {
 
   @Override
   public String getProperty(final String key) {
-    return ((Text) entity.getProperty(key)).getValue();
+    final Text value = ((Text) entity.getProperty(key));
+    return null == value ? null : value.getValue();
   }
 
   @Override
