@@ -7,3 +7,4 @@ db-gae/WEB-INF
 db-mem/target
 db-test/target
 db-test/WEB-INF
+db-util/target

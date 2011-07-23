@@ -16,6 +16,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ca.cutterslade.edbafakac.db.Entry;
+
+import com.google.common.collect.Sets;
+
 import edu.umd.cs.findbugs.annotations.SuppressWarnings;
 
 // CSOFF: NestedTryDepth|MagicNumber
@@ -86,7 +89,7 @@ public class JdbcEntryServiceTest {
     Entry entry = service.getNewEntry();
     service.saveEntry(entry);
     entry = service.getEntry(entry.getKey());
-    assertTrue(entry.getProperties().isEmpty());
+    assertTrue(Sets.difference(entry.getPropertyKeys(), service.getReservedKeys()).isEmpty());
   }
 
 }
