@@ -56,7 +56,7 @@ final class Values {
         orderedProviders.put(provider.getPriority(), provider);
       }
       for (final InitialValueProvider provider : orderedProviders.values()) {
-        for (final Value<?> value : provider.getInitialValues()) {
+        for (final Value<?> value : provider.getValues()) {
           value.save();
         }
       }
@@ -75,7 +75,7 @@ final class Values {
     Preconditions.checkArgument(null != type);
     final Entry entry = getEntryService().getNewEntry();
     entry.setProperty(BaseField.VALUE_TYPE.getKey(), type.getKey());
-    entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getField().getRawValue(type));
+    entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getValue().getRawValue(type));
     return Value.getInstance(entry, false);
   }
 

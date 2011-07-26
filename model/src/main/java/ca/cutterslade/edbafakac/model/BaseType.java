@@ -2,7 +2,7 @@ package ca.cutterslade.edbafakac.model;
 
 import com.google.common.collect.ImmutableMap;
 
-enum BaseType {
+enum BaseType implements InitialValue {
   RAW("0361bf6b-2203-4ea4-ae82-762a01eb4ead"),
   STRING("9fc6d0a8-5988-48a1-88a1-a90aea3f6fd3"),
   INTEGER("ccdf477d-b1c8-4910-b017-891a1ca53030"),
@@ -32,7 +32,8 @@ enum BaseType {
     return key;
   }
 
-  public TypeValue getType() {
+  @Override
+  public TypeValue getValue() {
     return (TypeValue) Values.getValue(key, BaseType.class.getSimpleName() + '.' + toString() + ".properties");
   }
 

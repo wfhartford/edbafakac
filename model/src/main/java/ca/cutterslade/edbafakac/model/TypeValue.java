@@ -22,7 +22,7 @@ public final class TypeValue extends Value<TypeValue> {
     try {
       @SuppressWarnings("unchecked")
       final Class<? extends Value<?>> clazz = (Class<? extends Value<?>>)
-          Class.forName(BaseField.TYPE_CLASS.getField().getRawValue(this)).asSubclass(Value.class);
+          Class.forName(BaseField.TYPE_CLASS.getValue().getRawValue(this)).asSubclass(Value.class);
       return clazz;
     }
     catch (final ClassNotFoundException e) {
@@ -40,27 +40,27 @@ public final class TypeValue extends Value<TypeValue> {
       throw new IllegalArgumentException(getName(true).getBaseValue() + " must have a name");
     }
     final Value<?> newValue = Values.getNewValue(this);
-    if (equals(BaseType.STRING.getType())) {
+    if (equals(BaseType.STRING.getValue())) {
       // A string value is its own name
-      BaseField.VALUE_NAME.getField().setRawValue(newValue, newValue.getKey());
+      BaseField.VALUE_NAME.getValue().setRawValue(newValue, newValue.getKey());
     }
     else if (null != name) {
-      BaseField.VALUE_NAME.getField().setValue(newValue, name);
+      BaseField.VALUE_NAME.getValue().setValue(newValue, name);
     }
-    if (equals(BaseType.TYPE.getType())) {
-      BaseField.TYPE_CLASS.getField().setRawValue(newValue, RecordValue.class.getName());
+    if (equals(BaseType.TYPE.getValue())) {
+      BaseField.TYPE_CLASS.getValue().setRawValue(newValue, RecordValue.class.getName());
     }
     return newValue;
   }
 
   public FieldValue getNewField(final StringValue name) {
-    final FieldValue value = (FieldValue) BaseType.FIELD.getType().getNewValue(name);
-    BaseField.FIELD_TYPE.getField().setValue(value, this);
+    final FieldValue value = (FieldValue) BaseType.FIELD.getValue().getNewValue(name);
+    BaseField.FIELD_TYPE.getValue().setValue(value, this);
     return value;
   }
 
   public ListValue getTypeFields(final boolean readOnly) {
-    return (ListValue) BaseField.TYPE_FIELDS.getField().getValue(this, readOnly);
+    return (ListValue) BaseField.TYPE_FIELDS.getValue().getValue(this, readOnly);
   }
 
   public TypeValue addField(final StringValue name, final TypeValue type) {

@@ -20,7 +20,7 @@ public final class ListValue extends Value<ListValue> {
   }
 
   public static ListValue ofValues() {
-    return (ListValue) BaseType.LIST.getType().getNewValue(null);
+    return (ListValue) BaseType.LIST.getValue().getNewValue(null);
   }
 
   public static ListValue ofType(final TypeValue type) {

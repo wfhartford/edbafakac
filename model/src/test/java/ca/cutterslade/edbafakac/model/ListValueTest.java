@@ -17,7 +17,7 @@ public class ListValueTest {
   public void basicEmptyListTest() {
     final ListValue list = ListValue.ofValues();
     assertNotNull(list);
-    assertEquals(BaseType.LIST.getType(), list.getType(true));
+    assertEquals(BaseType.LIST.getValue(), list.getType(true));
     assertNull(list.getValueType(true));
     assertEquals(0, list.getSize());
   }

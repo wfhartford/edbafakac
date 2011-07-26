@@ -11,7 +11,7 @@ public final class FieldValue extends Value<FieldValue> {
   }
 
   public TypeValue getFieldType(final boolean readOnly) {
-    return (TypeValue) BaseField.FIELD_TYPE.getField().getValue(this, readOnly);
+    return (TypeValue) BaseField.FIELD_TYPE.getValue().getValue(this, readOnly);
   }
 
   public Value<?> getValue(final Value<?> value, final boolean readOnly) {
@@ -27,9 +27,9 @@ public final class FieldValue extends Value<FieldValue> {
     // we have to omit a few things from this check because the could cause a stack overflow
 
     // Everything has a VALUE_TYPE field
-    if (!equals(BaseField.VALUE_TYPE.getField()) &&
+    if (!equals(BaseField.VALUE_TYPE.getValue()) &&
         // Types all have the fields field
-        !(equals(BaseField.TYPE_FIELDS.getField()) && value.isInstance(BaseType.TYPE.getType())) &&
+        !(equals(BaseField.TYPE_FIELDS.getValue()) && value.isInstance(BaseType.TYPE.getValue())) &&
         // Check that the value's list of fields contains this field
         !value.getFields(true).contains(this)) {
       throw new IllegalArgumentException("Value does not contain specified field");

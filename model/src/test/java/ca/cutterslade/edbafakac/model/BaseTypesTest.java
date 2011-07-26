@@ -34,14 +34,14 @@ public class BaseTypesTest {
 
   @Test
   public void testType() {
-    final TypeValue type = baseType.getType();
+    final TypeValue type = baseType.getValue();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
     assertNotNull(type.getName(true));
     assertEquals(getName(baseType), type.getName(true).getBaseValue());
     final ListValue fields = type.getTypeFields(true);
     assertNotNull(fields);
-    assertEquals(BaseType.FIELD.getType(), fields.getValueType(true));
+    assertEquals(BaseType.FIELD.getValue(), fields.getValueType(true));
     assertTrue(0 < fields.getSize());
     final long size = fields.getSize();
     for (long i = 0; i < size; i++) {

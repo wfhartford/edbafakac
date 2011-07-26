@@ -7,35 +7,35 @@ public final class Types {
   }
 
   public static TypeValue getBooleanType() {
-    return BaseType.BOOLEAN.getType();
+    return BaseType.BOOLEAN.getValue();
   }
 
   public static TypeValue getDateType() {
-    return BaseType.DATE.getType();
+    return BaseType.DATE.getValue();
   }
 
   public static TypeValue getDecimalType() {
-    return BaseType.DECIMAL.getType();
+    return BaseType.DECIMAL.getValue();
   }
 
   public static TypeValue getIntegerType() {
-    return BaseType.INTEGER.getType();
+    return BaseType.INTEGER.getValue();
   }
 
   public static TypeValue getListType() {
-    return BaseType.LIST.getType();
+    return BaseType.LIST.getValue();
   }
 
   public static TypeValue getStringType() {
-    return BaseType.STRING.getType();
+    return BaseType.STRING.getValue();
   }
 
   public static TypeValue getFieldType() {
-    return BaseType.FIELD.getType();
+    return BaseType.FIELD.getValue();
   }
 
   public static TypeValue getTypeType() {
-    return BaseType.TYPE.getType();
+    return BaseType.TYPE.getValue();
   }
 
   public static TypeValue getType(final String key, final boolean readOnly) {

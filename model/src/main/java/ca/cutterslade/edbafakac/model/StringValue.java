@@ -17,13 +17,13 @@ public final class StringValue extends Value<StringValue> {
   }
 
   public static StringValue withBase(final String baseValue, final boolean simple) {
-    return ((StringValue) BaseType.STRING.getType().getNewValue(null))
+    return ((StringValue) BaseType.STRING.getValue().getNewValue(null))
         .setSimple(simple)
         .setBaseValue(baseValue);
   }
 
   public static StringValue withValue(final String value, final Locale locale) {
-    return ((StringValue) BaseType.STRING.getType().getNewValue(null))
+    return ((StringValue) BaseType.STRING.getValue().getNewValue(null))
         .setValue(value, locale);
   }
 

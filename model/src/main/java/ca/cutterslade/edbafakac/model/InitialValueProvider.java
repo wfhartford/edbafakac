@@ -4,5 +4,5 @@ public interface InitialValueProvider {
 
   int getPriority();
 
-  Iterable<Value<?>> getInitialValues();
+  Iterable<Value<?>> getValues();
 }

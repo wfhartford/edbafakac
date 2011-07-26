@@ -33,7 +33,7 @@ public class BaseFieldsTest {
 
   @Test
   public void testField() {
-    final FieldValue field = baseField.getField();
+    final FieldValue field = baseField.getValue();
     assertNotNull(field);
     assertNotNull(field.getName(true));
     assertEquals(BaseTypesTest.getName(baseField), field.getName(true).getBaseValue());

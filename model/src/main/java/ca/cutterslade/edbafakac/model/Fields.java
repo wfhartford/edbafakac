@@ -7,19 +7,19 @@ public final class Fields {
   }
 
   public static FieldValue getNameField() {
-    return BaseField.VALUE_NAME.getField();
+    return BaseField.VALUE_NAME.getValue();
   }
 
   public static FieldValue getTypeField() {
-    return BaseField.VALUE_TYPE.getField();
+    return BaseField.VALUE_TYPE.getValue();
   }
 
   public static FieldValue getTypeFieldsField() {
-    return BaseField.TYPE_FIELDS.getField();
+    return BaseField.TYPE_FIELDS.getValue();
   }
 
   public static FieldValue getFieldTypeField() {
-    return BaseField.FIELD_TYPE.getField();
+    return BaseField.FIELD_TYPE.getValue();
   }
 
   public static FieldValue getField(final String key, final boolean readOnly) {

@@ -3,7 +3,7 @@ package ca.cutterslade.edbafakac.model;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
-enum BaseField {
+enum BaseField implements InitialValue {
   VALUE_NAME("619c10d4-6d66-43d3-ab50-35713f603426", new BaseFieldResolver() {
 
     @Override
@@ -49,7 +49,8 @@ enum BaseField {
     this.resolver = resolver;
   }
 
-  public FieldValue getField() {
+  @Override
+  public FieldValue getValue() {
     return (FieldValue) Values.getValue(key, BaseField.class.getSimpleName() + '.' + toString() + ".properties");
   }
 
