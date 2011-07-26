@@ -1,7 +1,10 @@
 package ca.cutterslade.edbafakac.model;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentMap;
 
 import ca.cutterslade.edbafakac.db.Entry;
@@ -11,8 +14,13 @@ import ca.cutterslade.edbafakac.db.ServiceFactory;
 import ca.cutterslade.utilities.PropertiesUtils;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.MapMaker;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimaps;
 
 final class Values {
 
@@ -34,14 +42,23 @@ final class Values {
   private abstract static class Initializer {
 
     static {
-      for (final BaseType type : BaseType.values()) {
-        type.getType();
+      final ServiceLoader<InitialValueProvider> providerLoader = ServiceLoader.load(InitialValueProvider.class);
+      final ListMultimap<Integer, InitialValueProvider> orderedProviders =
+          Multimaps.newListMultimap(Maps.<Integer, Collection<InitialValueProvider>> newTreeMap(),
+              new Supplier<List<InitialValueProvider>>() {
+
+                @Override
+                public List<InitialValueProvider> get() {
+                  return Lists.newArrayList();
+                }
+              });
+      for (final InitialValueProvider provider : providerLoader) {
+        orderedProviders.put(provider.getPriority(), provider);
       }
-      for (final BaseField field : BaseField.values()) {
-        field.getField();
-      }
-      for (final BaseValue value : BaseValue.values()) {
-        value.getValue();
+      for (final InitialValueProvider provider : orderedProviders.values()) {
+        for (final Value<?> value : provider.getInitialValues()) {
+          value.save();
+        }
       }
     }
 

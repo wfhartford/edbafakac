@@ -49,11 +49,6 @@ enum BaseField {
     this.resolver = resolver;
   }
 
-  // These are all equivalent
-  // BaseField.*.getKey()
-  // BaseField.*.getField().getFieldKey()
-  // BaseField.FIELD_KEY.getField().getRawValue(BaseField.*.getField())
-
   public FieldValue getField() {
     return (FieldValue) Values.getValue(key, BaseField.class.getSimpleName() + '.' + toString() + ".properties");
   }
