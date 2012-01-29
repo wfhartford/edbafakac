@@ -17,17 +17,17 @@ public class StringValueTest {
   @Test
   public void twoLanguangeTest() {
     StringValue value = StringValue.withValue(HELLO_WORLD, Locale.CANADA);
-    assertEquals(value, value.getName(true));
+    assertEquals(value, value.getName(RetrieveMode.READ_ONLY));
     testSingleLocale(value);
     value.setValue(HELLO_WORLD_FR_CA, Locale.CANADA_FRENCH);
     testDoubleLocale(value);
-    value = (StringValue) Values.getValue(value.save().getKey(), false);
-    assertEquals(value, value.getName(true));
+    value = (StringValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
+    assertEquals(value, value.getName(RetrieveMode.READ_ONLY));
     testDoubleLocale(value);
     value.setValue(HELLO_WORLD_FR_FR, Locale.FRANCE);
     testTripleLocale(value);
-    value = (StringValue) Values.getValue(value.save().getKey(), false);
-    assertEquals(value, value.getName(true));
+    value = (StringValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
+    assertEquals(value, value.getName(RetrieveMode.READ_ONLY));
     testTripleLocale(value);
   }
 

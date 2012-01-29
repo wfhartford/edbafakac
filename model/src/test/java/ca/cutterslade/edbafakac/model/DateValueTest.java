@@ -17,7 +17,7 @@ public class DateValueTest {
     final Locale locale = Locale.getDefault();
     final Calendar calendar = Calendar.getInstance(locale);
     DateValue dateValue = DateValue.withTime(calendar).save();
-    dateValue = (DateValue) Values.getValue(dateValue.getKey(), true);
+    dateValue = (DateValue) Values.getValue(dateValue.getKey(), RetrieveMode.READ_ONLY);
     assertEquals(calendar.getTime(), dateValue.getDate());
     assertEquals(calendar.getTimeZone(), dateValue.getZone());
     assertEquals(calendar, dateValue.getCalendar(locale));
@@ -27,7 +27,7 @@ public class DateValueTest {
   public void dateZoneSaveLoadTest() {
     final Calendar calendar = Calendar.getInstance();
     DateValue dateValue = DateValue.withTime(calendar.getTime(), calendar.getTimeZone()).save();
-    dateValue = (DateValue) Values.getValue(dateValue.getKey(), true);
+    dateValue = (DateValue) Values.getValue(dateValue.getKey(), RetrieveMode.READ_ONLY);
     assertEquals(calendar.getTime(), dateValue.getDate());
     assertEquals(calendar.getTimeZone(), dateValue.getZone());
     assertEquals(calendar, dateValue.getCalendar(null));
@@ -36,7 +36,7 @@ public class DateValueTest {
   @Test
   public void nullSaveLoadTest() {
     DateValue dateValue = DateValue.withTime(null).save();
-    dateValue = (DateValue) Values.getValue(dateValue.getKey(), true);
+    dateValue = (DateValue) Values.getValue(dateValue.getKey(), RetrieveMode.READ_ONLY);
     assertNull(dateValue.getDate());
     assertNull(dateValue.getZone());
     assertNull(dateValue.getCalendar(null));

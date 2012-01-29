@@ -20,8 +20,8 @@ public final class DecimalValue extends Value<DecimalValue> {
     return ((DecimalValue) Types.getDecimalType().getNewValue(null)).setValue(value);
   }
 
-  DecimalValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  DecimalValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public DecimalValue setValue(final BigDecimal value) {

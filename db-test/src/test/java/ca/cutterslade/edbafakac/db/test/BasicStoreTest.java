@@ -78,16 +78,6 @@ public class BasicStoreTest extends AvailableImplementationsTest {
     Assert.assertNull(entry.getProperty(KEY));
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void nullPropertyKeyTest() {
-    getEntryService().getNewEntry().setProperty(null, VALUE);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void nullPropertyValueTest() {
-    getEntryService().getNewEntry().setProperty(KEY, null);
-  }
-
   @Test(expected = EntryAlreadyExistsException.class)
   public void newEntryWithUsedKeyTest() {
     final Entry entry = getEntryService().getNewEntry();
@@ -137,21 +127,6 @@ public class BasicStoreTest extends AvailableImplementationsTest {
     Assert.assertEquals(entry.getKey(), getEntryService().getNewEntry(entry.getKey()).getKey());
   }
 
-  @Test(expected = IllegalArgumentException.class)
-  public void nullPresetKeyTest() {
-    getEntryService().getNewEntry(null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void nullGetEntryTest() {
-    getEntryService().getEntry(null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void nullRemovePropertyTest() {
-    getEntryService().getNewEntry().removeProperty(null);
-  }
-
   @Test
   public void hasPropertyTest() {
     final Entry entry = getEntryService().getNewEntry();
@@ -181,16 +156,6 @@ public class BasicStoreTest extends AvailableImplementationsTest {
     final ImmutableSet<String> propertyKeys = entry.getPropertyKeys();
     Assert.assertEquals(1, propertyKeys.size());
     Assert.assertEquals(KEY, Iterables.getOnlyElement(propertyKeys));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void nullSaveEntryTest() {
-    getEntryService().saveEntry(null);
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void nullRemoveEntryTest() {
-    getEntryService().removeEntry(null);
   }
 
   @Test

@@ -17,16 +17,16 @@ public abstract class Value<T extends Value<T>> {
 
   private final ImmutableMap<String, String> pristine;
 
-  private final boolean readOnly;
+  private final RetrieveMode retrieveMode;
 
-  static final Value<?> getInstance(final Entry entry, final boolean readOnly) {
+  static final Value<?> getInstance(final Entry entry, final RetrieveMode retrieveMode) {
     try {
       final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
       Preconditions.checkArgument(null != valueClass);
       @SuppressWarnings("unchecked")
       final Class<? extends Value<?>> clazz =
           (Class<? extends Value<?>>) Class.forName(valueClass).asSubclass(Value.class);
-      return clazz.getDeclaredConstructor(Entry.class, boolean.class).newInstance(entry, readOnly);
+      return clazz.getDeclaredConstructor(Entry.class, RetrieveMode.class).newInstance(entry, retrieveMode);
     }
     catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException
         | NoSuchMethodException e) {
@@ -34,10 +34,11 @@ public abstract class Value<T extends Value<T>> {
     }
   }
 
-  Value(final Entry entry, final boolean readOnly) {
+  Value(final Entry entry, final RetrieveMode retrieveMode) {
     Preconditions.checkArgument(null != entry);
+    Preconditions.checkArgument(null != retrieveMode);
     this.entry = entry;
-    this.readOnly = readOnly;
+    this.retrieveMode = retrieveMode;
     final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
     if (null == valueClass) {
       entry.setProperty(BaseField.VALUE_CLASS.getKey(), getClass().getName());
@@ -74,7 +75,7 @@ public abstract class Value<T extends Value<T>> {
   }
 
   final T checkWritable() {
-    Preconditions.checkState(!readOnly, "Value is read only");
+    Preconditions.checkState(!isReadOnly(), "Value is read only");
     return getThis();
   }
 
@@ -126,34 +127,38 @@ public abstract class Value<T extends Value<T>> {
   }
 
   public final boolean isInstance(final TypeValue type) {
-    return getType(true).getKey().equals(type.getKey());
+    return getType(RetrieveMode.READ_ONLY).getKey().equals(type.getKey());
   }
 
   public final boolean isReadOnly() {
-    return readOnly;
+    return RetrieveMode.READ_ONLY == retrieveMode;
+  }
+
+  public final RetrieveMode getRetrieveMode() {
+    return retrieveMode;
   }
 
   @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   public final T asReadOnly() {
     @SuppressWarnings("unchecked")
-    final T asReadOnly = (T) (readOnly ? this : Values.getValue(getKey(), true));
+    final T asReadOnly = (T) (isReadOnly() ? this : Values.getValue(getKey(), RetrieveMode.READ_ONLY));
     return asReadOnly;
   }
 
-  public final StringValue getName(final boolean readOnly) {
-    return (StringValue) getFieldValue(Fields.getNameField(), readOnly);
+  public final StringValue getName(final RetrieveMode retrieveMode) {
+    return (StringValue) getFieldValue(Fields.getNameField(), retrieveMode);
   }
 
-  public final TypeValue getType(final boolean readOnly) {
-    return (TypeValue) getFieldValue(Fields.getTypeField(), readOnly);
+  public final TypeValue getType(final RetrieveMode retrieveMode) {
+    return (TypeValue) getFieldValue(Fields.getTypeField(), retrieveMode);
   }
 
-  public final ListValue getFields(final boolean readOnly) {
-    return (ListValue) getType(true).getFieldValue(Fields.getTypeFieldsField(), readOnly);
+  public final ListValue getFields(final RetrieveMode retrieveMode) {
+    return (ListValue) getType(RetrieveMode.READ_ONLY).getFieldValue(Fields.getTypeFieldsField(), retrieveMode);
   }
 
-  public final Value<?> getFieldValue(final FieldValue field, final boolean readOnly) {
-    return field.getValue(this, readOnly);
+  public final Value<?> getFieldValue(final FieldValue field, final RetrieveMode retrieveMode) {
+    return field.getValue(this, retrieveMode);
   }
 
   public final T setFieldValue(final FieldValue field, final Value<?> value) {

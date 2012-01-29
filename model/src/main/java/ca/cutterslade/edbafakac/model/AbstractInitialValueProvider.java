@@ -9,6 +9,9 @@ public abstract class AbstractInitialValueProvider implements InitialValueProvid
 
     @Override
     public Value<?> apply(final InitialValue input) {
+      if (null == input) {
+        throw new IllegalArgumentException();
+      }
       return input.getValue();
     }
   };

@@ -38,8 +38,8 @@ public final class Types {
     return BaseType.TYPE.getValue();
   }
 
-  public static TypeValue getType(final String key, final boolean readOnly) {
-    return (TypeValue) Values.getValue(key, readOnly);
+  public static TypeValue getType(final String key, final RetrieveMode retrieveMode) {
+    return (TypeValue) Values.getValue(key, retrieveMode);
   }
 
   public static TypeValue getNewType(final StringValue name) {

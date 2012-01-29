@@ -51,8 +51,6 @@ public class MapEntry implements Entry {
 
   @Override
   public MapEntry setProperty(final String key, final String value) {
-    Preconditions.checkArgument(null != key, "Cannot set property with null key");
-    Preconditions.checkArgument(null != value, "Cannot set property with null value");
     Preconditions.checkArgument(!service.getReservedKeys().contains(key),
         "EntryService %s has reserved the key %s", service.getClass().getName(), key);
     if (!value.equals(map.put(key, value))) {
@@ -63,19 +61,16 @@ public class MapEntry implements Entry {
 
   @Override
   public String getProperty(final String key) {
-    Preconditions.checkArgument(null != key, "Cannot retrieve a property with null key");
     return map.get(key);
   }
 
   @Override
   public boolean hasProperty(final String key) {
-    Preconditions.checkArgument(null != key, "Cannot test for existance of a property with null key");
     return map.containsKey(key);
   }
 
   @Override
   public MapEntry removeProperty(final String key) {
-    Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
     if (null != map.remove(key)) {
       dirty = true;
     }

@@ -37,18 +37,18 @@ public class BaseTypesTest {
     final TypeValue type = baseType.getValue();
     assertNotNull(type);
     assertEquals(baseType.getKey(), type.getKey());
-    assertNotNull(type.getName(true));
-    assertEquals(getName(baseType), type.getName(true).getBaseValue());
-    final ListValue fields = type.getTypeFields(true);
+    assertNotNull(type.getName(RetrieveMode.READ_ONLY));
+    assertEquals(getName(baseType), type.getName(RetrieveMode.READ_ONLY).getBaseValue());
+    final ListValue fields = type.getTypeFields(RetrieveMode.READ_ONLY);
     assertNotNull(fields);
-    assertEquals(BaseType.FIELD.getValue(), fields.getValueType(true));
+    assertEquals(BaseType.FIELD.getValue(), fields.getValueType(RetrieveMode.READ_ONLY));
     assertTrue(0 < fields.getSize());
     final long size = fields.getSize();
     for (long i = 0; i < size; i++) {
       final FieldValue field = (FieldValue) fields.get(i);
       assertNotNull(field);
-      assertNotNull(field.getFieldType(true));
-      assertNotNull(field.getName(true));
+      assertNotNull(field.getFieldType(RetrieveMode.READ_ONLY));
+      assertNotNull(field.getName(RetrieveMode.READ_ONLY));
     }
   }
 

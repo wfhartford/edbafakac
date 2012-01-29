@@ -4,7 +4,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 
 public final class RecordValue extends Value<RecordValue> {
 
-  RecordValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  RecordValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 }

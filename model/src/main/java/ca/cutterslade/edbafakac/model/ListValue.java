@@ -15,8 +15,8 @@ public final class ListValue extends Value<ListValue> {
 
   private static final String TYPE_KEY = "56ab8c1e-f86a-4617-b342-45a98926a814";
 
-  ListValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  ListValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public static ListValue ofValues() {
@@ -70,15 +70,15 @@ public final class ListValue extends Value<ListValue> {
     return setProperty(TYPE_KEY, key);
   }
 
-  public TypeValue getValueType(final boolean readOnly) {
+  public TypeValue getValueType(final RetrieveMode retrieveMode) {
     final String typeKey = getProperty(TYPE_KEY);
-    return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, readOnly));
+    return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, retrieveMode));
   }
 
   public Value<?> get(final long position) {
     checkIndex(position);
     final String key = getProperty(String.valueOf(position));
-    return Values.getValue(key, isReadOnly());
+    return Values.getValue(key, getRetrieveMode());
   }
 
   public ListValue set(final long position, final Value<?> value) {
@@ -88,7 +88,7 @@ public final class ListValue extends Value<ListValue> {
 
   private ListValue checkValue(final Value<?> value) {
     Preconditions.checkArgument(null != value);
-    final TypeValue type = getValueType(true);
+    final TypeValue type = getValueType(RetrieveMode.READ_ONLY);
     if (null != type) {
       Preconditions.checkArgument(value.isInstance(type));
     }

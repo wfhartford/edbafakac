@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp.BasicDataSource;
@@ -28,7 +29,6 @@ import ca.cutterslade.utilities.ResultSetTransformer;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -37,6 +37,16 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 public class JdbcEntryService implements EntryService {
+
+  private static final String DFLT_DATABASE_PROPERTIES_RESOURCE = "database.properties";
+
+  private static final String JDBC_DRIVER_KEY = "edbafakac.jdbc.driver";
+
+  private static final String JDBC_URL_KEY = "edbafakac.jdbc.url";
+
+  private static final String JDBC_USER_KEY = "edbafakac.jdbc.user";
+
+  private static final String JDBC_PASS_KEY = "edbafakac.jdbc.pass";
 
   private static final Set<JdbcEntryService> INSTANCES = Collections.synchronizedSet(Sets
       .<JdbcEntryService> newHashSet());
@@ -64,7 +74,7 @@ public class JdbcEntryService implements EntryService {
     });
   }
 
-  private static final class Property {
+  static final class Property {
 
     private final String key;
 
@@ -88,19 +98,6 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
-  private static final Function<ResultSet, Property> PROPERTY_TRANSFORMER = new Function<ResultSet, Property>() {
-
-    @Override
-    public Property apply(final ResultSet input) {
-      try {
-        return new Property(input.getString("PROPERTY_KEY"), input.getString("PROPERTY_VALUE"));
-      }
-      catch (final SQLException e) {
-        throw Throwables.propagate(e);
-      }
-    }
-  };
-
   private static final String PLACEHOLDER_STRING = "7575c422-d00b-468d-898b-0e6fa0200b32";
 
   private static final String PROPERTY_COUNT_QUERY = "select COUNT(1) from EDBAFAKAC.ENTRIES where ENTRY_KEY = ?";
@@ -118,29 +115,23 @@ public class JdbcEntryService implements EntryService {
   private final DataSource dataSource;
 
   public JdbcEntryService() throws SQLException, IOException {
-    final ImmutableMap<String, String> props = PropertiesUtils.loadProperties("database.properties");
-    final BasicDataSource basicDataSource = new BasicDataSource();
-    basicDataSource.setDriverClassName(props.get("edbafakac.jdbc.driver"));
-    basicDataSource.setUrl(props.get("edbafakac.jdbc.url"));
-    basicDataSource.setUsername(props.get("edbafakac.jdbc.user"));
-    basicDataSource.setPassword(props.get("edbafakac.jdbc.pass"));
-    basicDataSource.getConnection().close();
-    dataSource = basicDataSource;
+    this(DFLT_DATABASE_PROPERTIES_RESOURCE);
   }
 
-  public JdbcEntryService(final String propertiesResource) throws SQLException, IOException {
+  public JdbcEntryService(@Nonnull final String propertiesResource) throws SQLException, IOException {
     final ImmutableMap<String, String> props = PropertiesUtils.loadProperties(propertiesResource);
     final BasicDataSource basicDataSource = new BasicDataSource();
-    basicDataSource.setDriverClassName(props.get("edbafakac.jdbc.driver"));
-    basicDataSource.setUrl(props.get("edbafakac.jdbc.url"));
-    basicDataSource.setUsername(props.get("edbafakac.jdbc.user"));
-    basicDataSource.setPassword(props.get("edbafakac.jdbc.pass"));
+    basicDataSource.setDriverClassName(props.get(JDBC_DRIVER_KEY));
+    basicDataSource.setUrl(props.get(JDBC_URL_KEY));
+    basicDataSource.setUsername(props.get(JDBC_USER_KEY));
+    basicDataSource.setPassword(props.get(JDBC_PASS_KEY));
     basicDataSource.getConnection().close();
     dataSource = basicDataSource;
   }
 
   @SuppressWarnings("PMD.ExcessiveParameterList")
-  public JdbcEntryService(final String driver, final String url, final String user, final String pass)
+  public JdbcEntryService(@Nonnull final String driver, @Nonnull final String url, @Nonnull final String user,
+      @Nonnull final String pass)
       throws SQLException {
     final BasicDataSource basicDataSource = new BasicDataSource();
     basicDataSource.setDriverClassName(driver);
@@ -151,8 +142,8 @@ public class JdbcEntryService implements EntryService {
     dataSource = basicDataSource;
   }
 
-  public JdbcEntryService(final DataSource dataSoruce) {
-    this.dataSource = dataSoruce;
+  public JdbcEntryService(@Nonnull final DataSource dataSource) {
+    this.dataSource = dataSource;
   }
 
   @Override
@@ -161,8 +152,7 @@ public class JdbcEntryService implements EntryService {
   }
 
   @Override
-  public Entry getNewEntry(final String key) {
-    Preconditions.checkArgument(null != key);
+  public Entry getNewEntry(@Nonnull final String key) {
     try {
       saveEntry(key, ImmutableMap.<String, String> of(), true);
       return new MapEntry(key, Maps.<String, String> newHashMap(), this, false);
@@ -173,11 +163,10 @@ public class JdbcEntryService implements EntryService {
   }
 
   @Override
-  public Entry getEntry(final String key) {
-    Preconditions.checkArgument(null != key);
+  public Entry getEntry(@Nonnull final String key) {
     try (final Connection connection = getConnection()) {
       final ImmutableList<Property> results =
-          getQueryResult(connection, PROPERTIES_QUERY, ImmutableSet.of(key), PROPERTY_TRANSFORMER);
+          getQueryResult(connection, PROPERTIES_QUERY, ImmutableSet.of(key), PropertyTransformer.INSTANCE);
       if (results.isEmpty()) {
         throw new EntryNotFoundException(key);
       }
@@ -200,15 +189,13 @@ public class JdbcEntryService implements EntryService {
   }
 
   @Override
-  public void saveEntry(final Entry entry) {
-    Preconditions.checkArgument(null != entry);
+  public void saveEntry(@Nonnull final Entry entry) {
     ((MapEntry) entry).setWriteTime(System.currentTimeMillis());
     saveEntryWithoutUpdatingWriteTime(entry);
   }
 
   @Override
-  public void saveEntryWithoutUpdatingWriteTime(final Entry entry) {
-    Preconditions.checkArgument(null != entry);
+  public void saveEntryWithoutUpdatingWriteTime(@Nonnull final Entry entry) {
     Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     try {
       saveEntry(entry.getKey(), entry.getProperties(), false);
@@ -220,8 +207,7 @@ public class JdbcEntryService implements EntryService {
   }
 
   @Override
-  public void removeEntry(final String key) {
-    Preconditions.checkArgument(null != key);
+  public void removeEntry(@Nonnull final String key) {
     try (final Connection connection = getConnection()) {
       removeEntry(connection, key);
     }
@@ -230,7 +216,7 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
-  private void saveEntry(final String key, final ImmutableMap<String, String> properties,
+  private void saveEntry(@Nonnull final String key, @Nonnull final ImmutableMap<String, String> properties,
       final boolean newEntry) throws SQLException {
     try (final Connection connection = getConnection()) {
       connection.setAutoCommit(false);
@@ -247,8 +233,8 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
-  private void insertProperties(final Connection connection, final String key,
-      final ImmutableMap<String, String> properties) throws SQLException {
+  private void insertProperties(@Nonnull final Connection connection, @Nonnull final String key,
+      @Nonnull final ImmutableMap<String, String> properties) throws SQLException {
     try (final PreparedStatement statement = connection.prepareStatement(INSERT_PROPERTY)) {
       statement.setString(1, key);
       statement.setString(2, PLACEHOLDER_STRING);
@@ -264,7 +250,7 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
-  private void removeEntry(final Connection connection, final String key) throws SQLException {
+  private void removeEntry(@Nonnull final Connection connection, @Nonnull final String key) throws SQLException {
     try (final PreparedStatement statement = connection.prepareStatement(DELETE_PROPERTIES)) {
       statement.setString(1, key);
       statement.execute();
@@ -273,23 +259,19 @@ public class JdbcEntryService implements EntryService {
 
   @SuppressWarnings("PMD.ExcessiveParameterList")
   @edu.umd.cs.findbugs.annotations.SuppressWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
-  private <T> ImmutableList<T> getQueryResult(final Connection connection, final String query,
-      final Iterable<?> params, final Function<ResultSet, T> resultTransformer) throws SQLException {
+  private <T> ImmutableList<T> getQueryResult(@Nonnull final Connection connection, @Nonnull final String query,
+      @Nonnull final Iterable<?> params, @Nonnull final Function<ResultSet, T> resultTransformer) throws SQLException {
+    final ImmutableList<T> results;
     try (final PreparedStatement statement = connection.prepareStatement(query)) {
       int index = 0;
       for (final Object param : params) {
         statement.setObject(++index, param);
       }
-      statement.execute();
-
-      try (final ResultSet result = statement.getResultSet()) {
-        return ImmutableList.copyOf(new ResultSetTransformer<T>(result, resultTransformer));
-      }
-      catch (final RuntimeException e) {
-        Throwables.propagateIfInstanceOf(e.getCause(), SQLException.class);
-        throw e;
+      try (final ResultSet result = statement.executeQuery()) {
+        results = ImmutableList.copyOf(new ResultSetTransformer<T>(result, resultTransformer));
       }
     }
+    return results;
   }
 
   public void createTable() throws SQLException {
@@ -298,7 +280,7 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
-  public static void createTable(final Connection connection) throws SQLException {
+  public static void createTable(@Nonnull final Connection connection) throws SQLException {
     boolean foundEdbafakac = false;
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet schemas = metaData.getSchemas()) {

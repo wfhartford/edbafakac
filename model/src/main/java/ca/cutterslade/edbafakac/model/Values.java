@@ -76,23 +76,24 @@ final class Values {
     final Entry entry = getEntryService().getNewEntry();
     entry.setProperty(BaseField.VALUE_TYPE.getKey(), type.getKey());
     entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getValue().getRawValue(type));
-    return Value.getInstance(entry, false);
+    return Value.getInstance(entry, RetrieveMode.READ_WRITE);
   }
 
-  static Value<?> getValue(final String key, final boolean readOnly) {
+  static Value<?> getValue(final String key, final RetrieveMode retrieveMode) {
     Initializer.init();
     Value<?> value = BASE_VALUES.get(key);
     if (null == value) {
-      value = Value.getInstance(getEntryService().getEntry(key), readOnly);
+      value = Value.getInstance(getEntryService().getEntry(key), retrieveMode);
       if (value.isBaseValue()) {
-        Preconditions.checkArgument(readOnly,
-            "Cannot provide writable value of %s", value.getName(true).getBaseValue());
+        Preconditions.checkArgument(RetrieveMode.READ_ONLY == retrieveMode,
+            "Cannot provide writable value of %s", value.getName(RetrieveMode.READ_ONLY).getBaseValue());
         final Value<?> oldValue = BASE_VALUES.putIfAbsent(key, value);
         value = null == oldValue ? value : oldValue;
       }
     }
-    else if (!readOnly) {
-      throw new IllegalArgumentException("Cannot provide writable value of " + value.getName(true).getBaseValue());
+    else if (RetrieveMode.READ_WRITE == retrieveMode) {
+      throw new IllegalArgumentException("Cannot provide writable value of " +
+          value.getName(RetrieveMode.READ_ONLY).getBaseValue());
     }
     return value;
   }
@@ -100,11 +101,11 @@ final class Values {
   static Value<?> getValue(final String key, final String defaultResource) {
     Value<?> value;
     try {
-      value = getValue(key, true);
+      value = getValue(key, RetrieveMode.READ_ONLY);
     }
     catch (final EntryNotFoundException e) {
       final Entry entry = readBaseEntry(key, defaultResource);
-      value = Value.getInstance(entry, true);
+      value = Value.getInstance(entry, RetrieveMode.READ_ONLY);
       final Value<?> oldValue = BASE_VALUES.putIfAbsent(key, value);
       if (null == oldValue) {
         getEntryService().saveEntry(entry);

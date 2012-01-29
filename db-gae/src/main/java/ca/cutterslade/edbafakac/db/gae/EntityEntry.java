@@ -45,8 +45,6 @@ public class EntityEntry implements Entry {
 
   @Override
   public EntityEntry setProperty(final String key, final String value) {
-    Preconditions.checkArgument(null != key, "Cannot set property with null key");
-    Preconditions.checkArgument(null != value, "Cannot set property with null value");
     Preconditions.checkArgument(!service.getReservedKeys().contains(key),
         "EntryService %s has reserved the key %s", service.getClass().getName(), key);
     if (!value.equals(entity.getProperty(key))) {
@@ -64,13 +62,11 @@ public class EntityEntry implements Entry {
 
   @Override
   public boolean hasProperty(final String key) {
-    Preconditions.checkArgument(null != key, "Cannot test for existance of a property with null key");
     return entity.hasProperty(key);
   }
 
   @Override
   public EntityEntry removeProperty(final String key) {
-    Preconditions.checkArgument(null != key, "Cannot remove a property with null key");
     if (entity.hasProperty(key)) {
       entity.removeProperty(key);
       dirty = true;

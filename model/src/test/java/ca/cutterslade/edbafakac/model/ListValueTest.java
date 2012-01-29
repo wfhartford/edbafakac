@@ -17,8 +17,8 @@ public class ListValueTest {
   public void basicEmptyListTest() {
     final ListValue list = ListValue.ofValues();
     assertNotNull(list);
-    assertEquals(BaseType.LIST.getValue(), list.getType(true));
-    assertNull(list.getValueType(true));
+    assertEquals(BaseType.LIST.getValue(), list.getType(RetrieveMode.READ_ONLY));
+    assertNull(list.getValueType(RetrieveMode.READ_ONLY));
     assertEquals(0, list.getSize());
   }
 
@@ -27,7 +27,7 @@ public class ListValueTest {
     final ListValue list = ListValue.ofValues(value("only"));
     assertEquals(1, list.getSize());
     assertEquals("only", value(list.get(0)));
-    assertNull(list.getValueType(true));
+    assertNull(list.getValueType(RetrieveMode.READ_ONLY));
   }
 
   @Test
@@ -36,7 +36,7 @@ public class ListValueTest {
     assertEquals(2, list.getSize());
     assertEquals("one", value(list.get(0)));
     assertEquals("two", value(list.get(1)));
-    assertNull(list.getValueType(true));
+    assertNull(list.getValueType(RetrieveMode.READ_ONLY));
   }
 
   @Test
@@ -45,7 +45,7 @@ public class ListValueTest {
     list.add(value("only"));
     assertEquals(1, list.getSize());
     assertEquals("only", value(list.get(0)));
-    assertEquals(Types.getStringType(), list.getValueType(true));
+    assertEquals(Types.getStringType(), list.getValueType(RetrieveMode.READ_ONLY));
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -85,11 +85,6 @@ public class ListValueTest {
     assertEquals(2, list.getSize());
     assertEquals("one", value(list.get(0)));
     assertEquals("two", value(list.get(1)));
-  }
-
-  @Test(expected = IllegalArgumentException.class)
-  public void addNullTest() {
-    ListValue.ofValues().add(null);
   }
 
   @Test

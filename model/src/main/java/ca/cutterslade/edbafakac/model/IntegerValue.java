@@ -16,8 +16,8 @@ public final class IntegerValue extends Value<IntegerValue> {
     return ((IntegerValue) Types.getIntegerType().getNewValue(null)).setValue(value);
   }
 
-  IntegerValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  IntegerValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public IntegerValue setValue(final BigInteger value) {

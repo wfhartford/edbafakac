@@ -35,9 +35,9 @@ public class BaseFieldsTest {
   public void testField() {
     final FieldValue field = baseField.getValue();
     assertNotNull(field);
-    assertNotNull(field.getName(true));
-    assertEquals(BaseTypesTest.getName(baseField), field.getName(true).getBaseValue());
-    assertNotNull(field.getFieldType(true));
-    assertNotNull(BaseType.getBaseType(field.getFieldType(true).getKey()));
+    assertNotNull(field.getName(RetrieveMode.READ_ONLY));
+    assertEquals(BaseTypesTest.getName(baseField), field.getName(RetrieveMode.READ_ONLY).getBaseValue());
+    assertNotNull(field.getFieldType(RetrieveMode.READ_ONLY));
+    assertNotNull(BaseType.getBaseType(field.getFieldType(RetrieveMode.READ_ONLY).getKey()));
   }
 }

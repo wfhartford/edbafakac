@@ -24,8 +24,8 @@ public final class DateValue extends Value<DateValue> {
     return ((DateValue) Types.getDateType().getNewValue(null)).setValue(date, zone);
   }
 
-  DateValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  DateValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public DateValue setValue(final Date date, final TimeZone zone) {
@@ -33,7 +33,7 @@ public final class DateValue extends Value<DateValue> {
     Preconditions.checkArgument(null == zone || zone.equals(TimeZone.getTimeZone(zone.getID())),
         "zone must be equal to that retrieved by its ID");
     return null == date ? removeProperty(TIME_KEY).removeProperty(ZONE_KEY) :
-          setProperty(TIME_KEY, String.valueOf(date.getTime())).setProperty(ZONE_KEY, zone.getID());
+        setProperty(TIME_KEY, String.valueOf(date.getTime())).setProperty(ZONE_KEY, zone.getID());
   }
 
   public DateValue setValue(final Calendar calendar) {

@@ -60,16 +60,16 @@ public class BooleanValueTest {
   @Test
   public void setSaveTest() {
     BooleanValue value = (BooleanValue) Types.getBooleanType().getNewValue(null);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), false);
+    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertNull(value.getValue());
     value.setValue(Boolean.FALSE);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), false);
+    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertFalse(value.getValue());
     value.setValue(Boolean.TRUE);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), false);
+    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertTrue(value.getValue());
     value.setValue(null);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), false);
+    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertNull(value.getValue());
   }
 }

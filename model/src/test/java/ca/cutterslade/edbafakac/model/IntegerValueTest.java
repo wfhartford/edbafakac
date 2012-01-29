@@ -11,7 +11,7 @@ public class IntegerValueTest {
   @Test
   public void saveLoadTest() {
     IntegerValue fourtyTwo = IntegerValue.withValue(MAGIC_NUMBER).save();
-    fourtyTwo = (IntegerValue) Values.getValue(fourtyTwo.getKey(), true);
+    fourtyTwo = (IntegerValue) Values.getValue(fourtyTwo.getKey(), RetrieveMode.READ_ONLY);
     assertEquals(MAGIC_NUMBER, fourtyTwo.getValue().longValue());
   }
 }

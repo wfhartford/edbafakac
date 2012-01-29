@@ -22,8 +22,8 @@ public final class Fields {
     return BaseField.FIELD_TYPE.getValue();
   }
 
-  public static FieldValue getField(final String key, final boolean readOnly) {
-    return (FieldValue) Values.getValue(key, readOnly);
+  public static FieldValue getField(final String key, final RetrieveMode retrieveMode) {
+    return (FieldValue) Values.getValue(key, retrieveMode);
   }
 
 }

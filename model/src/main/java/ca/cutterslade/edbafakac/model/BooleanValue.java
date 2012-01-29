@@ -6,8 +6,8 @@ public final class BooleanValue extends Value<BooleanValue> {
 
   private static final String VALUE_KEY = "4ce36559-c679-42cd-8531-b7d89aa5213a";
 
-  BooleanValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  BooleanValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public static BooleanValue get(final boolean value) {

@@ -12,8 +12,8 @@ public final class StringValue extends Value<StringValue> {
 
   private static final String SIMPLE_KEY = "9492132b-233c-4e62-8155-61f9c7e23c3a";
 
-  StringValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  StringValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public static StringValue withBase(final String baseValue, final boolean simple) {

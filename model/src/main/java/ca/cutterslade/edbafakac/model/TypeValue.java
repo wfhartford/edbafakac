@@ -14,8 +14,8 @@ public final class TypeValue extends Value<TypeValue> {
       BaseType.DECIMAL.getKey(),
       BaseType.INTEGER.getKey());
 
-  TypeValue(final Entry entry, final boolean readOnly) {
-    super(entry, readOnly);
+  TypeValue(final Entry entry, final RetrieveMode retrieveMode) {
+    super(entry, retrieveMode);
   }
 
   public Class<? extends Value<?>> getTypeClass() {
@@ -33,11 +33,11 @@ public final class TypeValue extends Value<TypeValue> {
   public Value<?> getNewValue(final StringValue name) {
     if (NAMELESS_TYPE_KEYS.contains(getKey())) {
       if (null != name) {
-        throw new IllegalArgumentException(getName(true).getBaseValue() + " may not have a name");
+        throw new IllegalArgumentException(getName(RetrieveMode.READ_ONLY).getBaseValue() + " may not have a name");
       }
     }
     else if (null == name) {
-      throw new IllegalArgumentException(getName(true).getBaseValue() + " must have a name");
+      throw new IllegalArgumentException(getName(RetrieveMode.READ_ONLY).getBaseValue() + " must have a name");
     }
     final Value<?> newValue = Values.getNewValue(this);
     if (equals(BaseType.STRING.getValue())) {
@@ -59,8 +59,8 @@ public final class TypeValue extends Value<TypeValue> {
     return value;
   }
 
-  public ListValue getTypeFields(final boolean readOnly) {
-    return (ListValue) BaseField.TYPE_FIELDS.getValue().getValue(this, readOnly);
+  public ListValue getTypeFields(final RetrieveMode retrieveMode) {
+    return (ListValue) BaseField.TYPE_FIELDS.getValue().getValue(this, retrieveMode);
   }
 
   public TypeValue addField(final StringValue name, final TypeValue type) {
@@ -68,7 +68,7 @@ public final class TypeValue extends Value<TypeValue> {
   }
 
   public TypeValue addField(final FieldValue field) {
-    getTypeFields(false).add(field);
+    getTypeFields(RetrieveMode.READ_WRITE).add(field);
     return this;
   }
 

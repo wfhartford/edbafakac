@@ -121,9 +121,11 @@
     <module name="BooleanExpressionComplexity">
       <property name="severity" value="warning" />
     </module>
+    <!-- Java7 ARM Blocks trigger this rule
     <module name="InnerAssignment">
       <property name="severity" value="warning" />
     </module>
+    -->
     <module name="OuterTypeNumber">
       <property name="severity" value="info" />
     </module>

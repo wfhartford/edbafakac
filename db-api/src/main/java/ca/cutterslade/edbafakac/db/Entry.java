@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.db;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -51,7 +53,7 @@ public interface Entry {
    * @throws IllegalArgumentException
    *           if {@code key} or {@code value} is {@code null}
    */
-  Entry setProperty(String key, String value);
+  Entry setProperty(@Nonnull String key, @Nonnull String value);
 
   /**
    * Retrieve the value of a property.
@@ -62,7 +64,7 @@ public interface Entry {
    * @throws IllegalArgumentException
    *           if {@code key} is {@code null}
    */
-  String getProperty(String key);
+  String getProperty(@Nonnull String key);
 
   /**
    * Determine if this entry has a property with the specified key.
@@ -73,7 +75,7 @@ public interface Entry {
    * @throws IllegalArgumentException
    *           if {@code key} is {@code null}
    */
-  boolean hasProperty(String key);
+  boolean hasProperty(@Nonnull String key);
 
   /**
    * Remove the value associated with the provided property key. This method has no effect if the property is not set.
@@ -84,7 +86,7 @@ public interface Entry {
    * @throws IllegalArgumentException
    *           if {@code key} is {@code null}
    */
-  Entry removeProperty(String key);
+  Entry removeProperty(@Nonnull String key);
 
   /**
    * Get all properties of this entry as a map.
