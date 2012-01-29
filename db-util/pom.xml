@@ -8,7 +8,6 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>ca.cutterslade.edbafakac</groupId>
   <artifactId>edbafakac-db-util</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>

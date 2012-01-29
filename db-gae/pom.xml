@@ -7,17 +7,12 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>ca.cutterslade.edbafakac</groupId>
   <artifactId>edbafakac-db-gae</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>edbafakac-db-gae</name>
   <url>https://github.com/wfhartford/edbafakac</url>
-
-  <properties>
-    <gae.version>1.5.0</gae.version>
-  </properties>
 
   <dependencies>
     <dependency>
@@ -43,25 +38,18 @@
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-1.0-sdk</artifactId>
-      <version>${gae.version}</version>
     </dependency>
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-labs</artifactId>
-      <version>${gae.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-api-stubs</artifactId>
-      <version>${gae.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.google.appengine</groupId>
       <artifactId>appengine-testing</artifactId>
-      <version>${gae.version}</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

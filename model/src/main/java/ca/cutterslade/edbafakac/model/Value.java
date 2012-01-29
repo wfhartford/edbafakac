@@ -28,19 +28,8 @@ public abstract class Value<T extends Value<T>> {
           (Class<? extends Value<?>>) Class.forName(valueClass).asSubclass(Value.class);
       return clazz.getDeclaredConstructor(Entry.class, boolean.class).newInstance(entry, readOnly);
     }
-    catch (final ClassNotFoundException e) {
-      throw new IllegalArgumentException(e);
-    }
-    catch (final InstantiationException e) {
-      throw new IllegalArgumentException(e);
-    }
-    catch (final IllegalAccessException e) {
-      throw new IllegalArgumentException(e);
-    }
-    catch (final InvocationTargetException e) {
-      throw new IllegalArgumentException(e);
-    }
-    catch (final NoSuchMethodException e) {
+    catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException
+        | NoSuchMethodException e) {
       throw new IllegalArgumentException(e);
     }
   }

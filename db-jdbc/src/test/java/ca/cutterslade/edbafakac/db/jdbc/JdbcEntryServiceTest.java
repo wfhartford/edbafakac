@@ -35,20 +35,9 @@ public class JdbcEntryServiceTest {
 
   @After
   public void tearDown() throws SQLException {
-    try {
-      final Connection connection = service.getConnection();
-      try {
-        final Statement statement = connection.createStatement();
-        try {
-          statement.execute("SHUTDOWN");
-        }
-        finally {
-          statement.close();
-        }
-      }
-      finally {
-        connection.close();
-      }
+    try (final Connection connection = service.getConnection();
+        final Statement statement = connection.createStatement();) {
+      statement.execute("SHUTDOWN");
     }
     finally {
       service.close();
@@ -57,30 +46,17 @@ public class JdbcEntryServiceTest {
 
   @Test
   public void testSetUp() throws SQLException {
-    final Connection connection = service.getConnection();
-    try {
-      final Statement statement = connection.createStatement();
-      try {
-        statement.execute("select * from edbafakac.entries");
-        final ResultSet resultSet = statement.getResultSet();
-        try {
-          final ResultSetMetaData metaData = resultSet.getMetaData();
-          assertEquals(3, metaData.getColumnCount());
-          assertEquals("ENTRY_KEY", metaData.getColumnName(1));
-          assertEquals("PROPERTY_KEY", metaData.getColumnName(2));
-          assertEquals("PROPERTY_VALUE", metaData.getColumnName(3));
-          assertFalse(resultSet.next());
-        }
-        finally {
-          resultSet.close();
-        }
+    try (final Connection connection = service.getConnection();
+        final Statement statement = connection.createStatement();) {
+      statement.execute("select * from edbafakac.entries");
+      try (final ResultSet resultSet = statement.getResultSet();) {
+        final ResultSetMetaData metaData = resultSet.getMetaData();
+        assertEquals(3, metaData.getColumnCount());
+        assertEquals("ENTRY_KEY", metaData.getColumnName(1));
+        assertEquals("PROPERTY_KEY", metaData.getColumnName(2));
+        assertEquals("PROPERTY_VALUE", metaData.getColumnName(3));
+        assertFalse(resultSet.next());
       }
-      finally {
-        statement.close();
-      }
-    }
-    finally {
-      connection.close();
     }
   }
 

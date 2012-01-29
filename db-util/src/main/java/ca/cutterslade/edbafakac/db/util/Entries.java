@@ -91,16 +91,14 @@ public final class Entries {
 
   public static ImmutableList<String> importEntries(final EntryService service,
       final InputSupplier<? extends InputStream> stream) throws IOException {
-    final BufferedReader reader = new BufferedReader(new InputStreamReader(stream.getInput(), Charsets.UTF_8));
-    try {
+    try (final InputStream input = stream.getInput();
+        final InputStreamReader streamReader = new InputStreamReader(input, Charsets.UTF_8);
+        final BufferedReader reader = new BufferedReader(streamReader);) {
       final ImmutableList.Builder<String> builder = ImmutableList.builder();
       for (String line = reader.readLine(); null != line; line = reader.readLine()) {
         builder.add(importEntry(service, line).getKey());
       }
       return builder.build();
-    }
-    finally {
-      reader.close();
     }
   }
 

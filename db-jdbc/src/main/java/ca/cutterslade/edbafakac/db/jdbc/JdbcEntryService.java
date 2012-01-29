@@ -46,13 +46,19 @@ public class JdbcEntryService implements EntryService {
 
       @Override
       public void run() {
+        final RuntimeException exception = new RuntimeException();
+        boolean sqlException = false;
         for (final JdbcEntryService service : Sets.newHashSet(INSTANCES)) {
           try {
             service.close();
           }
           catch (final SQLException e) {
-            throw Throwables.propagate(e);
+            sqlException = true;
+            exception.addSuppressed(e);
           }
+        }
+        if (sqlException) {
+          throw exception;
         }
       }
     });
@@ -169,25 +175,19 @@ public class JdbcEntryService implements EntryService {
   @Override
   public Entry getEntry(final String key) {
     Preconditions.checkArgument(null != key);
-    try {
-      final Connection connection = getConnection();
-      try {
-        final ImmutableList<Property> results =
-            getQueryResult(connection, PROPERTIES_QUERY, ImmutableSet.of(key), PROPERTY_TRANSFORMER);
-        if (results.isEmpty()) {
-          throw new EntryNotFoundException(key);
-        }
-        final Map<String, String> properties = Maps.newHashMap();
-        for (final Property prop : results) {
-          if (!prop.isPlaceholder()) {
-            properties.put(prop.getKey(), prop.getValue());
-          }
-        }
-        return new MapEntry(key, properties, this, false);
+    try (final Connection connection = getConnection()) {
+      final ImmutableList<Property> results =
+          getQueryResult(connection, PROPERTIES_QUERY, ImmutableSet.of(key), PROPERTY_TRANSFORMER);
+      if (results.isEmpty()) {
+        throw new EntryNotFoundException(key);
       }
-      finally {
-        connection.close();
+      final Map<String, String> properties = Maps.newHashMap();
+      for (final Property prop : results) {
+        if (!prop.isPlaceholder()) {
+          properties.put(prop.getKey(), prop.getValue());
+        }
       }
+      return new MapEntry(key, properties, this, false);
     }
     catch (final SQLException e) {
       throw new EntryStoreException(e);
@@ -222,14 +222,8 @@ public class JdbcEntryService implements EntryService {
   @Override
   public void removeEntry(final String key) {
     Preconditions.checkArgument(null != key);
-    try {
-      final Connection connection = getConnection();
-      try {
-        removeEntry(connection, key);
-      }
-      finally {
-        connection.close();
-      }
+    try (final Connection connection = getConnection()) {
+      removeEntry(connection, key);
     }
     catch (final SQLException e) {
       throw new EntryStoreException(e);
@@ -238,9 +232,7 @@ public class JdbcEntryService implements EntryService {
 
   private void saveEntry(final String key, final ImmutableMap<String, String> properties,
       final boolean newEntry) throws SQLException {
-    boolean success = false;
-    final Connection connection = getConnection();
-    try {
+    try (final Connection connection = getConnection()) {
       connection.setAutoCommit(false);
       if (newEntry &&
           0 != Iterables.getOnlyElement(getQueryResult(connection, PROPERTY_COUNT_QUERY, ImmutableSet.of(key),
@@ -252,20 +244,12 @@ public class JdbcEntryService implements EntryService {
       }
       insertProperties(connection, key, properties);
       connection.commit();
-      success = true;
-    }
-    finally {
-      if (!success) {
-        connection.rollback();
-      }
-      connection.close();
     }
   }
 
   private void insertProperties(final Connection connection, final String key,
       final ImmutableMap<String, String> properties) throws SQLException {
-    final PreparedStatement statement = connection.prepareStatement(INSERT_PROPERTY);
-    try {
+    try (final PreparedStatement statement = connection.prepareStatement(INSERT_PROPERTY)) {
       statement.setString(1, key);
       statement.setString(2, PLACEHOLDER_STRING);
       statement.setString(3, PLACEHOLDER_STRING);
@@ -278,19 +262,12 @@ public class JdbcEntryService implements EntryService {
       }
       statement.executeBatch();
     }
-    finally {
-      statement.close();
-    }
   }
 
   private void removeEntry(final Connection connection, final String key) throws SQLException {
-    final PreparedStatement statement = connection.prepareStatement(DELETE_PROPERTIES);
-    try {
+    try (final PreparedStatement statement = connection.prepareStatement(DELETE_PROPERTIES)) {
       statement.setString(1, key);
       statement.execute();
-    }
-    finally {
-      statement.close();
     }
   }
 
@@ -298,80 +275,53 @@ public class JdbcEntryService implements EntryService {
   @edu.umd.cs.findbugs.annotations.SuppressWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
   private <T> ImmutableList<T> getQueryResult(final Connection connection, final String query,
       final Iterable<?> params, final Function<ResultSet, T> resultTransformer) throws SQLException {
-    final PreparedStatement statement = connection.prepareStatement(query);
-    try {
+    try (final PreparedStatement statement = connection.prepareStatement(query)) {
       int index = 0;
       for (final Object param : params) {
         statement.setObject(++index, param);
       }
       statement.execute();
-      final ResultSet result = statement.getResultSet();
-      try {
+
+      try (final ResultSet result = statement.getResultSet()) {
         return ImmutableList.copyOf(new ResultSetTransformer<T>(result, resultTransformer));
       }
       catch (final RuntimeException e) {
         Throwables.propagateIfInstanceOf(e.getCause(), SQLException.class);
         throw e;
       }
-      finally {
-        result.close();
-      }
-    }
-    finally {
-      statement.close();
     }
   }
 
   public void createTable() throws SQLException {
-    final Connection connection = getConnection();
-    try {
+    try (final Connection connection = getConnection()) {
       createTable(connection);
-    }
-    finally {
-      connection.close();
     }
   }
 
   public static void createTable(final Connection connection) throws SQLException {
-    final DatabaseMetaData metaData = connection.getMetaData();
-    final ResultSet schemas = metaData.getSchemas();
     boolean foundEdbafakac = false;
-    try {
+    final DatabaseMetaData metaData = connection.getMetaData();
+    try (final ResultSet schemas = metaData.getSchemas()) {
       while (!foundEdbafakac && schemas.next()) {
         foundEdbafakac = "EDBAFAKAC".equals(schemas.getString("TABLE_SCHEM"));
       }
     }
-    finally {
-      schemas.close();
-    }
     if (!foundEdbafakac) {
-      final Statement statement = connection.createStatement();
-      try {
+      try (final Statement statement = connection.createStatement()) {
         statement.execute("create schema EDBAFAKAC");
-      }
-      finally {
-        statement.close();
       }
     }
     boolean foundEntries = false;
-    final ResultSet tables = metaData.getTables(null, "EDBAFAKAC", "ENTRIES", null);
-    try {
+    try (final ResultSet tables = metaData.getTables(null, "EDBAFAKAC", "ENTRIES", null)) {
       foundEntries = tables.next();
     }
-    finally {
-      tables.close();
-    }
     if (!foundEntries) {
-      final Statement statement = connection.createStatement();
-      try {
+      try (final Statement statement = connection.createStatement()) {
         statement.execute("create table EDBAFAKAC.ENTRIES(" +
-                "ENTRY_KEY VARCHAR(500) not null," +
-                "PROPERTY_KEY VARCHAR(500) not null," +
-                "PROPERTY_VALUE VARCHAR(65535) not null," +
-                "primary key(ENTRY_KEY,PROPERTY_KEY))");
-      }
-      finally {
-        statement.close();
+            "ENTRY_KEY VARCHAR(500) not null," +
+            "PROPERTY_KEY VARCHAR(500) not null," +
+            "PROPERTY_VALUE VARCHAR(65535) not null," +
+            "primary key(ENTRY_KEY,PROPERTY_KEY))");
       }
     }
   }
