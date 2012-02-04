@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.db;
 
+import javax.annotation.Nonnull;
+
 /**
  * Thrown from {@link EntryService#getEntry(String)} when passed a key which does not identify an existing entry.
  * 
@@ -11,12 +13,12 @@ public class EntryNotFoundException extends RuntimeException {
 
   private final String key;
 
-  public EntryNotFoundException(final String key) {
+  public EntryNotFoundException(@Nonnull final String key) {
     super("Attempted to retrieve missing entry with key '" + key + "'");
     this.key = key;
   }
 
-  public EntryNotFoundException(final String key, final Throwable cause) {
+  public EntryNotFoundException(@Nonnull final String key, @Nonnull final Throwable cause) {
     super("Attempted to retrieve missing entry with key '" + key + "'", cause);
     this.key = key;
   }

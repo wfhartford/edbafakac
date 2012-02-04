@@ -27,7 +27,6 @@ public class MapEntryService implements EntryService {
 
   @Override
   public Entry getNewEntry(final String key) {
-    Preconditions.checkArgument(null != key);
     final MapEntry newEntry = new MapEntry(key, Maps.<String, String> newHashMap(), this, false);
     if (null != entries.putIfAbsent(key, newEntry.getProperties())) {
       throw new EntryAlreadyExistsException(key);
@@ -37,7 +36,6 @@ public class MapEntryService implements EntryService {
 
   @Override
   public Entry getEntry(final String key) {
-    Preconditions.checkArgument(null != key);
     final ImmutableMap<String, String> entry = entries.get(key);
     if (null == entry) {
       throw new EntryNotFoundException(key);
@@ -47,14 +45,12 @@ public class MapEntryService implements EntryService {
 
   @Override
   public void saveEntry(final Entry entry) {
-    Preconditions.checkArgument(null != entry);
     ((MapEntry) entry).setWriteTime(System.currentTimeMillis());
     saveEntryWithoutUpdatingWriteTime(entry);
   }
 
   @Override
   public void saveEntryWithoutUpdatingWriteTime(final Entry entry) {
-    Preconditions.checkArgument(null != entry);
     Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     entries.put(entry.getKey(), entry.getProperties());
     ((MapEntry) entry).saved();
@@ -62,7 +58,6 @@ public class MapEntryService implements EntryService {
 
   @Override
   public void removeEntry(final String key) {
-    Preconditions.checkArgument(null != key);
     entries.remove(key);
   }
 

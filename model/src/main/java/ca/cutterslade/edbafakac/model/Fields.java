@@ -1,10 +1,9 @@
 package ca.cutterslade.edbafakac.model;
 
-public final class Fields {
+import javax.annotation.Nonnull;
 
-  private Fields() {
-    throw new UnsupportedOperationException();
-  }
+public enum Fields {
+  ;
 
   public static FieldValue getNameField() {
     return BaseField.VALUE_NAME.getValue();
@@ -22,7 +21,7 @@ public final class Fields {
     return BaseField.FIELD_TYPE.getValue();
   }
 
-  public static FieldValue getField(final String key, final RetrieveMode retrieveMode) {
+  public static FieldValue getField(@Nonnull final String key, @Nonnull final RetrieveMode retrieveMode) {
     return (FieldValue) Values.getValue(key, retrieveMode);
   }
 

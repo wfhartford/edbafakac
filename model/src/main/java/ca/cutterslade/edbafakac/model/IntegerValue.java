@@ -2,6 +2,9 @@ package ca.cutterslade.edbafakac.model;
 
 import java.math.BigInteger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 public final class IntegerValue extends Value<IntegerValue> {
@@ -12,15 +15,15 @@ public final class IntegerValue extends Value<IntegerValue> {
     return withValue(BigInteger.valueOf(value));
   }
 
-  public static IntegerValue withValue(final BigInteger value) {
+  public static IntegerValue withValue(@Nullable final BigInteger value) {
     return ((IntegerValue) Types.getIntegerType().getNewValue(null)).setValue(value);
   }
 
-  IntegerValue(final Entry entry, final RetrieveMode retrieveMode) {
+  IntegerValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     super(entry, retrieveMode);
   }
 
-  public IntegerValue setValue(final BigInteger value) {
+  public IntegerValue setValue(@Nullable final BigInteger value) {
     return null == value ? removeProperty(VALUE_KEY) : setProperty(VALUE_KEY, value.toString());
   }
 

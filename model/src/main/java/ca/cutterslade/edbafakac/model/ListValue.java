@@ -2,6 +2,9 @@ package ca.cutterslade.edbafakac.model;
 
 import java.util.Arrays;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
@@ -15,7 +18,7 @@ public final class ListValue extends Value<ListValue> {
 
   private static final String TYPE_KEY = "56ab8c1e-f86a-4617-b342-45a98926a814";
 
-  ListValue(final Entry entry, final RetrieveMode retrieveMode) {
+  ListValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     super(entry, retrieveMode);
   }
 
@@ -23,19 +26,19 @@ public final class ListValue extends Value<ListValue> {
     return (ListValue) BaseType.LIST.getValue().getNewValue(null);
   }
 
-  public static ListValue ofType(final TypeValue type) {
+  public static ListValue ofType(@Nonnull final TypeValue type) {
     return ofValues().setValueType(type.save());
   }
 
-  public static ListValue ofValues(final Value<?>... values) {
+  public static ListValue ofValues(@Nonnull final Value<?>... values) {
     return ofValues().addAll(values);
   }
 
-  public static ListValue ofValues(final Iterable<? extends Value<?>> values) {
+  public static ListValue ofValues(@Nonnull final Iterable<? extends Value<?>> values) {
     return ofValues().addAll(values);
   }
 
-  public static ListValue ofValues(final TypeValue type, final Iterable<? extends Value<?>> values) {
+  public static ListValue ofValues(@Nonnull final TypeValue type, @Nonnull final Iterable<? extends Value<?>> values) {
     return ofType(type).addAll(values);
   }
 
@@ -52,7 +55,7 @@ public final class ListValue extends Value<ListValue> {
     return size;
   }
 
-  public ListValue setValueType(final TypeValue type) {
+  public ListValue setValueType(@Nullable final TypeValue type) {
     if (null == type) {
       removeProperty(TYPE_KEY);
     }
@@ -63,14 +66,13 @@ public final class ListValue extends Value<ListValue> {
     return this;
   }
 
-  ListValue setValueTypeRaw(final String key) {
-    Preconditions.checkArgument(null != key);
+  ListValue setValueTypeRaw(@Nonnull final String key) {
     Preconditions.checkArgument(BaseType.FIELD.getKey().equals(key));
     Preconditions.checkState(0 == getSize(), "Type may only be set on an empty list");
     return setProperty(TYPE_KEY, key);
   }
 
-  public TypeValue getValueType(final RetrieveMode retrieveMode) {
+  public TypeValue getValueType(@Nonnull final RetrieveMode retrieveMode) {
     final String typeKey = getProperty(TYPE_KEY);
     return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, retrieveMode));
   }
@@ -81,13 +83,12 @@ public final class ListValue extends Value<ListValue> {
     return Values.getValue(key, getRetrieveMode());
   }
 
-  public ListValue set(final long position, final Value<?> value) {
+  public ListValue set(final long position, @Nonnull final Value<?> value) {
     checkIndex(position);
     return checkValue(value).setProperty(String.valueOf(position), value.save().getKey());
   }
 
-  private ListValue checkValue(final Value<?> value) {
-    Preconditions.checkArgument(null != value);
+  private ListValue checkValue(@Nonnull final Value<?> value) {
     final TypeValue type = getValueType(RetrieveMode.READ_ONLY);
     if (null != type) {
       Preconditions.checkArgument(value.isInstance(type));
@@ -95,7 +96,7 @@ public final class ListValue extends Value<ListValue> {
     return this;
   }
 
-  public ListValue add(final Value<?> value) {
+  public ListValue add(@Nonnull final Value<?> value) {
     final long size = getSize();
     Preconditions.checkState(Long.MAX_VALUE > size, TOO_LARGE_MESSAGE);
     return checkValue(value)
@@ -103,11 +104,11 @@ public final class ListValue extends Value<ListValue> {
         .setProperty(SIZE_KEY, String.valueOf(size + 1));
   }
 
-  public ListValue addAll(final Value<?>... values) {
+  public ListValue addAll(@Nonnull final Value<?>... values) {
     return addAll(Arrays.asList(values));
   }
 
-  public ListValue addAll(final Iterable<? extends Value<?>> values) {
+  public ListValue addAll(@Nonnull final Iterable<? extends Value<?>> values) {
     long size = getSize();
     Preconditions.checkState(Long.MAX_VALUE - Iterables.size(values) > size, TOO_LARGE_MESSAGE);
     for (final Value<?> value : values) {
@@ -119,14 +120,14 @@ public final class ListValue extends Value<ListValue> {
     return setProperty(SIZE_KEY, String.valueOf(size));
   }
 
-  ListValue addRawValue(final String value) {
+  ListValue addRawValue(@Nonnull final String value) {
     final long size = getSize();
     Preconditions.checkArgument(Long.MAX_VALUE > size, TOO_LARGE_MESSAGE);
     return setProperty(String.valueOf(size), value).
         setProperty(SIZE_KEY, String.valueOf(size + 1));
   }
 
-  public ListValue insert(final long position, final Value<?> value) {
+  public ListValue insert(final long position, @Nonnull final Value<?> value) {
     final long size = getSize();
     Preconditions.checkArgument(Long.MAX_VALUE > size, TOO_LARGE_MESSAGE);
     checkValue(value);
@@ -148,7 +149,7 @@ public final class ListValue extends Value<ListValue> {
     return removeProperty(String.valueOf(size)).setProperty(SIZE_KEY, String.valueOf(size));
   }
 
-  public long indexOf(final Value<?> value) {
+  public long indexOf(@Nonnull final Value<?> value) {
     final String key = value.getKey();
     long index = -1;
     final long size = getSize();
@@ -160,7 +161,7 @@ public final class ListValue extends Value<ListValue> {
     return index;
   }
 
-  public boolean contains(final Value<?> value) {
+  public boolean contains(@Nonnull final Value<?> value) {
     return -1 != indexOf(value);
   }
 

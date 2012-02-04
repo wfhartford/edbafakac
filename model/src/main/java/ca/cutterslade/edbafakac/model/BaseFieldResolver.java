@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
+import javax.annotation.Nonnull;
+
 abstract class BaseFieldResolver {
 
   public static final String UNRESOLVED_PREFIX = "unresolved:";
@@ -8,9 +10,9 @@ abstract class BaseFieldResolver {
     return null != value && value.startsWith(UNRESOLVED_PREFIX);
   }
 
-  String getUnresolvedValue(final String value) {
+  String getUnresolvedValue(@Nonnull final String value) {
     return value.substring(UNRESOLVED_PREFIX.length());
   }
 
-  abstract String resolve(String value);
+  abstract String resolve(@Nonnull String value);
 }

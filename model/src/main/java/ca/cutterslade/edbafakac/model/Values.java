@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.ConcurrentMap;
 
+import javax.annotation.Nonnull;
+
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
@@ -22,15 +24,13 @@ import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimaps;
 
-final class Values {
+enum Values {
+  ;
 
   private static final ConcurrentMap<String, Value<?>> BASE_VALUES = new MapMaker().makeMap();
 
-  private Values() {
-    throw new UnsupportedOperationException();
-  }
-
-  private abstract static class ServiceHolder {
+  private enum ServiceHolder {
+    ;
 
     private static final EntryService ENTRY_SERVICE = ServiceFactory.getInstance().getEntryService();
 
@@ -39,7 +39,8 @@ final class Values {
     }
   }
 
-  private abstract static class Initializer {
+  private enum Initializer {
+    ;
 
     static {
       final ServiceLoader<InitialValueProvider> providerLoader = ServiceLoader.load(InitialValueProvider.class);
@@ -71,15 +72,14 @@ final class Values {
     return ServiceHolder.getEntryService();
   }
 
-  static Value<?> getNewValue(final TypeValue type) {
-    Preconditions.checkArgument(null != type);
+  static Value<?> getNewValue(@Nonnull final TypeValue type) {
     final Entry entry = getEntryService().getNewEntry();
     entry.setProperty(BaseField.VALUE_TYPE.getKey(), type.getKey());
     entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getValue().getRawValue(type));
     return Value.getInstance(entry, RetrieveMode.READ_WRITE);
   }
 
-  static Value<?> getValue(final String key, final RetrieveMode retrieveMode) {
+  static Value<?> getValue(@Nonnull final String key, @Nonnull final RetrieveMode retrieveMode) {
     Initializer.init();
     Value<?> value = BASE_VALUES.get(key);
     if (null == value) {
@@ -98,7 +98,7 @@ final class Values {
     return value;
   }
 
-  static Value<?> getValue(final String key, final String defaultResource) {
+  static Value<?> getValue(@Nonnull final String key, final String defaultResource) {
     Value<?> value;
     try {
       value = getValue(key, RetrieveMode.READ_ONLY);
@@ -117,7 +117,7 @@ final class Values {
     return value;
   }
 
-  private static Entry readBaseEntry(final String key, final String defaultResource) {
+  private static Entry readBaseEntry(@Nonnull final String key, @Nonnull final String defaultResource) {
     try {
       final ImmutableMap<String, String> values = PropertiesUtils.loadProperties(Values.class, defaultResource);
       final Entry entry = getEntryService().getNewEntry(key);

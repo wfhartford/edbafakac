@@ -2,6 +2,9 @@ package ca.cutterslade.edbafakac.model;
 
 import java.math.BigDecimal;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 public final class DecimalValue extends Value<DecimalValue> {
@@ -16,15 +19,15 @@ public final class DecimalValue extends Value<DecimalValue> {
     return withValue(BigDecimal.valueOf(value));
   }
 
-  public static DecimalValue withValue(final BigDecimal value) {
+  public static DecimalValue withValue(@Nullable final BigDecimal value) {
     return ((DecimalValue) Types.getDecimalType().getNewValue(null)).setValue(value);
   }
 
-  DecimalValue(final Entry entry, final RetrieveMode retrieveMode) {
+  DecimalValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     super(entry, retrieveMode);
   }
 
-  public DecimalValue setValue(final BigDecimal value) {
+  public DecimalValue setValue(@Nullable final BigDecimal value) {
     return null == value ? removeProperty(VALUE_KEY) : setProperty(VALUE_KEY, value.toString());
   }
 

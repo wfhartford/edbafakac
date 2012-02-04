@@ -28,7 +28,6 @@ public class EntityEntryService implements EntryService {
 
   @Override
   public Entry getNewEntry(final String key) {
-    Preconditions.checkArgument(null != key);
     try {
       datastoreService.get(KeyFactory.createKey(EntityEntry.class.getName(), key));
       throw new EntryAlreadyExistsException(key);
@@ -42,7 +41,6 @@ public class EntityEntryService implements EntryService {
 
   @Override
   public Entry getEntry(final String key) {
-    Preconditions.checkArgument(null != key);
     try {
       return new EntityEntry(datastoreService.get(KeyFactory.createKey(EntityEntry.class.getName(), key)), this, false);
     }
@@ -53,7 +51,6 @@ public class EntityEntryService implements EntryService {
 
   @Override
   public void saveEntry(final Entry entry) {
-    Preconditions.checkArgument(null != entry);
     ((EntityEntry) entry).setWriteTime(System.currentTimeMillis());
     saveEntryWithoutUpdatingWriteTime(entry);
     datastoreService.put(((EntityEntry) entry).getEntity());
@@ -62,7 +59,6 @@ public class EntityEntryService implements EntryService {
 
   @Override
   public void saveEntryWithoutUpdatingWriteTime(final Entry entry) {
-    Preconditions.checkArgument(null != entry);
     Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     datastoreService.put(((EntityEntry) entry).getEntity());
     ((EntityEntry) entry).saved();
@@ -70,7 +66,6 @@ public class EntityEntryService implements EntryService {
 
   @Override
   public void removeEntry(final String key) {
-    Preconditions.checkArgument(null != key);
     datastoreService.delete(KeyFactory.createKey(EntityEntry.class.getName(), key));
   }
 

@@ -2,6 +2,8 @@ package ca.cutterslade.edbafakac.db;
 
 import java.util.ServiceLoader;
 
+import javax.annotation.Nonnull;
+
 /**
  * Provides instances of this package's service interfaces. An application should usually only deal with a single
  * instance of this class, and should probably only call its get methods once.
@@ -16,7 +18,7 @@ public final class ServiceFactory {
 
   private EntryService entryService;
 
-  private ServiceFactory(final EntryService entryService) {
+  private ServiceFactory(@Nonnull final EntryService entryService) {
     this.entryService = entryService;
   }
 
@@ -43,7 +45,7 @@ public final class ServiceFactory {
    * @param service
    *          The {@link EntryService} to be returned by future instances of {@link ServiceFactory}
    */
-  public static void setDefaultEntryService(final EntryService service) {
+  public static void setDefaultEntryService(@Nonnull final EntryService service) {
     defaultEntryService = service;
   }
 

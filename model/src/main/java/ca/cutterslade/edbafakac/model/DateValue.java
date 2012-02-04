@@ -6,6 +6,9 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
@@ -16,19 +19,19 @@ public final class DateValue extends Value<DateValue> {
 
   private static final String ZONE_KEY = "999a2b99-c0bb-4bcb-912d-02a3f043f3e2";
 
-  public static DateValue withTime(final Calendar calendar) {
+  public static DateValue withTime(@Nullable final Calendar calendar) {
     return ((DateValue) Types.getDateType().getNewValue(null)).setValue(calendar);
   }
 
-  public static DateValue withTime(final Date date, final TimeZone zone) {
+  public static DateValue withTime(@Nullable final Date date, @Nullable final TimeZone zone) {
     return ((DateValue) Types.getDateType().getNewValue(null)).setValue(date, zone);
   }
 
-  DateValue(final Entry entry, final RetrieveMode retrieveMode) {
+  DateValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     super(entry, retrieveMode);
   }
 
-  public DateValue setValue(final Date date, final TimeZone zone) {
+  public DateValue setValue(@Nullable final Date date, @Nullable final TimeZone zone) {
     Preconditions.checkArgument((null == date) == (null == zone), "date and zone must have equal nullity");
     Preconditions.checkArgument(null == zone || zone.equals(TimeZone.getTimeZone(zone.getID())),
         "zone must be equal to that retrieved by its ID");
@@ -36,7 +39,7 @@ public final class DateValue extends Value<DateValue> {
         setProperty(TIME_KEY, String.valueOf(date.getTime())).setProperty(ZONE_KEY, zone.getID());
   }
 
-  public DateValue setValue(final Calendar calendar) {
+  public DateValue setValue(@Nullable final Calendar calendar) {
     return null == calendar ? setValue(null, null) : setValue(calendar.getTime(), calendar.getTimeZone());
   }
 
@@ -50,7 +53,7 @@ public final class DateValue extends Value<DateValue> {
     return null == value ? null : TimeZone.getTimeZone(value);
   }
 
-  public Calendar getCalendar(final Locale locale) {
+  public Calendar getCalendar(@Nullable final Locale locale) {
     final Date date = getDate();
     final Calendar calendar;
     if (null == date) {

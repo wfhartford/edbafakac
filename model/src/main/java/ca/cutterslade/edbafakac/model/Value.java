@@ -2,6 +2,9 @@ package ca.cutterslade.edbafakac.model;
 
 import java.lang.reflect.InvocationTargetException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 
@@ -34,9 +37,7 @@ public abstract class Value<T extends Value<T>> {
     }
   }
 
-  Value(final Entry entry, final RetrieveMode retrieveMode) {
-    Preconditions.checkArgument(null != entry);
-    Preconditions.checkArgument(null != retrieveMode);
+  Value(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     this.entry = entry;
     this.retrieveMode = retrieveMode;
     final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
@@ -53,7 +54,7 @@ public abstract class Value<T extends Value<T>> {
     return entry.getKey();
   }
 
-  final String getProperty(final String propertyName) {
+  final String getProperty(@Nonnull final String propertyName) {
     String value = entry.getProperty(propertyName);
     if (isBaseValue()) {
       final BaseFieldResolver resolver = BaseField.getResolver(propertyName);
@@ -65,7 +66,7 @@ public abstract class Value<T extends Value<T>> {
     return value;
   }
 
-  final Iterable<String> getUnknownPropertyKeys(final String... ignore) {
+  final Iterable<String> getUnknownPropertyKeys(@Nullable final String... ignore) {
     final ImmutableSet.Builder<String> notIncluded = ImmutableSet.builder();
     if (null != ignore) {
       notIncluded.add(ignore);
@@ -79,20 +80,19 @@ public abstract class Value<T extends Value<T>> {
     return getThis();
   }
 
-  final T removeProperty(final String propertyName) {
+  final T removeProperty(@Nonnull final String propertyName) {
     checkWritable();
     entry.removeProperty(propertyName);
     return getThis();
   }
 
-  final T setProperty(final String propertyName, final String value) {
+  final T setProperty(@Nonnull final String propertyName, @Nonnull final String value) {
     checkWritable();
-    Preconditions.checkArgument(null != value);
     entry.setProperty(propertyName, value);
     return getThis();
   }
 
-  final T setPropertyIfMissing(final String propertyName, final String value) {
+  final T setPropertyIfMissing(@Nonnull final String propertyName, @Nonnull final String value) {
     checkWritable();
     if (!entry.hasProperty(propertyName)) {
       setProperty(propertyName, value);
@@ -122,11 +122,11 @@ public abstract class Value<T extends Value<T>> {
     return getThis();
   }
 
-  void onBeforeSave(final ImmutableMap<String, String> previouslyRead,
-      final ImmutableMap<String, String> justRead, final ImmutableMap<String, String> toWrite) {
+  void onBeforeSave(@Nonnull final ImmutableMap<String, String> previouslyRead,
+      @Nullable final ImmutableMap<String, String> justRead, @Nonnull final ImmutableMap<String, String> toWrite) {
   }
 
-  public final boolean isInstance(final TypeValue type) {
+  public final boolean isInstance(@Nonnull final TypeValue type) {
     return getType(RetrieveMode.READ_ONLY).getKey().equals(type.getKey());
   }
 
@@ -145,23 +145,24 @@ public abstract class Value<T extends Value<T>> {
     return asReadOnly;
   }
 
-  public final StringValue getName(final RetrieveMode retrieveMode) {
+  public final StringValue getName(@Nonnull final RetrieveMode retrieveMode) {
     return (StringValue) getFieldValue(Fields.getNameField(), retrieveMode);
   }
 
-  public final TypeValue getType(final RetrieveMode retrieveMode) {
+  public final TypeValue getType(@Nonnull final RetrieveMode retrieveMode) {
     return (TypeValue) getFieldValue(Fields.getTypeField(), retrieveMode);
   }
 
-  public final ListValue getFields(final RetrieveMode retrieveMode) {
+  public final ListValue getFields(@Nonnull final RetrieveMode retrieveMode) {
     return (ListValue) getType(RetrieveMode.READ_ONLY).getFieldValue(Fields.getTypeFieldsField(), retrieveMode);
   }
 
-  public final Value<?> getFieldValue(final FieldValue field, final RetrieveMode retrieveMode) {
+  public final Value<?> getFieldValue(@Nonnull final FieldValue field, @Nonnull final RetrieveMode retrieveMode) {
     return field.getValue(this, retrieveMode);
   }
 
-  public final T setFieldValue(final FieldValue field, final Value<?> value) {
+  public final T setFieldValue(@Nonnull final FieldValue field, @Nonnull final Value<?> value) {
+    checkWritable();
     field.setValue(this, value.save()).save();
     return getThis();
   }

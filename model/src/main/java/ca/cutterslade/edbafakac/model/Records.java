@@ -1,12 +1,11 @@
 package ca.cutterslade.edbafakac.model;
 
-public final class Records {
+import javax.annotation.Nonnull;
 
-  private Records() {
-    throw new UnsupportedOperationException();
-  }
+public enum Records {
+  ;
 
-  public static RecordValue getRecord(final String key, final RetrieveMode retrieveMode) {
+  public static RecordValue getRecord(@Nonnull final String key, @Nonnull final RetrieveMode retrieveMode) {
     return (RecordValue) Values.getValue(key, retrieveMode);
   }
 }

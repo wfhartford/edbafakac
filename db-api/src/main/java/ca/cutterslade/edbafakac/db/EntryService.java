@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.db;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -25,7 +27,7 @@ public interface EntryService {
    * @throws EntryAlreadyExistsException
    *           If an entry already exists with the specified key
    */
-  Entry getNewEntry(String key);
+  Entry getNewEntry(@Nonnull String key);
 
   /**
    * Retrieve an entry from the database.
@@ -36,7 +38,7 @@ public interface EntryService {
    * @throws EntryNotFoundException
    *           If the provided key does not locate an existing entry
    */
-  Entry getEntry(String key);
+  Entry getEntry(@Nonnull String key);
 
   /**
    * Save an entry to the database.
@@ -44,7 +46,7 @@ public interface EntryService {
    * @param entry
    *          The entry to save
    */
-  void saveEntry(Entry entry);
+  void saveEntry(@Nonnull Entry entry);
 
   /**
    * Save an entry to the database without adjusting its write time;
@@ -52,7 +54,7 @@ public interface EntryService {
    * @param entry
    *          The entry to save
    */
-  void saveEntryWithoutUpdatingWriteTime(Entry entry);
+  void saveEntryWithoutUpdatingWriteTime(@Nonnull Entry entry);
 
   /**
    * Remove an entry from the database. After being removed, the entry may be re-added by calling
@@ -61,7 +63,7 @@ public interface EntryService {
    * @param key
    *          The key of the entry to remove
    */
-  void removeEntry(String key);
+  void removeEntry(@Nonnull String key);
 
   /**
    * Get the {@link EntryService} implementation's reserved keys. This method must return the same set of keys over the

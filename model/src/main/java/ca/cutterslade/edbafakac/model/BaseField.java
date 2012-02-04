@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 
@@ -44,7 +46,7 @@ enum BaseField implements InitialValue {
 
   private final BaseFieldResolver resolver;
 
-  private BaseField(final String key, final BaseFieldResolver resolver) {
+  private BaseField(@Nonnull final String key, final BaseFieldResolver resolver) {
     this.key = key;
     this.resolver = resolver;
   }
@@ -58,7 +60,7 @@ enum BaseField implements InitialValue {
     return key;
   }
 
-  static BaseField getBaseField(final String key) {
+  static BaseField getBaseField(@Nonnull final String key) {
     return FIELDS_BY_KEY.get(key);
   }
 
@@ -66,7 +68,7 @@ enum BaseField implements InitialValue {
     return FIELDS_BY_KEY.keySet();
   }
 
-  static BaseFieldResolver getResolver(final String key) {
+  static BaseFieldResolver getResolver(@Nonnull final String key) {
     final BaseField baseField = FIELDS_BY_KEY.get(key);
     return null == baseField ? null : baseField.getResolver();
   }

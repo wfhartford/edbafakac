@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Map;
+
+import javax.annotation.Nonnull;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
@@ -31,25 +34,23 @@ public final class Entries {
     throw new UnsupportedOperationException();
   }
 
-  public static void exportEntries(final Iterable<? extends Entry> entries,
-      final OutputSupplier<? extends OutputStream> stream) throws IOException {
-    final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(stream.getOutput(), Charsets.UTF_8));
-    try {
+  public static void exportEntries(@Nonnull final Iterable<? extends Entry> entries,
+      @Nonnull final OutputSupplier<? extends OutputStream> stream) throws IOException {
+    try (final OutputStream output = stream.getOutput();
+        final Writer writer = new OutputStreamWriter(output, Charsets.UTF_8);
+        final BufferedWriter bufferedWriter = new BufferedWriter(writer);) {
       exportEntries(entries, writer);
-    }
-    finally {
-      writer.close();
     }
   }
 
-  public static void exportEntries(final Iterable<? extends Entry> entries, final Appendable writer)
+  public static void exportEntries(@Nonnull final Iterable<? extends Entry> entries, @Nonnull final Appendable writer)
       throws IOException {
     for (final Entry entry : entries) {
       exportEntry(entry, writer);
     }
   }
 
-  public static String exportEntry(final Entry entry) {
+  public static String exportEntry(@Nonnull final Entry entry) {
     try {
       return exportEntry(entry, new StringBuilder()).toString();
     }
@@ -59,7 +60,8 @@ public final class Entries {
     }
   }
 
-  public static <T extends Appendable> T exportEntry(final Entry entry, final T builder) throws IOException {
+  public static <T extends Appendable> T exportEntry(@Nonnull final Entry entry, @Nonnull final T builder)
+      throws IOException {
     toCsvValue(builder, entry.getKey());
     for (final Map.Entry<String, String> property : entry.getProperties().entrySet()) {
       builder.append(',');
@@ -72,7 +74,7 @@ public final class Entries {
   }
 
   @SuppressWarnings("PMD.MissingBreakInSwitch")
-  private static void toCsvValue(final Appendable builder, final String value) throws IOException {
+  private static void toCsvValue(@Nonnull final Appendable builder, @Nonnull final String value) throws IOException {
     // CSOFF: ModifiedControlVariable
     for (final char cha : value.toCharArray()) {
       // CSOFF: FallThrough
@@ -89,8 +91,8 @@ public final class Entries {
     // CSON: ModifiedControlVariable
   }
 
-  public static ImmutableList<String> importEntries(final EntryService service,
-      final InputSupplier<? extends InputStream> stream) throws IOException {
+  public static ImmutableList<String> importEntries(@Nonnull final EntryService service,
+      @Nonnull final InputSupplier<? extends InputStream> stream) throws IOException {
     try (final InputStream input = stream.getInput();
         final InputStreamReader streamReader = new InputStreamReader(input, Charsets.UTF_8);
         final BufferedReader reader = new BufferedReader(streamReader);) {
@@ -102,7 +104,8 @@ public final class Entries {
     }
   }
 
-  public static ImmutableList<String> importEntries(final EntryService service, final Iterable<String> entries) {
+  public static ImmutableList<String> importEntries(@Nonnull final EntryService service,
+      @Nonnull final Iterable<String> entries) {
     final ImmutableList.Builder<String> builder = ImmutableList.builder();
     for (final String entry : entries) {
       builder.add(importEntry(service, entry).getKey());
@@ -110,7 +113,7 @@ public final class Entries {
     return builder.build();
   }
 
-  public static Entry importEntry(final EntryService service, final String entry) {
+  public static Entry importEntry(@Nonnull final EntryService service, @Nonnull final String entry) {
     final StringBuilder builder = new StringBuilder();
     int position = fromCsvValue(entry, builder, 0);
     final Entry newEntry = service.getNewEntry(builder.toString());
@@ -138,7 +141,8 @@ public final class Entries {
     return newEntry;
   }
 
-  private static int fromCsvValue(final String entry, final StringBuilder builder, final int startPosition) {
+  private static int fromCsvValue(@Nonnull final String entry, @Nonnull final StringBuilder builder,
+      final int startPosition) {
     Preconditions.checkArgument(0 <= startPosition);
     boolean escaped = false;
     int endPosition = -1;

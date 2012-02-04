@@ -1,20 +1,22 @@
 package ca.cutterslade.edbafakac.model;
 
+import javax.annotation.Nonnull;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.base.Preconditions;
 
 public final class FieldValue extends Value<FieldValue> {
 
-  FieldValue(final Entry entry, final RetrieveMode retrieveMode) {
+  FieldValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     super(entry, retrieveMode);
   }
 
-  public TypeValue getFieldType(final RetrieveMode retrieveMode) {
+  public TypeValue getFieldType(@Nonnull final RetrieveMode retrieveMode) {
     return (TypeValue) BaseField.FIELD_TYPE.getValue().getValue(this, retrieveMode);
   }
 
-  public Value<?> getValue(final Value<?> value, final RetrieveMode retrieveMode) {
+  public Value<?> getValue(@Nonnull final Value<?> value, @Nonnull final RetrieveMode retrieveMode) {
     Preconditions.checkArgument(RetrieveMode.READ_ONLY == retrieveMode || !value.isReadOnly(),
         "Cannot provide writable field value from read only value");
     checkValueFields(value);
@@ -22,7 +24,7 @@ public final class FieldValue extends Value<FieldValue> {
     return null == rawValue ? null : Values.getValue(rawValue, retrieveMode);
   }
 
-  private void checkValueFields(final Value<?> value) {
+  private void checkValueFields(@Nonnull final Value<?> value) {
     // Check that the value could possibly contain the field
     // we have to omit a few things from this check because the could cause a stack overflow
 
@@ -36,7 +38,7 @@ public final class FieldValue extends Value<FieldValue> {
     }
   }
 
-  public FieldValue setValue(final Value<?> targetValue, final Value<?> fieldValue) {
+  public FieldValue setValue(@Nonnull final Value<?> targetValue, @Nonnull final Value<?> fieldValue) {
     checkValueFields(targetValue);
     final TypeValue fieldType = save().getFieldType(RetrieveMode.READ_ONLY);
     if (getKey().equals(BaseField.VALUE_TYPE.getKey())) {
@@ -50,11 +52,11 @@ public final class FieldValue extends Value<FieldValue> {
     return setRawValue(targetValue.save(), fieldValue.save().getKey());
   }
 
-  String getRawValue(final Value<?> value) {
+  String getRawValue(@Nonnull final Value<?> value) {
     return value.getProperty(getKey());
   }
 
-  FieldValue setRawValue(final Value<?> targetValue, final String rawValue) {
+  FieldValue setRawValue(@Nonnull final Value<?> targetValue, @Nonnull final String rawValue) {
     targetValue.save().setProperty(getKey(), rawValue);
     return this;
   }

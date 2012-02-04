@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.db;
 
+import javax.annotation.Nonnull;
+
 /**
  * Thrown from {@link EntryService#getNewEntry(String)} to indicate that the provided key points to an existing entry.
  * 
@@ -11,7 +13,7 @@ public class EntryAlreadyExistsException extends RuntimeException {
 
   private final String key;
 
-  public EntryAlreadyExistsException(final String key) {
+  public EntryAlreadyExistsException(@Nonnull final String key) {
     super("Attempted to create a new entry specifying already used key '" + key + "'");
     this.key = key;
   }

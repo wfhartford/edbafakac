@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
+import javax.annotation.Nonnull;
+
 import com.google.common.collect.ImmutableMap;
 
 enum BaseValue implements InitialValue {
@@ -17,7 +19,7 @@ enum BaseValue implements InitialValue {
 
   private final String key;
 
-  private BaseValue(final String key) {
+  private BaseValue(@Nonnull final String key) {
     this.key = key;
   }
 
@@ -30,7 +32,7 @@ enum BaseValue implements InitialValue {
     return Values.getValue(key, BaseValue.class.getSimpleName() + '.' + toString() + ".properties");
   }
 
-  public static BaseValue getBaseValue(final String key) {
+  public static BaseValue getBaseValue(@Nonnull final String key) {
     return VALUES_BY_KEY.get(key);
   }
 }
