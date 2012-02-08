@@ -2,6 +2,7 @@ package ca.cutterslade.edbafakac.db;
 
 import javax.annotation.Nonnull;
 
+
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -72,5 +73,9 @@ public interface EntryService {
    * @return The keys reserved by the EntryService implementation, including {@link Entry#WRITE_TIME_KEY}
    */
   ImmutableSet<String> getReservedKeys();
+
+  Iterable<Entry> search(@Nonnull SearchTerm term);
+
+  Iterable<String> searchForKeys(@Nonnull SearchTerm term);
 
 }

@@ -1,6 +1,7 @@
 package ca.cutterslade.edbafakac.core;
 
 import ca.cutterslade.edbafakac.model.InitialValue;
+import ca.cutterslade.edbafakac.model.Value;
 
 public enum CoreType implements InitialValue {
   USER,
@@ -13,5 +14,11 @@ public enum CoreType implements InitialValue {
   INPUT_FORM,
   SEARCH_PROMPT,
   SEARCH_FORM,
-  LIST_COLUMN,
+  LIST_COLUMN;
+
+  @Override
+  public Value<?> getValue() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("getValue has not been implemented");
+  }
 }

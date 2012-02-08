@@ -2,9 +2,14 @@ package ca.cutterslade.edbafakac.model;
 
 import java.util.Locale;
 
-import ca.cutterslade.edbafakac.db.Entry;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-import com.google.common.base.Preconditions;
+import ca.cutterslade.edbafakac.db.Entry;
+import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.search.SearchTerms;
+
+import com.google.common.collect.ImmutableList;
 
 public final class StringValue extends Value<StringValue> {
 
@@ -12,17 +17,17 @@ public final class StringValue extends Value<StringValue> {
 
   private static final String SIMPLE_KEY = "9492132b-233c-4e62-8155-61f9c7e23c3a";
 
-  StringValue(final Entry entry, final RetrieveMode retrieveMode) {
+  StringValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
     super(entry, retrieveMode);
   }
 
-  public static StringValue withBase(final String baseValue, final boolean simple) {
+  public static StringValue withBase(@Nonnull final String baseValue, final boolean simple) {
     return ((StringValue) BaseType.STRING.getValue().getNewValue(null))
         .setSimple(simple)
         .setBaseValue(baseValue);
   }
 
-  public static StringValue withValue(final String value, final Locale locale) {
+  public static StringValue withValue(@Nonnull final String value, @Nonnull final Locale locale) {
     return ((StringValue) BaseType.STRING.getValue().getNewValue(null))
         .setValue(value, locale);
   }
@@ -48,37 +53,46 @@ public final class StringValue extends Value<StringValue> {
     return Boolean.parseBoolean(getProperty(SIMPLE_KEY));
   }
 
-  public StringValue setValue(final String value, final Locale locale) {
+  public StringValue setValue(@Nullable final String value, @Nonnull final Locale locale) {
     if (isSimple()) {
-      setBaseValue(value);
+      if (null != value) {
+        setBaseValue(value);
+      }
     }
     else if (null == value) {
       removeProperty(locale.toString());
     }
     else {
-      setProperty(locale.toString(), value);
-      for (Locale parent = getParent(locale); null != parent; parent = getParent(parent)) {
-        setPropertyIfMissing(parent.toString(), value);
+      boolean force = true;
+      for (final String loc : getLocaleChain(locale)) {
+        if (force) {
+          setProperty(loc, value);
+          force = false;
+        }
+        else {
+          setPropertyIfMissing(loc, value);
+        }
       }
-      setPropertyIfMissing(BASE_VALUE_KEY, value);
     }
     return this;
   }
 
-  public StringValue setBaseValue(final String value) {
-    Preconditions.checkArgument(null != value || isSimple(), "Base value cannot be unset");
-    return null == value ? removeProperty(BASE_VALUE_KEY) : setProperty(BASE_VALUE_KEY, value);
+  public StringValue setBaseValue(@Nonnull final String value) {
+    return setProperty(BASE_VALUE_KEY, value);
   }
 
-  public String getValue(final Locale locale) {
+  public String getValue(@Nonnull final Locale locale) {
     String value = null;
-    if (!isSimple()) {
-      for (Locale loc = locale; null != loc && null == value; loc = getParent(loc)) {
-        value = getProperty(loc.toString());
-      }
-    }
-    if (null == value) {
+    if (isSimple()) {
       value = getBaseValue();
+    }
+    else {
+      for (final String loc : getLocaleChain(locale)) {
+        value = getProperty(loc);
+        if (null != value) {
+          break;
+        }
+      }
     }
     return value;
   }
@@ -87,7 +101,20 @@ public final class StringValue extends Value<StringValue> {
     return getProperty(BASE_VALUE_KEY);
   }
 
-  private Locale getParent(final Locale locale) {
+  public static SearchTerm exactValueSearchTerm(@Nonnull final String value, @Nonnull final Locale locale) {
+    return SearchTerms.anyFieldValue(value, getLocaleChain(locale));
+  }
+
+  private static ImmutableList<String> getLocaleChain(@Nonnull final Locale locale) {
+    final ImmutableList.Builder<String> builder = ImmutableList.builder();
+    for (Locale loc = locale; null != loc; loc = getParent(loc)) {
+      builder.add(loc.toString());
+    }
+    builder.add(BASE_VALUE_KEY);
+    return builder.build();
+  }
+
+  private static Locale getParent(@Nonnull final Locale locale) {
     final Locale parent;
     if (locale.getCountry().isEmpty()) {
       parent = null;

@@ -1,24 +1,105 @@
 package ca.cutterslade.edbafakac.db.mem;
 
+import java.util.Iterator;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
+import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicates;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 public class MapEntryService implements EntryService {
 
   private static final ImmutableSet<String> RESERVED_KEYS = ImmutableSet.of(Entry.WRITE_TIME_KEY);
 
+  private final class FieldValueSearchResult implements Iterable<String> {
+
+    private final Object resultsMutex = new Object();
+
+    private final Object dirtyMutex = new Object();
+
+    private final FieldValueSearchTerm term;
+
+    private final Set<String> results = Sets.newHashSet();
+
+    private Set<String> dirtyEntries = Sets.newHashSet(entries.keySet());
+
+    public FieldValueSearchResult(final FieldValueSearchTerm term) {
+      this.term = term;
+    }
+
+    public ImmutableSet<String> getResults() {
+      synchronized (resultsMutex) {
+        refreshDirtyEntries();
+        return ImmutableSet.copyOf(results);
+      }
+    }
+
+    private void refreshDirtyEntries() {
+      final Set<String> dirty;
+      synchronized (dirtyMutex) {
+        dirty = dirtyEntries;
+        dirtyEntries = Sets.newHashSet();
+      }
+      for (final String key : dirty) {
+        results.remove(key);
+        final ImmutableMap<String, String> values = entries.get(key);
+        if (null != values) {
+          for (final String field : term.getFieldKeys()) {
+            if (term.getValue().equals(values.get(field))) {
+              results.add(key);
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    public void addDirtyEntry(final String key) {
+      synchronized (dirtyMutex) {
+        dirtyEntries.add(key);
+      }
+    }
+
+    @Override
+    public Iterator<String> iterator() {
+      return getResults().iterator();
+    }
+
+  }
+
   private final ConcurrentMap<String, ImmutableMap<String, String>> entries = new MapMaker().makeMap();
+
+  private final LoadingCache<FieldValueSearchTerm, FieldValueSearchResult> fieldValueSearchResultCache =
+      CacheBuilder.newBuilder().build(new CacheLoader<FieldValueSearchTerm, FieldValueSearchResult>() {
+
+        @Override
+        public FieldValueSearchResult load(final FieldValueSearchTerm key) {
+          return new FieldValueSearchResult(key);
+        }
+      });
+
+  private final ReadWriteLock searchTermLock = new ReentrantReadWriteLock();
 
   @Override
   public Entry getNewEntry() {
@@ -31,6 +112,7 @@ public class MapEntryService implements EntryService {
     if (null != entries.putIfAbsent(key, newEntry.getProperties())) {
       throw new EntryAlreadyExistsException(key);
     }
+    addDirtyEntryKey(key);
     return newEntry;
   }
 
@@ -54,6 +136,7 @@ public class MapEntryService implements EntryService {
     Preconditions.checkArgument(entry.hasProperty(Entry.WRITE_TIME_KEY));
     entries.put(entry.getKey(), entry.getProperties());
     ((MapEntry) entry).saved();
+    addDirtyEntryKey(entry.getKey());
   }
 
   @Override
@@ -68,6 +151,61 @@ public class MapEntryService implements EntryService {
 
   public void clear() {
     entries.clear();
+  }
+
+  @Override
+  public Iterable<Entry> search(final SearchTerm term) {
+    return Iterables.filter(Iterables.transform(searchForKeys(term), new Function<String, Entry>() {
+
+      @Override
+      public Entry apply(final String input) {
+        Entry entry;
+        if (null == input) {
+          entry = null;
+        }
+        else {
+          try {
+            entry = getEntry(input);
+          }
+          catch (final EntryNotFoundException e) {
+            entry = null;
+          }
+        }
+        return entry;
+      }
+    }), Predicates.notNull());
+  }
+
+  @Override
+  public Iterable<String> searchForKeys(final SearchTerm term) {
+    final Iterable<String> results;
+    if (term instanceof FieldValueSearchTerm) {
+      final Lock lock = searchTermLock.writeLock();
+      lock.lock();
+      try {
+        results = fieldValueSearchResultCache.getUnchecked((FieldValueSearchTerm) term);
+      }
+      finally {
+        lock.unlock();
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("Unsupported search term type: " + term);
+    }
+    return results;
+  }
+
+  private void addDirtyEntryKey(final String key) {
+    final Lock lock = searchTermLock.readLock();
+    lock.lock();
+    try {
+      for (final FieldValueSearchResult result : fieldValueSearchResultCache.asMap().values()) {
+        result.addDirtyEntry(key);
+      }
+    }
+    finally {
+      lock.unlock();
+    }
   }
 
 }
