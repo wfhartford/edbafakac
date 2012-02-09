@@ -8,9 +8,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.SearchTerm;
 
-import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 public class FieldValueSearchTerm implements SearchTerm {
 
@@ -28,7 +26,14 @@ public class FieldValueSearchTerm implements SearchTerm {
 
   @Override
   public boolean matches(final Entry entry, final SearchService service) {
-    return Iterables.any(Iterables.transform(fieldKeys, new PropertyValueFunction(entry)), Predicates.in(values));
+    boolean match = false;
+    for (final String key : fieldKeys) {
+      if (values.contains(entry.getProperty(key))) {
+        match = true;
+        break;
+      }
+    }
+    return match;
   }
 
   public ImmutableSet<String> getFieldKeys() {
@@ -45,6 +50,7 @@ public class FieldValueSearchTerm implements SearchTerm {
   }
 
   @Override
+  @SuppressWarnings({ "PMD.OnlyOneReturn", "PMD.NPathComplexity", "PMD.CyclomaticComplexity" })
   public boolean equals(final Object obj) {
     if (this == obj) {
       return true;

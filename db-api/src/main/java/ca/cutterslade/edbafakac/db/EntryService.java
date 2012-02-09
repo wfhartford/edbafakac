@@ -2,7 +2,6 @@ package ca.cutterslade.edbafakac.db;
 
 import javax.annotation.Nonnull;
 
-
 import com.google.common.collect.ImmutableSet;
 
 /**
@@ -74,8 +73,5 @@ public interface EntryService {
    */
   ImmutableSet<String> getReservedKeys();
 
-  Iterable<Entry> search(@Nonnull SearchTerm term);
-
-  Iterable<String> searchForKeys(@Nonnull SearchTerm term);
-
+  SearchService getSearchService();
 }

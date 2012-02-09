@@ -16,8 +16,8 @@ public class ReferencesMatchSearchTerm implements SearchTerm {
 
   private final int hash;
 
-  public ReferencesMatchSearchTerm(final String referenceFieldKey, final SearchTerm term) {
-    this.referenceFieldKeys = ImmutableSet.of(referenceFieldKey);
+  public ReferencesMatchSearchTerm(final Iterable<String> referenceFieldKeys, final SearchTerm term) {
+    this.referenceFieldKeys = ImmutableSet.copyOf(referenceFieldKeys);
     this.term = term;
     hash = Objects.hash(referenceFieldKeys, term);
   }
@@ -28,12 +28,21 @@ public class ReferencesMatchSearchTerm implements SearchTerm {
     return new FieldValueSearchTerm(referenceFieldKeys, keys).matches(entry, service);
   }
 
+  protected ImmutableSet<String> getReferenceFieldKeys() {
+    return referenceFieldKeys;
+  }
+
+  protected SearchTerm getTerm() {
+    return term;
+  }
+
   @Override
   public int hashCode() {
     return hash;
   }
 
   @Override
+  @SuppressWarnings({ "PMD.OnlyOneReturn", "PMD.NPathComplexity", "PMD.CyclomaticComplexity" })
   public boolean equals(final Object obj) {
     if (this == obj) {
       return true;
@@ -69,7 +78,7 @@ public class ReferencesMatchSearchTerm implements SearchTerm {
 
   @Override
   public String toString() {
-    return referenceFieldKeys.iterator().next() + " references " + term;
+    return referenceFieldKeys + " references(" + term + ")";
   }
 
 }

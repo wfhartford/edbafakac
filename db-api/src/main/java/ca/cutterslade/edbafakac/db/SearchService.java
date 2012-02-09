@@ -20,6 +20,8 @@ public interface SearchService {
 
   SearchTerm referencesMatch(@Nonnull String fieldKey, @Nonnull SearchTerm term);
 
+  SearchTerm referencesMatch(@Nonnull Iterable<String> fieldKeys, @Nonnull SearchTerm term);
+
   SearchTerm fieldValue(@Nonnull String fieldKey, @Nonnull String... values);
 
   SearchTerm fieldValue(@Nonnull String fieldKey, @Nonnull Iterable<String> values);

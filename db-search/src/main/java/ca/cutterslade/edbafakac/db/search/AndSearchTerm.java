@@ -11,7 +11,6 @@ import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.SearchTerm;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 
 public class AndSearchTerm implements CompositeSearchTerm {
 
@@ -26,7 +25,14 @@ public class AndSearchTerm implements CompositeSearchTerm {
 
   @Override
   public boolean matches(final Entry entry, final SearchService service) {
-    return Iterables.all(terms, SearchTerms.entryPredicate(entry, service));
+    boolean match = true;
+    for (final SearchTerm term : terms) {
+      if (!term.matches(entry, service)) {
+        match = false;
+        break;
+      }
+    }
+    return match;
   }
 
   @Override
@@ -45,6 +51,7 @@ public class AndSearchTerm implements CompositeSearchTerm {
   }
 
   @Override
+  @SuppressWarnings("PMD.OnlyOneReturn")
   public boolean equals(final Object obj) {
     if (this == obj) {
       return true;

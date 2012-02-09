@@ -1,8 +1,5 @@
 package ca.cutterslade.edbafakac.db.search;
 
-import java.util.Map;
-
-import ca.cutterslade.edbafakac.db.CompositeSearchTerm;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.NegatedSearchTerm;
 import ca.cutterslade.edbafakac.db.SearchService;
@@ -10,10 +7,10 @@ import ca.cutterslade.edbafakac.db.SearchTerm;
 
 import com.google.common.collect.ImmutableList;
 
-enum Constant implements NegatedSearchTerm, CompositeSearchTerm {
+enum Constant implements NegatedSearchTerm {
   ANY_ENTRY, NO_ENTRY;
 
-  private final ImmutableList<? extends SearchTerm> asList = ImmutableList.of(this);
+  private final ImmutableList<? extends SearchTerm> list = ImmutableList.of(this);
 
   @Override
   public boolean matches(final Entry entry, final SearchService service) {
@@ -25,13 +22,8 @@ enum Constant implements NegatedSearchTerm, CompositeSearchTerm {
     return this == ANY_ENTRY ? NO_ENTRY : ANY_ENTRY;
   }
 
-  @Override
-  public Iterable<? extends SearchTerm> getComponents() {
-    return asList;
+  protected ImmutableList<? extends SearchTerm> asList() {
+    return list;
   }
 
-  @Override
-  public boolean combine(final Map<? extends SearchTerm, Boolean> componentResults) {
-    return this == ANY_ENTRY;
-  }
 }

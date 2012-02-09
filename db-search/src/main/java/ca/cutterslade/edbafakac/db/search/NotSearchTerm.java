@@ -17,10 +17,13 @@ public class NotSearchTerm implements CompositeSearchTerm, NegatedSearchTerm {
 
   private final SearchTerm term;
 
+  private final ImmutableList<SearchTerm> terms;
+
   private final int hash;
 
   NotSearchTerm(@Nonnull final SearchTerm term) {
     this.term = term;
+    this.terms = ImmutableList.of(term);
     hash = Objects.hash(this.term);
   }
 
@@ -31,7 +34,7 @@ public class NotSearchTerm implements CompositeSearchTerm, NegatedSearchTerm {
 
   @Override
   public Iterable<SearchTerm> getComponents() {
-    return ImmutableList.of(term);
+    return terms;
   }
 
   @Override
@@ -50,6 +53,7 @@ public class NotSearchTerm implements CompositeSearchTerm, NegatedSearchTerm {
   }
 
   @Override
+  @SuppressWarnings("PMD.OnlyOneReturn")
   public boolean equals(final Object obj) {
     if (this == obj) {
       return true;

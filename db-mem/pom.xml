@@ -19,6 +19,10 @@
       <artifactId>edbafakac-db-api</artifactId>
     </dependency>
     <dependency>
+      <groupId>ca.cutterslade.edbafakac</groupId>
+      <artifactId>edbafakac-db-search</artifactId>
+    </dependency>
+    <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
     </dependency>

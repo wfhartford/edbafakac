@@ -14,11 +14,12 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ca.cutterslade.edbafakac.db.EntryService;
+import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.jdbc.JdbcEntryService;
 
-import com.google.appengine.repackaged.com.google.common.collect.ImmutableList;
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
 import com.google.appengine.tools.development.testing.LocalServiceTestHelper;
+import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("PMD")
 @RunWith(Parameterized.class)
@@ -29,12 +30,19 @@ public abstract class AvailableImplementationsTest {
 
   private final EntryService entryService;
 
+  private final SearchService searchService;
+
   public AvailableImplementationsTest(final EntryService entryService) {
     this.entryService = entryService;
+    this.searchService = entryService.getSearchService();
   }
 
   protected EntryService getEntryService() {
     return entryService;
+  }
+
+  protected SearchService getSearchService() {
+    return searchService;
   }
 
   @Parameters

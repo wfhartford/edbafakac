@@ -12,18 +12,15 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
-import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -66,9 +63,11 @@ public class MapEntryService implements EntryService {
         final ImmutableMap<String, String> values = entries.get(key);
         if (null != values) {
           for (final String field : term.getFieldKeys()) {
-            if (term.getValue().equals(values.get(field))) {
-              results.add(key);
-              break;
+            for (final String value : term.getValues()) {
+              if (value.equals(values.get(field))) {
+                results.add(key);
+                break;
+              }
             }
           }
         }
@@ -100,6 +99,13 @@ public class MapEntryService implements EntryService {
       });
 
   private final ReadWriteLock searchTermLock = new ReentrantReadWriteLock();
+
+  private final MapSearchService searchService = new MapSearchService(this);
+
+  @Override
+  public SearchService getSearchService() {
+    return searchService;
+  }
 
   @Override
   public Entry getNewEntry() {
@@ -153,44 +159,15 @@ public class MapEntryService implements EntryService {
     entries.clear();
   }
 
-  @Override
-  public Iterable<Entry> search(final SearchTerm term) {
-    return Iterables.filter(Iterables.transform(searchForKeys(term), new Function<String, Entry>() {
-
-      @Override
-      public Entry apply(final String input) {
-        Entry entry;
-        if (null == input) {
-          entry = null;
-        }
-        else {
-          try {
-            entry = getEntry(input);
-          }
-          catch (final EntryNotFoundException e) {
-            entry = null;
-          }
-        }
-        return entry;
-      }
-    }), Predicates.notNull());
-  }
-
-  @Override
-  public Iterable<String> searchForKeys(final SearchTerm term) {
+  Iterable<String> searchForKeys(final FieldValueSearchTerm term) {
     final Iterable<String> results;
-    if (term instanceof FieldValueSearchTerm) {
-      final Lock lock = searchTermLock.writeLock();
-      lock.lock();
-      try {
-        results = fieldValueSearchResultCache.getUnchecked((FieldValueSearchTerm) term);
-      }
-      finally {
-        lock.unlock();
-      }
+    final Lock lock = searchTermLock.writeLock();
+    lock.lock();
+    try {
+      results = fieldValueSearchResultCache.getUnchecked(term);
     }
-    else {
-      throw new UnsupportedOperationException("Unsupported search term type: " + term);
+    finally {
+      lock.unlock();
     }
     return results;
   }
