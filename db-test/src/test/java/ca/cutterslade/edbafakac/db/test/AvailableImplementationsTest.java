@@ -30,11 +30,8 @@ public abstract class AvailableImplementationsTest {
 
   private final EntryService entryService;
 
-  private final SearchService searchService;
-
   public AvailableImplementationsTest(final EntryService entryService) {
     this.entryService = entryService;
-    this.searchService = entryService.getSearchService();
   }
 
   protected EntryService getEntryService() {
@@ -42,7 +39,7 @@ public abstract class AvailableImplementationsTest {
   }
 
   protected SearchService getSearchService() {
-    return searchService;
+    return entryService.getSearchService();
   }
 
   @Parameters

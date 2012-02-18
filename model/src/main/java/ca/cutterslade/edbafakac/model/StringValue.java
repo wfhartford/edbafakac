@@ -6,8 +6,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import ca.cutterslade.edbafakac.db.Entry;
-import ca.cutterslade.edbafakac.db.SearchTerm;
-import ca.cutterslade.edbafakac.db.search.SearchTerms;
 
 import com.google.common.collect.ImmutableList;
 
@@ -99,10 +97,6 @@ public final class StringValue extends Value<StringValue> {
 
   public String getBaseValue() {
     return getProperty(BASE_VALUE_KEY);
-  }
-
-  public static SearchTerm exactValueSearchTerm(@Nonnull final String value, @Nonnull final Locale locale) {
-    return SearchTerms.anyFieldValue(value, getLocaleChain(locale));
   }
 
   private static ImmutableList<String> getLocaleChain(@Nonnull final Locale locale) {

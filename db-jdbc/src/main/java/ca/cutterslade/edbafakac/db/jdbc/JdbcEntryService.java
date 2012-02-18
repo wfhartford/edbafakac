@@ -87,7 +87,8 @@ public class JdbcEntryService implements EntryService {
       "select distinct ENTRY_KEY from EDBAFAKAC.ENTRIES where PROPERTY_KEY in ";
 
   private static final String SEARCH_QUERY_FOR_ENTRIES_PREFIX =
-      "select ENTRY_KEY,PROPERTY_KEY,PROPERTY_VALUE from EDBAFAKAC.ENTRIES where PROPERTY_KEY in ";
+      "select ENTRY_KEY,PROPERTY_KEY,PROPERTY_VALUE from EDBAFAKAC.ENTRIES where ENTRY_KEY in (" +
+          SEARCH_QUERY_FOR_KEYS_PREFIX;
 
   private static final String SEARCH_QUERY_MIDDLE = " and PROPERTY_VALUE in ";
 
@@ -99,6 +100,8 @@ public class JdbcEntryService implements EntryService {
   private static final ImmutableSet<String> RESERVED_KEYS = ImmutableSet.of(Entry.WRITE_TIME_KEY, PLACEHOLDER_STRING);
 
   private final DataSource dataSource;
+
+  private final SearchService searchService = new JdbcSearchService(this);
 
   public JdbcEntryService() throws SQLException, IOException {
     this(DFLT_DATABASE_PROPERTIES_RESOURCE);
@@ -130,6 +133,11 @@ public class JdbcEntryService implements EntryService {
 
   public JdbcEntryService(@Nonnull final DataSource dataSource) {
     this.dataSource = dataSource;
+  }
+
+  @Override
+  public SearchService getSearchService() {
+    return searchService;
   }
 
   @Override
@@ -299,11 +307,6 @@ public class JdbcEntryService implements EntryService {
     return RESERVED_KEYS;
   }
 
-  @Override
-  public SearchService getSearchService() {
-    return new JdbcSearchService(this);
-  }
-
   public void close() throws SQLException {
     if (INSTANCES.remove(this)) {
       ((BasicDataSource) dataSource).close();
@@ -313,7 +316,7 @@ public class JdbcEntryService implements EntryService {
   Iterable<Entry> searchForEntries(final FieldValueSearchTerm term) {
     try (Connection connection = getConnection()) {
       final ImmutableList<EntryProperty> entryProperties = getQueryResult(connection,
-          getSearchQuery(term, SEARCH_QUERY_FOR_ENTRIES_PREFIX),
+          getSearchQuery(term, SEARCH_QUERY_FOR_ENTRIES_PREFIX, ")"),
           Iterables.concat(term.getFieldKeys(), term.getValues()), EntryPropertyTransformer.INSTANCE);
       return createEntries(entryProperties);
     }
@@ -324,25 +327,24 @@ public class JdbcEntryService implements EntryService {
 
   private Iterable<Entry> createEntries(final ImmutableList<EntryProperty> entryProperties) {
     final ImmutableList.Builder<Entry> builder = ImmutableList.builder();
-    final Map<String, String> propertyBuilder = Maps.newHashMap();
+    Map<String, String> propertyBuilder = null;
     String currentKey = null;
     for (final EntryProperty property : entryProperties) {
-      if (null != currentKey && !currentKey.equals(property.getEntryKey())) {
+      if (!property.getEntryKey().equals(currentKey)) {
+        currentKey = property.getEntryKey();
+        propertyBuilder = Maps.newHashMap();
         builder.add(new MapEntry(currentKey, propertyBuilder, this, false));
-        propertyBuilder.clear();
       }
-      currentKey = property.getEntryKey();
-      propertyBuilder.put(property.getPropertyKey(), property.getPropertyValue());
-    }
-    if (!propertyBuilder.isEmpty()) {
-      builder.add(new MapEntry(currentKey, propertyBuilder, this, false));
+      if (!PLACEHOLDER_STRING.equals(property.getPropertyKey())) {
+        propertyBuilder.put(property.getPropertyKey(), property.getPropertyValue());
+      }
     }
     return builder.build();
   }
 
   Iterable<String> searchForKeys(final FieldValueSearchTerm term) {
     try (Connection connection = getConnection()) {
-      return getQueryResult(connection, getSearchQuery(term, SEARCH_QUERY_FOR_KEYS_PREFIX),
+      return getQueryResult(connection, getSearchQuery(term, SEARCH_QUERY_FOR_KEYS_PREFIX, ""),
           Iterables.concat(term.getFieldKeys(), term.getValues()),
           ResultSetTransformer.STRING_TRANSFORMER);
     }
@@ -351,15 +353,17 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
-  private String getSearchQuery(final FieldValueSearchTerm term, final String prefix) {
+  private String getSearchQuery(final FieldValueSearchTerm term, final String prefix, final String suffix) {
     final StringBuilder builder = new StringBuilder(prefix.length() +
         (term.getFieldKeys().size() * 2) + 1 +
         SEARCH_QUERY_MIDDLE.length() +
-        (term.getValues().size() * 2) + 1);
+        (term.getValues().size() * 2) + 1 +
+        suffix.length());
     builder.append(prefix);
     appendParams(term.getFieldKeys().size(), builder);
     builder.append(SEARCH_QUERY_MIDDLE);
     appendParams(term.getValues().size(), builder);
+    builder.append(suffix);
     return builder.toString();
   }
 

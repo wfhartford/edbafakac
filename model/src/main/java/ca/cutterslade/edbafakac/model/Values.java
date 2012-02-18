@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
+import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.ServiceFactory;
 import ca.cutterslade.utilities.PropertiesUtils;
 
@@ -70,6 +71,10 @@ enum Values {
 
   private static EntryService getEntryService() {
     return ServiceHolder.getEntryService();
+  }
+
+  static SearchService getSearchService() {
+    return getEntryService().getSearchService();
   }
 
   static Value<?> getNewValue(@Nonnull final TypeValue type) {

@@ -4,15 +4,36 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.ServiceLoader;
+
 import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.gae.EntityEntryService;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
+@SuppressWarnings("PMD")
 public class FieldValueSearchTest extends AvailableImplementationsTest {
+
+  @Parameters
+  public static Collection<Object[]> getParameters() {
+    final ImmutableList.Builder<Object[]> builder = ImmutableList.builder();
+    for (final Iterator<EntryService> it = ServiceLoader.load(EntryService.class).iterator(); it.hasNext();) {
+      final EntryService service = it.next();
+      // TODO Implement search in db-gae
+      if (!(service instanceof EntityEntryService)) {
+        builder.add(new Object[]{ service });
+      }
+    }
+    return builder.build();
+  }
 
   public FieldValueSearchTest(final EntryService entryService) {
     super(entryService);
