@@ -6,6 +6,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
+import ca.cutterslade.edbafakac.db.SearchService;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
@@ -72,6 +73,12 @@ public class EntityEntryService implements EntryService {
   @Override
   public ImmutableSet<String> getReservedKeys() {
     return RESERVED_KEYS;
+  }
+
+  @Override
+  public SearchService getSearchService() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("getSearchService has not been implemented");
   }
 
 }

@@ -22,7 +22,9 @@ import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.EntryStoreException;
+import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.mem.MapEntry;
+import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 import ca.cutterslade.utilities.PropertiesUtils;
 import ca.cutterslade.utilities.ResultSetTransformer;
 
@@ -74,36 +76,20 @@ public class JdbcEntryService implements EntryService {
     });
   }
 
-  static final class Property {
-
-    private final String key;
-
-    private final String value;
-
-    public Property(final String key, final String value) {
-      this.key = key;
-      this.value = value;
-    }
-
-    public String getKey() {
-      return key;
-    }
-
-    public String getValue() {
-      return value;
-    }
-
-    public boolean isPlaceholder() {
-      return PLACEHOLDER_STRING.equals(key);
-    }
-  }
-
-  private static final String PLACEHOLDER_STRING = "7575c422-d00b-468d-898b-0e6fa0200b32";
+  static final String PLACEHOLDER_STRING = "7575c422-d00b-468d-898b-0e6fa0200b32";
 
   private static final String PROPERTY_COUNT_QUERY = "select COUNT(1) from EDBAFAKAC.ENTRIES where ENTRY_KEY = ?";
 
   private static final String PROPERTIES_QUERY =
       "select PROPERTY_KEY,PROPERTY_VALUE from EDBAFAKAC.ENTRIES where ENTRY_KEY = ?";
+
+  private static final String SEARCH_QUERY_FOR_KEYS_PREFIX =
+      "select distinct ENTRY_KEY from EDBAFAKAC.ENTRIES where PROPERTY_KEY in ";
+
+  private static final String SEARCH_QUERY_FOR_ENTRIES_PREFIX =
+      "select ENTRY_KEY,PROPERTY_KEY,PROPERTY_VALUE from EDBAFAKAC.ENTRIES where PROPERTY_KEY in ";
+
+  private static final String SEARCH_QUERY_MIDDLE = " and PROPERTY_VALUE in ";
 
   private static final String INSERT_PROPERTY =
       "insert into EDBAFAKAC.ENTRIES (ENTRY_KEY,PROPERTY_KEY,PROPERTY_VALUE) values (?, ?, ?)";
@@ -313,10 +299,77 @@ public class JdbcEntryService implements EntryService {
     return RESERVED_KEYS;
   }
 
+  @Override
+  public SearchService getSearchService() {
+    return new JdbcSearchService(this);
+  }
+
   public void close() throws SQLException {
     if (INSTANCES.remove(this)) {
       ((BasicDataSource) dataSource).close();
     }
+  }
+
+  Iterable<Entry> searchForEntries(final FieldValueSearchTerm term) {
+    try (Connection connection = getConnection()) {
+      final ImmutableList<EntryProperty> entryProperties = getQueryResult(connection,
+          getSearchQuery(term, SEARCH_QUERY_FOR_ENTRIES_PREFIX),
+          Iterables.concat(term.getFieldKeys(), term.getValues()), EntryPropertyTransformer.INSTANCE);
+      return createEntries(entryProperties);
+    }
+    catch (final SQLException e) {
+      throw new EntryStoreException(e);
+    }
+  }
+
+  private Iterable<Entry> createEntries(final ImmutableList<EntryProperty> entryProperties) {
+    final ImmutableList.Builder<Entry> builder = ImmutableList.builder();
+    final Map<String, String> propertyBuilder = Maps.newHashMap();
+    String currentKey = null;
+    for (final EntryProperty property : entryProperties) {
+      if (null != currentKey && !currentKey.equals(property.getEntryKey())) {
+        builder.add(new MapEntry(currentKey, propertyBuilder, this, false));
+        propertyBuilder.clear();
+      }
+      currentKey = property.getEntryKey();
+      propertyBuilder.put(property.getPropertyKey(), property.getPropertyValue());
+    }
+    if (!propertyBuilder.isEmpty()) {
+      builder.add(new MapEntry(currentKey, propertyBuilder, this, false));
+    }
+    return builder.build();
+  }
+
+  Iterable<String> searchForKeys(final FieldValueSearchTerm term) {
+    try (Connection connection = getConnection()) {
+      return getQueryResult(connection, getSearchQuery(term, SEARCH_QUERY_FOR_KEYS_PREFIX),
+          Iterables.concat(term.getFieldKeys(), term.getValues()),
+          ResultSetTransformer.STRING_TRANSFORMER);
+    }
+    catch (final SQLException e) {
+      throw new EntryStoreException(e);
+    }
+  }
+
+  private String getSearchQuery(final FieldValueSearchTerm term, final String prefix) {
+    final StringBuilder builder = new StringBuilder(prefix.length() +
+        (term.getFieldKeys().size() * 2) + 1 +
+        SEARCH_QUERY_MIDDLE.length() +
+        (term.getValues().size() * 2) + 1);
+    builder.append(prefix);
+    appendParams(term.getFieldKeys().size(), builder);
+    builder.append(SEARCH_QUERY_MIDDLE);
+    appendParams(term.getValues().size(), builder);
+    return builder.toString();
+  }
+
+  private StringBuilder appendParams(final int count, final StringBuilder builder) {
+    builder.append('(');
+    for (int i = 0; i < count; i++) {
+      builder.append("?,");
+    }
+    builder.setCharAt(builder.length() - 1, ')');
+    return builder;
   }
 
   // CSOFF: NoFinalizer|IllegalThrows
@@ -330,4 +383,5 @@ public class JdbcEntryService implements EntryService {
     }
   }
   // CSON: NoFinalizer|IllegalThrows
+
 }

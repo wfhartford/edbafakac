@@ -3,8 +3,6 @@ package ca.cutterslade.edbafakac.db.jdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import ca.cutterslade.edbafakac.db.jdbc.JdbcEntryService.Property;
-
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 
@@ -23,4 +21,5 @@ enum PropertyTransformer implements Function<ResultSet, Property> {
       throw Throwables.propagate(e);
     }
   }
+
 }

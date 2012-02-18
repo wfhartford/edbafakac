@@ -84,6 +84,6 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
     service.saveEntry(entry);
     final Iterable<Entry> secondSearch = getSearchService().searchForEntries(searchTerm);
     assertNotNull(secondSearch);
-    assertTrue(Iterables.isEmpty(search));
+    assertTrue(Iterables.isEmpty(secondSearch));
   }
 }
