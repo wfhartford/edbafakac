@@ -28,11 +28,11 @@ public class ReferencesMatchSearchTerm implements SearchTerm {
     return new FieldValueSearchTerm(referenceFieldKeys, keys).matches(entry, service);
   }
 
-  protected ImmutableSet<String> getReferenceFieldKeys() {
+  public ImmutableSet<String> getReferenceFieldKeys() {
     return referenceFieldKeys;
   }
 
-  protected SearchTerm getTerm() {
+  public SearchTerm getTerm() {
     return term;
   }
 

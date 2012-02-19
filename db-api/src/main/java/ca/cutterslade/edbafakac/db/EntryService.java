@@ -12,6 +12,14 @@ import com.google.common.collect.ImmutableSet;
 public interface EntryService {
 
   /**
+   * Get an implementation of the {@link SearchService} interface capable of finding entries accessible using this entry
+   * service.
+   * 
+   * @return An implementation of the {@link SearchService} interface
+   */
+  SearchService getSearchService();
+
+  /**
    * Create a new entry with a random, unused key.
    * 
    * @return A new entry, not in the database until it is saved
@@ -73,5 +81,4 @@ public interface EntryService {
    */
   ImmutableSet<String> getReservedKeys();
 
-  SearchService getSearchService();
 }

@@ -13,6 +13,7 @@ import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.SearchService;
+import ca.cutterslade.edbafakac.db.search.AbstractSearchService;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
 import com.google.common.base.Preconditions;
@@ -21,6 +22,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -100,7 +102,7 @@ public class MapEntryService implements EntryService {
 
   private final ReadWriteLock searchTermLock = new ReentrantReadWriteLock();
 
-  private final MapSearchService searchService = new MapSearchService(this);
+  private final AbstractSearchService<MapEntryService> searchService = new MapSearchService(this);
 
   @Override
   public SearchService getSearchService() {
@@ -170,6 +172,10 @@ public class MapEntryService implements EntryService {
       lock.unlock();
     }
     return results;
+  }
+
+  Iterable<String> getAllKeys() {
+    return Iterables.unmodifiableIterable(entries.keySet());
   }
 
   private void addDirtyEntryKey(final String key) {

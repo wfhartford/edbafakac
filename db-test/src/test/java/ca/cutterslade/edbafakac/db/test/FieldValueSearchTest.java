@@ -42,7 +42,7 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
   @Test
   public void findMissingKey() {
     final Iterable<Entry> search =
-        getSearchService().searchForEntries(getSearchService().fieldValue("unusedKey", "value"));
+        getSearchService().searchForEntries(getSearchService().propertyValue("unusedKey", "value"));
     assertNotNull(search);
     assertTrue(Iterables.isEmpty(search));
   }
@@ -53,7 +53,7 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
     final Entry entry = service.getNewEntry().setProperty("keyOne", "valueOne");
     service.saveEntry(entry);
     final Iterable<Entry> search =
-        getSearchService().searchForEntries(getSearchService().fieldValue("keyOne", "valueOne"));
+        getSearchService().searchForEntries(getSearchService().propertyValue("keyOne", "valueOne"));
     assertNotNull(search);
     final Entry result = Iterables.getOnlyElement(search);
     assertEquals(entry.getKey(), result.getKey());
@@ -66,7 +66,7 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
     final Entry entry = service.getNewEntry().setProperty("keyTwo", "valueOne");
     service.saveEntry(entry);
     final Iterable<Entry> search =
-        getSearchService().searchForEntries(getSearchService().fieldValue("keyTwo", "valueTwo"));
+        getSearchService().searchForEntries(getSearchService().propertyValue("keyTwo", "valueTwo"));
     assertNotNull(search);
     assertTrue(Iterables.isEmpty(search));
   }
@@ -77,13 +77,13 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
     final Entry entry = service.getNewEntry().setProperty("keyThree", "valueOne");
     service.saveEntry(entry);
     final Iterable<Entry> search =
-        getSearchService().searchForEntries(getSearchService().fieldValue("keyThree", "valueTwo"));
+        getSearchService().searchForEntries(getSearchService().propertyValue("keyThree", "valueTwo"));
     assertNotNull(search);
     assertTrue(Iterables.isEmpty(search));
     entry.setProperty("keyThree", "valueTwo");
     service.saveEntry(entry);
     final Iterable<Entry> secondSearch =
-        getSearchService().searchForEntries(getSearchService().fieldValue("keyThree", "valueTwo"));
+        getSearchService().searchForEntries(getSearchService().propertyValue("keyThree", "valueTwo"));
     assertNotNull(secondSearch);
     final Entry result = Iterables.getOnlyElement(secondSearch);
     assertEquals(entry.getKey(), result.getKey());
@@ -95,7 +95,7 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
     final EntryService service = getEntryService();
     final Entry entry = service.getNewEntry().setProperty("keyFour", "valueOne");
     service.saveEntry(entry);
-    final SearchTerm searchTerm = getSearchService().fieldValue("keyFour", "valueOne");
+    final SearchTerm searchTerm = getSearchService().propertyValue("keyFour", "valueOne");
     final Iterable<Entry> search = getSearchService().searchForEntries(searchTerm);
     assertNotNull(search);
     final Entry result = Iterables.getOnlyElement(search);

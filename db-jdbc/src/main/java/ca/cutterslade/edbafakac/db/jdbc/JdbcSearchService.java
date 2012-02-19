@@ -1,7 +1,5 @@
 package ca.cutterslade.edbafakac.db.jdbc;
 
-import ca.cutterslade.edbafakac.db.Entry;
-import ca.cutterslade.edbafakac.db.SearchTerm;
 import ca.cutterslade.edbafakac.db.search.AbstractSearchService;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
@@ -12,19 +10,14 @@ public class JdbcSearchService extends AbstractSearchService<JdbcEntryService> {
   }
 
   @Override
-  public Iterable<String> searchForKeys(final SearchTerm term) {
-    if (term instanceof FieldValueSearchTerm) {
-      return getEntryService().searchForKeys((FieldValueSearchTerm) term);
-    }
-    throw new UnsupportedOperationException();
+  protected Iterable<String> getAllKeys() {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("getAllKeys has not been implemented");
   }
 
   @Override
-  public Iterable<Entry> searchForEntries(final SearchTerm term) {
-    if (term instanceof FieldValueSearchTerm) {
-      return getEntryService().searchForEntries((FieldValueSearchTerm) term);
-    }
-    throw new UnsupportedOperationException();
+  protected Iterable<String> executeFieldValueSearch(final FieldValueSearchTerm term) {
+    return getEntryService().searchForKeys(term);
   }
 
 }

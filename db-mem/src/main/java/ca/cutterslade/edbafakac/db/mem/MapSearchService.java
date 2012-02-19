@@ -1,21 +1,21 @@
 package ca.cutterslade.edbafakac.db.mem;
 
-import ca.cutterslade.edbafakac.db.SearchTerm;
 import ca.cutterslade.edbafakac.db.search.AbstractSearchService;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
-class MapSearchService extends AbstractSearchService<MapEntryService> {
+public class MapSearchService extends AbstractSearchService<MapEntryService> {
 
   MapSearchService(final MapEntryService entryService) {
     super(entryService);
   }
 
   @Override
-  public Iterable<String> searchForKeys(final SearchTerm term) {
-    if (term instanceof FieldValueSearchTerm) {
-      return getEntryService().searchForKeys((FieldValueSearchTerm) term);
-    }
-    throw new UnsupportedOperationException();
+  protected Iterable<String> executeFieldValueSearch(final FieldValueSearchTerm term) {
+    return getEntryService().searchForKeys(term);
   }
 
+  @Override
+  protected Iterable<String> getAllKeys() {
+    return getEntryService().getAllKeys();
+  }
 }

@@ -7,7 +7,7 @@ import ca.cutterslade.edbafakac.db.SearchTerm;
 
 import com.google.common.collect.ImmutableList;
 
-enum Constant implements NegatedSearchTerm {
+public enum Constant implements NegatedSearchTerm {
   ANY_ENTRY, NO_ENTRY;
 
   private final ImmutableList<? extends SearchTerm> list = ImmutableList.of(this);

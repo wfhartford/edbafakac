@@ -1,5 +1,8 @@
 package ca.cutterslade.edbafakac.db.search;
 
+import javax.annotation.Nonnull;
+
+import ca.cutterslade.edbafakac.db.CompositeSearchTerm;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
@@ -8,12 +11,28 @@ import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.edbafakac.db.SearchTerm;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 public abstract class AbstractSearchService<T extends EntryService> implements SearchService {
+
+  private class SearchTermKeyPredicate implements Predicate<String> {
+
+    private final SearchTerm term;
+
+    public SearchTermKeyPredicate(@Nonnull final SearchTerm term) {
+      this.term = term;
+    }
+
+    @Override
+    public boolean apply(final String input) {
+      return null == input ? false : term.matches(lookup.apply(input), AbstractSearchService.this);
+    }
+
+  }
 
   private static final Function<NegatedSearchTerm, SearchTerm> NEGATED_TERM_FUNCTION =
       new Function<NegatedSearchTerm, SearchTerm>() {
@@ -152,22 +171,107 @@ public abstract class AbstractSearchService<T extends EntryService> implements S
 
   @Override
   public SearchTerm referencesMatch(final Iterable<String> fieldKeys, final SearchTerm term) {
-    return new ReferencesMatchSearchTerm(fieldKeys, term);
+    return Iterables.isEmpty(fieldKeys) || Constant.NO_ENTRY.equals(term) ? Constant.NO_ENTRY :
+        new ReferencesMatchSearchTerm(fieldKeys, term);
   }
 
   @Override
-  public SearchTerm fieldValue(final String fieldKey, final String... values) {
-    return fieldValue(fieldKey, ImmutableSet.copyOf(values));
+  public SearchTerm propertyValue(final String fieldKey, final String... values) {
+    return propertyValue(fieldKey, ImmutableSet.copyOf(values));
   }
 
   @Override
-  public SearchTerm fieldValue(final String fieldKey, final Iterable<String> values) {
-    return fieldValue(ImmutableSet.of(fieldKey), values);
+  public SearchTerm propertyValue(final String fieldKey, final Iterable<String> values) {
+    return propertyValue(ImmutableSet.of(fieldKey), values);
   }
 
   @Override
-  public SearchTerm fieldValue(final Iterable<String> fieldKeys, final Iterable<String> values) {
-    return new FieldValueSearchTerm(fieldKeys, values);
+  public SearchTerm propertyValue(final Iterable<String> fieldKeys, final Iterable<String> values) {
+    return Iterables.isEmpty(fieldKeys) || Iterables.isEmpty(values) ? Constant.NO_ENTRY :
+        new FieldValueSearchTerm(fieldKeys, values);
+  }
+
+  @Override
+  public Iterable<String> searchForKeys(final SearchTerm term) {
+    final Iterable<String> result;
+    if (Constant.NO_ENTRY.equals(term)) {
+      result = getNoKeys();
+    }
+    else if (Constant.ANY_ENTRY.equals(term)) {
+      result = getAllKeys();
+    }
+    else if (term instanceof FieldValueSearchTerm) {
+      result = executeFieldValueSearch((FieldValueSearchTerm) term);
+    }
+    else if (term instanceof ReferencesMatchSearchTerm) {
+      result = executeReferencesMatchSearch((ReferencesMatchSearchTerm) term);
+    }
+    else if (term instanceof NegatedSearchTerm) {
+      result = executeNegatedSearch((NegatedSearchTerm) term);
+    }
+    else if (term instanceof AndSearchTerm) {
+      result = executeAndSearch((AndSearchTerm) term);
+    }
+    else if (term instanceof OrSearchTerm) {
+      result = executeOrSearch((OrSearchTerm) term);
+    }
+    else if (term instanceof CompositeSearchTerm) {
+      result = executeUnsupportedCompositeSearch((CompositeSearchTerm) term);
+    }
+    else {
+      result = executeUnsupportedSearch(term);
+    }
+    return result;
+  }
+
+  protected Iterable<String> getNoKeys() {
+    return ImmutableList.of();
+  }
+
+  protected abstract Iterable<String> getAllKeys();
+
+  /**
+   * Implements the basic filtering on a {@link FieldValueSearchTerm}. This implementation, while effective, should
+   * generally be overridden by implementation specific search services.
+   * 
+   * @param term
+   *          The search term to evaluate
+   * @return The keys of matching entries
+   */
+  protected Iterable<String> executeFieldValueSearch(final FieldValueSearchTerm term) {
+    return Iterables.filter(getAllKeys(), new SearchTermKeyPredicate(term));
+  }
+
+  protected Iterable<String> executeReferencesMatchSearch(final ReferencesMatchSearchTerm term) {
+    final Iterable<String> keys = searchForKeys(term.getTerm());
+    return searchForKeys(propertyValue(term.getReferenceFieldKeys(), keys));
+  }
+
+  protected Iterable<String> executeNegatedSearch(final NegatedSearchTerm term) {
+    return Iterables.filter(getAllKeys(), Predicates.not(new SearchTermKeyPredicate(term)));
+  }
+
+  protected Iterable<String> executeOrSearch(final OrSearchTerm term) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("executeOrSearch has not been implemented");
+  }
+
+  protected Iterable<String> executeAndSearch(final AndSearchTerm term) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("executeAndSearch has not been implemented");
+  }
+
+  protected Iterable<String> executeUnsupportedCompositeSearch(final CompositeSearchTerm term) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("executeUnsupportedCompositeSearch has not been implemented");
+  }
+
+  protected Iterable<String> executeUnsupportedSearch(final SearchTerm term) {
+    return filterEntryKeys(getAllKeys(), term);
+  }
+
+  protected Iterable<String> filterEntryKeys(final Iterable<String> keys, final SearchTerm term) {
+    return Iterables.filter(keys, new SearchTermKeyPredicate(term));
   }
 
 }
