@@ -10,7 +10,7 @@ import javax.annotation.Nonnull;
  * 
  * @author W.F. Hartford
  */
-public final class ServiceFactory {
+public final class EntryServiceFactory {
 
   private static EntryService defaultEntryService;
 
@@ -18,7 +18,7 @@ public final class ServiceFactory {
 
   private EntryService entryService;
 
-  private ServiceFactory(@Nonnull final EntryService entryService) {
+  private EntryServiceFactory(@Nonnull final EntryService entryService) {
     this.entryService = entryService;
   }
 
@@ -26,7 +26,7 @@ public final class ServiceFactory {
    * Get the {@link EntryService} provided by this instance.
    * 
    * @return An {@link EntryService} implementation, every invocation of this method on the same instance of
-   *         {@link ServiceFactory} will return the same instance.
+   *         {@link EntryServiceFactory} will return the same instance.
    */
   public EntryService getEntryService() {
     synchronized (entryServiceMutex) {
@@ -39,24 +39,24 @@ public final class ServiceFactory {
   }
 
   /**
-   * Set the {@link EntryService} instance to be returned by instances of {@link ServiceFactory} returned from future
+   * Set the {@link EntryService} instance to be returned by instances of {@link EntryServiceFactory} returned from future
    * calls to {@link #getInstance()}.
    * 
    * @param service
-   *          The {@link EntryService} to be returned by future instances of {@link ServiceFactory}
+   *          The {@link EntryService} to be returned by future instances of {@link EntryServiceFactory}
    */
   public static void setDefaultEntryService(@Nonnull final EntryService service) {
     defaultEntryService = service;
   }
 
   /**
-   * Get a {@link ServiceFactory}. If {@link #setDefaultEntryService(EntryService)} has previously been called, the
+   * Get a {@link EntryServiceFactory}. If {@link #setDefaultEntryService(EntryService)} has previously been called, the
    * returned instance's {@link #getEntryService()} method will always return the {@link EntryService} provided to
    * {@link #setDefaultEntryService(EntryService)}.
    * 
-   * @return An instance of {@link ServiceFactory}
+   * @return An instance of {@link EntryServiceFactory}
    */
-  public static ServiceFactory getInstance() {
-    return new ServiceFactory(defaultEntryService);
+  public static EntryServiceFactory getInstance() {
+    return new EntryServiceFactory(defaultEntryService);
   }
 }

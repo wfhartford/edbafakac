@@ -9,20 +9,9 @@ public final class BooleanValue extends Value<BooleanValue> {
 
   private static final String VALUE_KEY = "4ce36559-c679-42cd-8531-b7d89aa5213a";
 
-  BooleanValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
-  }
-
-  public static BooleanValue get(final boolean value) {
-    return value ? getTrue() : getFalse();
-  }
-
-  public static BooleanValue getFalse() {
-    return (BooleanValue) BaseValue.BOOLEAN_FALSE.getValue();
-  }
-
-  public static BooleanValue getTrue() {
-    return (BooleanValue) BaseValue.BOOLEAN_TRUE.getValue();
+  BooleanValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public BooleanValue setValue(@Nullable final Boolean value) {

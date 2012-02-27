@@ -2,5 +2,5 @@ package ca.cutterslade.edbafakac.model;
 
 public interface InitialValue {
 
-  Value<?> getValue();
+  Value<?> getValue(ValueService service);
 }

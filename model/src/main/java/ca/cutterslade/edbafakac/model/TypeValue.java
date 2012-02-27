@@ -1,5 +1,7 @@
 package ca.cutterslade.edbafakac.model;
 
+import javax.annotation.Nonnull;
+
 import ca.cutterslade.edbafakac.db.Entry;
 
 import com.google.common.collect.ImmutableSet;
@@ -14,15 +16,16 @@ public final class TypeValue extends Value<TypeValue> {
       BaseType.DECIMAL.getKey(),
       BaseType.INTEGER.getKey());
 
-  TypeValue(final Entry entry, final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
+  TypeValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public Class<? extends Value<?>> getTypeClass() {
     try {
       @SuppressWarnings("unchecked")
       final Class<? extends Value<?>> clazz = (Class<? extends Value<?>>)
-          Class.forName(BaseField.TYPE_CLASS.getValue().getRawValue(this)).asSubclass(Value.class);
+          Class.forName(BaseField.TYPE_CLASS.getValue(getValueService()).getRawValue(this)).asSubclass(Value.class);
       return clazz;
     }
     catch (final ClassNotFoundException e) {
@@ -39,28 +42,28 @@ public final class TypeValue extends Value<TypeValue> {
     else if (null == name) {
       throw new IllegalArgumentException(getName(RetrieveMode.READ_ONLY).getBaseValue() + " must have a name");
     }
-    final Value<?> newValue = Values.getNewValue(this);
-    if (equals(BaseType.STRING.getValue())) {
+    final Value<?> newValue = getValueService().getNewValue(this);
+    if (equals(BaseType.STRING.getValue(getValueService()))) {
       // A string value is its own name
-      BaseField.VALUE_NAME.getValue().setRawValue(newValue, newValue.getKey());
+      BaseField.VALUE_NAME.getValue(getValueService()).setRawValue(newValue, newValue.getKey());
     }
     else if (null != name) {
-      BaseField.VALUE_NAME.getValue().setValue(newValue, name);
+      BaseField.VALUE_NAME.getValue(getValueService()).setValue(newValue, name);
     }
-    if (equals(BaseType.TYPE.getValue())) {
-      BaseField.TYPE_CLASS.getValue().setRawValue(newValue, RecordValue.class.getName());
+    if (equals(BaseType.TYPE.getValue(getValueService()))) {
+      BaseField.TYPE_CLASS.getValue(getValueService()).setRawValue(newValue, RecordValue.class.getName());
     }
     return newValue;
   }
 
   public FieldValue getNewField(final StringValue name) {
-    final FieldValue value = (FieldValue) BaseType.FIELD.getValue().getNewValue(name);
-    BaseField.FIELD_TYPE.getValue().setValue(value, this);
+    final FieldValue value = (FieldValue) BaseType.FIELD.getValue(getValueService()).getNewValue(name);
+    BaseField.FIELD_TYPE.getValue(getValueService()).setValue(value, this);
     return value;
   }
 
   public ListValue getTypeFields(final RetrieveMode retrieveMode) {
-    return (ListValue) BaseField.TYPE_FIELDS.getValue().getValue(this, retrieveMode);
+    return (ListValue) BaseField.TYPE_FIELDS.getValue(getValueService()).getValue(this, retrieveMode);
   }
 
   public TypeValue addField(final StringValue name, final TypeValue type) {

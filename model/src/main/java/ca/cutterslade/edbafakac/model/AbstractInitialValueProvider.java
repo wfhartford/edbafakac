@@ -5,21 +5,27 @@ import com.google.common.collect.Iterables;
 
 public abstract class AbstractInitialValueProvider implements InitialValueProvider {
 
-  private static final Function<InitialValue, Value<?>> VALUE_FUNCTION = new Function<InitialValue, Value<?>>() {
+  private final class InitialValueFunction implements Function<InitialValue, Value<?>> {
+
+    private final ValueService service;
+
+    public InitialValueFunction(final ValueService service) {
+      this.service = service;
+    }
 
     @Override
     public Value<?> apply(final InitialValue input) {
       if (null == input) {
         throw new IllegalArgumentException();
       }
-      return input.getValue();
+      return input.getValue(service);
     }
-  };
-
-  @Override
-  public Iterable<Value<?>> getValues() {
-    return Iterables.transform(getInitialValues(), VALUE_FUNCTION);
   }
 
-  protected abstract Iterable<? extends InitialValue> getInitialValues();
+  @Override
+  public Iterable<Value<?>> getValues(final ValueService service) {
+    return Iterables.transform(getInitialValues(service), new InitialValueFunction(service));
+  }
+
+  protected abstract Iterable<? extends InitialValue> getInitialValues(ValueService service);
 }

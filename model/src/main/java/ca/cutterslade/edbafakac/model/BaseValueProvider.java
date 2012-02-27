@@ -12,7 +12,7 @@ public class BaseValueProvider extends AbstractInitialValueProvider {
   }
 
   @Override
-  protected Iterable<? extends InitialValue> getInitialValues() {
+  protected Iterable<? extends InitialValue> getInitialValues(final ValueService service) {
     return Iterables.concat(
         Arrays.asList(BaseType.values()),
         Arrays.asList(BaseField.values()),

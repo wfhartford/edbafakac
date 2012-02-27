@@ -19,16 +19,9 @@ public final class DateValue extends Value<DateValue> {
 
   private static final String ZONE_KEY = "999a2b99-c0bb-4bcb-912d-02a3f043f3e2";
 
-  public static DateValue withTime(@Nullable final Calendar calendar) {
-    return ((DateValue) Types.getDateType().getNewValue(null)).setValue(calendar);
-  }
-
-  public static DateValue withTime(@Nullable final Date date, @Nullable final TimeZone zone) {
-    return ((DateValue) Types.getDateType().getNewValue(null)).setValue(date, zone);
-  }
-
-  DateValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
+  DateValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public DateValue setValue(@Nullable final Date date, @Nullable final TimeZone zone) {

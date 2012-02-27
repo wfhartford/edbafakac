@@ -22,14 +22,17 @@ public abstract class Value<T extends Value<T>> {
 
   private final RetrieveMode retrieveMode;
 
-  static final Value<?> getInstance(final Entry entry, final RetrieveMode retrieveMode) {
+  private final ValueService service;
+
+  static final Value<?> getInstance(final ValueService service, final Entry entry, final RetrieveMode retrieveMode) {
     try {
       final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
       Preconditions.checkArgument(null != valueClass);
       @SuppressWarnings("unchecked")
       final Class<? extends Value<?>> clazz =
           (Class<? extends Value<?>>) Class.forName(valueClass).asSubclass(Value.class);
-      return clazz.getDeclaredConstructor(Entry.class, RetrieveMode.class).newInstance(entry, retrieveMode);
+      return clazz.getDeclaredConstructor(ValueService.class, Entry.class, RetrieveMode.class)
+          .newInstance(service, entry, retrieveMode);
     }
     catch (final ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException
         | NoSuchMethodException e) {
@@ -37,7 +40,8 @@ public abstract class Value<T extends Value<T>> {
     }
   }
 
-  Value(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
+  Value(@Nonnull final ValueService service, @Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
+    this.service = service;
     this.entry = entry;
     this.retrieveMode = retrieveMode;
     final String valueClass = entry.getProperty(BaseField.VALUE_CLASS.getKey());
@@ -50,6 +54,10 @@ public abstract class Value<T extends Value<T>> {
     pristine = entry.getProperties();
   }
 
+  final ValueService getValueService() {
+    return service;
+  }
+
   public final String getKey() {
     return entry.getKey();
   }
@@ -59,7 +67,7 @@ public abstract class Value<T extends Value<T>> {
     if (isBaseValue()) {
       final BaseFieldResolver resolver = BaseField.getResolver(propertyName);
       if (null != resolver && resolver.isUnresolved(value)) {
-        value = resolver.resolve(value);
+        value = resolver.resolve(service, value);
         entry.setProperty(propertyName, value);
       }
     }
@@ -141,20 +149,20 @@ public abstract class Value<T extends Value<T>> {
   @SuppressWarnings("PMD.UnnecessaryLocalBeforeReturn")
   public final T asReadOnly() {
     @SuppressWarnings("unchecked")
-    final T asReadOnly = (T) (isReadOnly() ? this : Values.getValue(getKey(), RetrieveMode.READ_ONLY));
+    final T asReadOnly = (T) (isReadOnly() ? this : service.getValue(getKey(), RetrieveMode.READ_ONLY));
     return asReadOnly;
   }
 
   public final StringValue getName(@Nonnull final RetrieveMode retrieveMode) {
-    return (StringValue) getFieldValue(Fields.getNameField(), retrieveMode);
+    return (StringValue) getFieldValue(service.getNameField(), retrieveMode);
   }
 
   public final TypeValue getType(@Nonnull final RetrieveMode retrieveMode) {
-    return (TypeValue) getFieldValue(Fields.getTypeField(), retrieveMode);
+    return (TypeValue) getFieldValue(service.getTypeField(), retrieveMode);
   }
 
   public final ListValue getFields(@Nonnull final RetrieveMode retrieveMode) {
-    return (ListValue) getType(RetrieveMode.READ_ONLY).getFieldValue(Fields.getTypeFieldsField(), retrieveMode);
+    return (ListValue) getType(RetrieveMode.READ_ONLY).getFieldValue(service.getTypeFieldsField(), retrieveMode);
   }
 
   public final Value<?> getFieldValue(@Nonnull final FieldValue field, @Nonnull final RetrieveMode retrieveMode) {

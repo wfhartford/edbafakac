@@ -8,12 +8,13 @@ import com.google.common.base.Preconditions;
 
 public final class FieldValue extends Value<FieldValue> {
 
-  FieldValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
+  FieldValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public TypeValue getFieldType(@Nonnull final RetrieveMode retrieveMode) {
-    return (TypeValue) BaseField.FIELD_TYPE.getValue().getValue(this, retrieveMode);
+    return (TypeValue) BaseField.FIELD_TYPE.getValue(getValueService()).getValue(this, retrieveMode);
   }
 
   public Value<?> getValue(@Nonnull final Value<?> value, @Nonnull final RetrieveMode retrieveMode) {
@@ -21,7 +22,7 @@ public final class FieldValue extends Value<FieldValue> {
         "Cannot provide writable field value from read only value");
     checkValueFields(value);
     final String rawValue = getRawValue(value);
-    return null == rawValue ? null : Values.getValue(rawValue, retrieveMode);
+    return null == rawValue ? null : getValueService().getValue(rawValue, retrieveMode);
   }
 
   private void checkValueFields(@Nonnull final Value<?> value) {
@@ -29,9 +30,10 @@ public final class FieldValue extends Value<FieldValue> {
     // we have to omit a few things from this check because the could cause a stack overflow
 
     // Everything has a VALUE_TYPE field
-    if (!equals(BaseField.VALUE_TYPE.getValue()) &&
+    if (!equals(BaseField.VALUE_TYPE.getValue(getValueService())) &&
         // Types all have the fields field
-        !(equals(BaseField.TYPE_FIELDS.getValue()) && value.isInstance(BaseType.TYPE.getValue())) &&
+        !(equals(BaseField.TYPE_FIELDS.getValue(getValueService())) &&
+        value.isInstance(BaseType.TYPE.getValue(getValueService()))) &&
         // Check that the value's list of fields contains this field
         !value.getFields(RetrieveMode.READ_ONLY).contains(this)) {
       throw new IllegalArgumentException("Value does not contain specified field");

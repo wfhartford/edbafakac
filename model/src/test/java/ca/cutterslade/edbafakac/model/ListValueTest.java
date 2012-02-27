@@ -11,20 +11,20 @@ import org.junit.Test;
 
 // CSOFF: MagicNumber
 @SuppressWarnings("PMD.AvoidDuplicateLiterals")
-public class ListValueTest {
+public class ListValueTest extends ValueServiceTest {
 
   @Test
   public void basicEmptyListTest() {
-    final ListValue list = ListValue.ofValues();
+    final ListValue list = getValueService().listOfValues();
     assertNotNull(list);
-    assertEquals(BaseType.LIST.getValue(), list.getType(RetrieveMode.READ_ONLY));
+    assertEquals(BaseType.LIST.getValue(getValueService()), list.getType(RetrieveMode.READ_ONLY));
     assertNull(list.getValueType(RetrieveMode.READ_ONLY));
     assertEquals(0, list.getSize());
   }
 
   @Test
   public void oneEntryTest() {
-    final ListValue list = ListValue.ofValues(value("only"));
+    final ListValue list = getValueService().listOfValues(value("only"));
     assertEquals(1, list.getSize());
     assertEquals("only", value(list.get(0)));
     assertNull(list.getValueType(RetrieveMode.READ_ONLY));
@@ -32,7 +32,7 @@ public class ListValueTest {
 
   @Test
   public void twoEntriesTest() {
-    final ListValue list = ListValue.ofValues(value("one"), value("two"));
+    final ListValue list = getValueService().listOfValues(value("one"), value("two"));
     assertEquals(2, list.getSize());
     assertEquals("one", value(list.get(0)));
     assertEquals("two", value(list.get(1)));
@@ -41,22 +41,23 @@ public class ListValueTest {
 
   @Test
   public void typeRestrictedTest() {
-    final ListValue list = ListValue.ofType(Types.getStringType());
+    final ListValue list = getValueService().listOfType(getValueService().getStringType());
     list.add(value("only"));
     assertEquals(1, list.getSize());
     assertEquals("only", value(list.get(0)));
-    assertEquals(Types.getStringType(), list.getValueType(RetrieveMode.READ_ONLY));
+    assertEquals(getValueService().getStringType(), list.getValueType(RetrieveMode.READ_ONLY));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void typeRestrictedWrongTypeTest() {
-    ListValue.ofType(Types.getIntegerType()).add(value("only"));
+    getValueService().listOfType(getValueService().getIntegerType()).add(value("only"));
   }
 
   @Test
   public void removeTest() {
     final ListValue list =
-        ListValue.ofValues(Types.getStringType(), Arrays.asList(value("one"), value("oops"), value("two")));
+        getValueService().listOfValues(getValueService().getStringType(),
+            Arrays.asList(value("one"), value("oops"), value("two")));
     assertEquals(3, list.getSize());
     assertEquals("oops", value(list.get(1)));
     list.remove(1);
@@ -67,7 +68,8 @@ public class ListValueTest {
 
   @Test
   public void insertTest() {
-    final ListValue list = ListValue.ofType(Types.getStringType()).addAll(value("one"), value("three"));
+    final ListValue list =
+        getValueService().listOfType(getValueService().getStringType()).addAll(value("one"), value("three"));
     assertEquals(2, list.getSize());
     list.insert(1, value("two"));
     assertEquals(3, list.getSize());
@@ -78,7 +80,8 @@ public class ListValueTest {
 
   @Test
   public void setTest() {
-    final ListValue list = ListValue.ofType(Types.getStringType()).addAll(value("one"), value("tow"));
+    final ListValue list =
+        getValueService().listOfType(getValueService().getStringType()).addAll(value("one"), value("tow"));
     assertEquals(2, list.getSize());
     assertEquals("tow", value(list.get(1)));
     list.set(1, value("two"));
@@ -92,7 +95,8 @@ public class ListValueTest {
     final StringValue one = value("one");
     final StringValue two = value("two");
     final StringValue three = value("three");
-    final ListValue list = ListValue.ofValues(Types.getStringType(), Arrays.asList(one, two, three));
+    final ListValue list =
+        getValueService().listOfValues(getValueService().getStringType(), Arrays.asList(one, two, three));
     assertEquals(3, list.getSize());
     assertTrue(list.contains(one));
     assertEquals(0, list.indexOf(one));
@@ -103,7 +107,7 @@ public class ListValueTest {
   }
 
   private StringValue value(final String string) {
-    return StringValue.withBase(string, true);
+    return getValueService().stringWithBase(string, true);
   }
 
   private String value(final Value<?> value) {

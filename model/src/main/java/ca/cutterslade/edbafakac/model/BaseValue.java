@@ -28,8 +28,8 @@ enum BaseValue implements InitialValue {
   }
 
   @Override
-  public Value<?> getValue() {
-    return Values.getValue(key, BaseValue.class.getSimpleName() + '.' + toString() + ".properties");
+  public Value<?> getValue(final ValueService service) {
+    return service.getValue(key, BaseValue.class.getSimpleName() + '.' + toString() + ".properties");
   }
 
   public static BaseValue getBaseValue(@Nonnull final String key) {

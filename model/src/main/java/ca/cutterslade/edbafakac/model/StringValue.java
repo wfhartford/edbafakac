@@ -15,19 +15,9 @@ public final class StringValue extends Value<StringValue> {
 
   private static final String SIMPLE_KEY = "9492132b-233c-4e62-8155-61f9c7e23c3a";
 
-  StringValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
-  }
-
-  public static StringValue withBase(@Nonnull final String baseValue, final boolean simple) {
-    return ((StringValue) BaseType.STRING.getValue().getNewValue(null))
-        .setSimple(simple)
-        .setBaseValue(baseValue);
-  }
-
-  public static StringValue withValue(@Nonnull final String value, @Nonnull final Locale locale) {
-    return ((StringValue) BaseType.STRING.getValue().getNewValue(null))
-        .setValue(value, locale);
+  StringValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public StringValue setSimple(final boolean simple) {

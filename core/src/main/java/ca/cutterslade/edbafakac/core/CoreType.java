@@ -2,6 +2,7 @@ package ca.cutterslade.edbafakac.core;
 
 import ca.cutterslade.edbafakac.model.InitialValue;
 import ca.cutterslade.edbafakac.model.Value;
+import ca.cutterslade.edbafakac.model.ValueService;
 
 public enum CoreType implements InitialValue {
   USER,
@@ -17,7 +18,7 @@ public enum CoreType implements InitialValue {
   LIST_COLUMN;
 
   @Override
-  public Value<?> getValue() {
+  public Value<?> getValue(final ValueService service) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("getValue has not been implemented");
   }

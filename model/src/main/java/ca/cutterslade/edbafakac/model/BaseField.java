@@ -9,8 +9,8 @@ enum BaseField implements InitialValue {
   VALUE_NAME("619c10d4-6d66-43d3-ab50-35713f603426", new BaseFieldResolver() {
 
     @Override
-    String resolve(final String value) {
-      return StringValue.withBase(getUnresolvedValue(value), false).save(true).getKey();
+    String resolve(final ValueService service, final String value) {
+      return service.stringWithBase(getUnresolvedValue(value), false).save(true).getKey();
     }
   }),
   VALUE_TYPE("bb1ba5f1-0914-474f-94d9-3e2372a88012", null),
@@ -19,8 +19,8 @@ enum BaseField implements InitialValue {
   TYPE_FIELDS("57cf2358-235f-43f4-8a56-436b419029be", new BaseFieldResolver() {
 
     @Override
-    String resolve(final String value) {
-      final ListValue resolvedValue = (ListValue) Types.getListType().getNewValue(null);
+    String resolve(final ValueService service, final String value) {
+      final ListValue resolvedValue = (ListValue) service.getListType().getNewValue(null);
       resolvedValue.setValueTypeRaw(BaseType.FIELD.getKey());
       for (final String typeKey : getUnresolvedValue(value).split(",")) {
         final String trimmedKey = typeKey.trim();
@@ -52,8 +52,8 @@ enum BaseField implements InitialValue {
   }
 
   @Override
-  public FieldValue getValue() {
-    return (FieldValue) Values.getValue(key, BaseField.class.getSimpleName() + '.' + toString() + ".properties");
+  public FieldValue getValue(final ValueService service) {
+    return (FieldValue) service.getValue(key, BaseField.class.getSimpleName() + '.' + toString() + ".properties");
   }
 
   public String getKey() {

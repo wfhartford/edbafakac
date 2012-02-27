@@ -4,12 +4,11 @@ import javax.annotation.Nonnull;
 
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.model.FieldValue;
-import ca.cutterslade.edbafakac.model.Fields;
 import ca.cutterslade.edbafakac.model.InitialValue;
 import ca.cutterslade.edbafakac.model.RetrieveMode;
-import ca.cutterslade.edbafakac.model.StringValue;
 import ca.cutterslade.edbafakac.model.TypeValue;
 import ca.cutterslade.edbafakac.model.Value;
+import ca.cutterslade.edbafakac.model.ValueService;
 
 public enum CoreField implements InitialValue {
   PARENT("e7836205-1d28-487c-a6ed-1fd7a08ed839") {
@@ -29,19 +28,19 @@ public enum CoreField implements InitialValue {
   }
 
   @Override
-  public Value<?> getValue() {
+  public Value<?> getValue(final ValueService service) {
     FieldValue value;
     try {
-      value = Fields.getField(key, RetrieveMode.READ_ONLY);
+      value = service.getField(key, RetrieveMode.READ_ONLY);
     }
     catch (final EntryNotFoundException e) {
-      value = getInitialValue();
+      value = getInitialValue(service);
     }
     return value;
   }
 
-  private FieldValue getInitialValue() {
-    final FieldValue value = getFieldType().getNewField(StringValue.withBase(name(), false));
+  private FieldValue getInitialValue(final ValueService service) {
+    final FieldValue value = getFieldType().getNewField(service.stringWithBase(name(), false));
     initializeFieldValue(value);
     return value;
   }

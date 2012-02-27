@@ -18,28 +18,9 @@ public final class ListValue extends Value<ListValue> {
 
   private static final String TYPE_KEY = "56ab8c1e-f86a-4617-b342-45a98926a814";
 
-  ListValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
-  }
-
-  public static ListValue ofValues() {
-    return (ListValue) BaseType.LIST.getValue().getNewValue(null);
-  }
-
-  public static ListValue ofType(@Nonnull final TypeValue type) {
-    return ofValues().setValueType(type.save());
-  }
-
-  public static ListValue ofValues(@Nonnull final Value<?>... values) {
-    return ofValues().addAll(values);
-  }
-
-  public static ListValue ofValues(@Nonnull final Iterable<? extends Value<?>> values) {
-    return ofValues().addAll(values);
-  }
-
-  public static ListValue ofValues(@Nonnull final TypeValue type, @Nonnull final Iterable<? extends Value<?>> values) {
-    return ofType(type).addAll(values);
+  ListValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public long getSize() {
@@ -74,13 +55,13 @@ public final class ListValue extends Value<ListValue> {
 
   public TypeValue getValueType(@Nonnull final RetrieveMode retrieveMode) {
     final String typeKey = getProperty(TYPE_KEY);
-    return (TypeValue) (null == typeKey ? null : Values.getValue(typeKey, retrieveMode));
+    return (TypeValue) (null == typeKey ? null : getValueService().getValue(typeKey, retrieveMode));
   }
 
   public Value<?> get(final long position) {
     checkIndex(position);
     final String key = getProperty(String.valueOf(position));
-    return Values.getValue(key, getRetrieveMode());
+    return getValueService().getValue(key, getRetrieveMode());
   }
 
   public ListValue set(final long position, @Nonnull final Value<?> value) {

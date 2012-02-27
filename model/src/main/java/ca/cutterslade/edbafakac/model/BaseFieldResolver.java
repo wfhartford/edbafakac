@@ -14,5 +14,5 @@ abstract class BaseFieldResolver {
     return value.substring(UNRESOLVED_PREFIX.length());
   }
 
-  abstract String resolve(@Nonnull String value);
+  abstract String resolve(@Nonnull ValueService service, @Nonnull String value);
 }

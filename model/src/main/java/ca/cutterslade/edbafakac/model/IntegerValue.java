@@ -11,16 +11,9 @@ public final class IntegerValue extends Value<IntegerValue> {
 
   private static final String VALUE_KEY = "61b1d125-2e3d-41e0-93c8-1df3a3a4ddd3";
 
-  public static IntegerValue withValue(final long value) {
-    return withValue(BigInteger.valueOf(value));
-  }
-
-  public static IntegerValue withValue(@Nullable final BigInteger value) {
-    return ((IntegerValue) Types.getIntegerType().getNewValue(null)).setValue(value);
-  }
-
-  IntegerValue(@Nonnull final Entry entry, @Nonnull final RetrieveMode retrieveMode) {
-    super(entry, retrieveMode);
+  IntegerValue(@Nonnull final ValueService service, @Nonnull final Entry entry,
+      @Nonnull final RetrieveMode retrieveMode) {
+    super(service, entry, retrieveMode);
   }
 
   public IntegerValue setValue(@Nullable final BigInteger value) {

@@ -6,11 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-public class BooleanValueTest {
+public class BooleanValueTest extends ValueServiceTest {
 
   @Test
   public void trueTest() {
-    final BooleanValue booleanTrue = BooleanValue.getTrue();
+    final BooleanValue booleanTrue = getValueService().getBooleanTrue();
     assertTrue(booleanTrue.getValue());
     assertTrue(booleanTrue.getValue(true));
     assertTrue(booleanTrue.getValue(false));
@@ -23,7 +23,7 @@ public class BooleanValueTest {
 
   @Test
   public void falseTest() {
-    final BooleanValue booleanFalse = BooleanValue.getFalse();
+    final BooleanValue booleanFalse = getValueService().getBooleanFalse();
     assertFalse(booleanFalse.getValue());
     assertFalse(booleanFalse.getValue(true));
     assertFalse(booleanFalse.getValue(false));
@@ -36,7 +36,7 @@ public class BooleanValueTest {
 
   @Test
   public void nullTest() {
-    final BooleanValue booleanNull = (BooleanValue) Types.getBooleanType().getNewValue(null);
+    final BooleanValue booleanNull = (BooleanValue) getValueService().getBooleanType().getNewValue(null);
     assertNull(booleanNull.getValue());
     assertTrue(booleanNull.getValue(true));
     assertFalse(booleanNull.getValue(false));
@@ -49,27 +49,27 @@ public class BooleanValueTest {
 
   @Test(expected = IllegalStateException.class)
   public void setTrueTest() {
-    BooleanValue.getTrue().setValue(Boolean.FALSE);
+    getValueService().getBooleanTrue().setValue(Boolean.FALSE);
   }
 
   @Test(expected = IllegalStateException.class)
   public void setFalseTest() {
-    BooleanValue.getFalse().setValue(Boolean.TRUE);
+    getValueService().getBooleanFalse().setValue(Boolean.TRUE);
   }
 
   @Test
   public void setSaveTest() {
-    BooleanValue value = (BooleanValue) Types.getBooleanType().getNewValue(null);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
+    BooleanValue value = (BooleanValue) getValueService().getBooleanType().getNewValue(null);
+    value = (BooleanValue) getValueService().getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertNull(value.getValue());
     value.setValue(Boolean.FALSE);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
+    value = (BooleanValue) getValueService().getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertFalse(value.getValue());
     value.setValue(Boolean.TRUE);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
+    value = (BooleanValue) getValueService().getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertTrue(value.getValue());
     value.setValue(null);
-    value = (BooleanValue) Values.getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
+    value = (BooleanValue) getValueService().getValue(value.save().getKey(), RetrieveMode.READ_WRITE);
     assertNull(value.getValue());
   }
 }

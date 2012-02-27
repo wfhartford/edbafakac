@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableList;
 
 @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
 @RunWith(Parameterized.class)
-public class BaseFieldsTest {
+public class BaseFieldsTest extends ValueServiceTest {
 
   @Parameters
   public static Collection<Object[]> getParameters() {
@@ -28,12 +28,13 @@ public class BaseFieldsTest {
   private final BaseField baseField;
 
   public BaseFieldsTest(final BaseField baseField) {
+    super();
     this.baseField = baseField;
   }
 
   @Test
   public void testField() {
-    final FieldValue field = baseField.getValue();
+    final FieldValue field = baseField.getValue(getValueService());
     assertNotNull(field);
     assertNotNull(field.getName(RetrieveMode.READ_ONLY));
     assertEquals(BaseTypesTest.getName(baseField), field.getName(RetrieveMode.READ_ONLY).getBaseValue());

@@ -35,8 +35,8 @@ enum BaseType implements InitialValue {
   }
 
   @Override
-  public TypeValue getValue() {
-    return (TypeValue) Values.getValue(key, BaseType.class.getSimpleName() + '.' + toString() + ".properties");
+  public TypeValue getValue(final ValueService service) {
+    return (TypeValue) service.getValue(key, BaseType.class.getSimpleName() + '.' + toString() + ".properties");
   }
 
   static BaseType getBaseType(@Nonnull final String key) {
