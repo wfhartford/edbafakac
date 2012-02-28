@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables;
 
 public abstract class AbstractInitialValueProvider implements InitialValueProvider {
 
-  private final class InitialValueFunction implements Function<InitialValue, Value<?>> {
+  private static final class InitialValueFunction implements Function<InitialValue, Value<?>> {
 
     private final ValueService service;
 

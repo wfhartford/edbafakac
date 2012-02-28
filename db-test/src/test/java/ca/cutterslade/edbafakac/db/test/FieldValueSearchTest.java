@@ -13,7 +13,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryService;
-import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 import ca.cutterslade.edbafakac.db.gae.EntityEntryService;
 
 import com.google.common.collect.ImmutableList;
@@ -95,7 +95,7 @@ public class FieldValueSearchTest extends AvailableImplementationsTest {
     final EntryService service = getEntryService();
     final Entry entry = service.getNewEntry().setProperty("keyFour", "valueOne");
     service.saveEntry(entry);
-    final SearchTerm searchTerm = getSearchService().propertyValue("keyFour", "valueOne");
+    final EntrySearchTerm searchTerm = getSearchService().propertyValue("keyFour", "valueOne");
     final Iterable<Entry> search = getSearchService().searchForEntries(searchTerm);
     assertNotNull(search);
     final Entry result = Iterables.getOnlyElement(search);

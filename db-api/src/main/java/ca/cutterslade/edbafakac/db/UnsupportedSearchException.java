@@ -1,11 +1,11 @@
 package ca.cutterslade.edbafakac.db;
 
 /**
- * Indicates that a specific {@link SearchTerm} cannot be evaluated by the {@link SearchService} which was asked to
- * execute the search.
+ * Indicates that a specific {@link EntrySearchTerm} cannot be evaluated by the {@link EntrySearchService} which was
+ * asked to execute the search.
  * 
- * @see SearchService#searchForKeys(SearchTerm)
- * @see SearchService#searchForEntries(SearchTerm)
+ * @see EntrySearchService#searchForKeys(EntrySearchTerm)
+ * @see EntrySearchService#searchForEntries(EntrySearchTerm)
  * 
  * @author W.F. Hartford
  */
@@ -13,7 +13,7 @@ public class UnsupportedSearchException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
-  private final SearchTerm term;
+  private final EntrySearchTerm term;
 
   /**
    * Create an instance specifying a descriptive reason as to why the search cannot be executed, and the term which
@@ -24,7 +24,7 @@ public class UnsupportedSearchException extends RuntimeException {
    * @param term
    *          The search term which is not supported
    */
-  public UnsupportedSearchException(final String reason, final SearchTerm term) {
+  public UnsupportedSearchException(final String reason, final EntrySearchTerm term) {
     super(reason);
     this.term = term;
   }
@@ -34,7 +34,7 @@ public class UnsupportedSearchException extends RuntimeException {
    * 
    * @return The unsupported search term
    */
-  public SearchTerm getTerm() {
+  public EntrySearchTerm getTerm() {
     return term;
   }
 

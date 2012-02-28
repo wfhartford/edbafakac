@@ -12,7 +12,7 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
-import ca.cutterslade.edbafakac.db.SearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
 import ca.cutterslade.edbafakac.db.search.AbstractSearchService;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
@@ -105,7 +105,7 @@ public class MapEntryService implements EntryService {
   private final AbstractSearchService<MapEntryService> searchService = new MapSearchService(this);
 
   @Override
-  public SearchService getSearchService() {
+  public EntrySearchService getSearchService() {
     return searchService;
   }
 

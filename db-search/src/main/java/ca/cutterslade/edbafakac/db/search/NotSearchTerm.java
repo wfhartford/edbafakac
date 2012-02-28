@@ -5,45 +5,45 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import ca.cutterslade.edbafakac.db.CompositeSearchTerm;
+import ca.cutterslade.edbafakac.db.CompositeEntrySearchTerm;
 import ca.cutterslade.edbafakac.db.Entry;
-import ca.cutterslade.edbafakac.db.NegatedSearchTerm;
-import ca.cutterslade.edbafakac.db.SearchService;
-import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.NegatedEntrySearchTerm;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.collect.ImmutableList;
 
-public class NotSearchTerm implements CompositeSearchTerm, NegatedSearchTerm {
+public class NotSearchTerm implements CompositeEntrySearchTerm, NegatedEntrySearchTerm {
 
-  private final SearchTerm term;
+  private final EntrySearchTerm term;
 
-  private final ImmutableList<SearchTerm> terms;
+  private final ImmutableList<EntrySearchTerm> terms;
 
   private final int hash;
 
-  NotSearchTerm(@Nonnull final SearchTerm term) {
+  NotSearchTerm(@Nonnull final EntrySearchTerm term) {
     this.term = term;
     this.terms = ImmutableList.of(term);
     hash = Objects.hash(this.term);
   }
 
   @Override
-  public boolean matches(final Entry entry, final SearchService service) {
+  public boolean matches(final Entry entry, final EntrySearchService service) {
     return !term.matches(entry, service);
   }
 
   @Override
-  public Iterable<SearchTerm> getComponents() {
+  public Iterable<EntrySearchTerm> getComponents() {
     return terms;
   }
 
   @Override
-  public boolean combine(final Map<? extends SearchTerm, Boolean> componentResults) {
+  public boolean combine(final Map<? extends EntrySearchTerm, Boolean> componentResults) {
     return !componentResults.get(term).booleanValue();
   }
 
   @Override
-  public SearchTerm getNegatedTerm() {
+  public EntrySearchTerm getNegatedTerm() {
     return term;
   }
 

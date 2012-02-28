@@ -22,7 +22,7 @@ import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.EntryStoreException;
-import ca.cutterslade.edbafakac.db.SearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
 import ca.cutterslade.edbafakac.db.mem.MapEntry;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 import ca.cutterslade.utilities.PropertiesUtils;
@@ -101,7 +101,7 @@ public class JdbcEntryService implements EntryService {
 
   private final DataSource dataSource;
 
-  private final SearchService searchService = new JdbcSearchService(this);
+  private final EntrySearchService searchService = new JdbcSearchService(this);
 
   public JdbcEntryService() throws SQLException, IOException {
     this(DFLT_DATABASE_PROPERTIES_RESOURCE);
@@ -136,7 +136,7 @@ public class JdbcEntryService implements EntryService {
   }
 
   @Override
-  public SearchService getSearchService() {
+  public EntrySearchService getSearchService() {
     return searchService;
   }
 

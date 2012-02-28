@@ -20,7 +20,6 @@ import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.EntryServiceFactory;
-import ca.cutterslade.edbafakac.db.SearchService;
 import ca.cutterslade.utilities.PropertiesUtils;
 
 import com.google.common.base.Preconditions;
@@ -70,16 +69,16 @@ public final class ValueService {
     return new ValueService(entryService);
   }
 
+  public ValueSearchService getSearchService() {
+    return new ValueSearchService(this);
+  }
+
   EntryService getEntryService() {
     return entryService;
   }
 
-  SearchService getSearchService() {
-    return getEntryService().getSearchService();
-  }
-
   Value<?> getNewValue(@Nonnull final TypeValue type) {
-    final Entry entry = getEntryService().getNewEntry();
+    final Entry entry = entryService.getNewEntry();
     entry.setProperty(BaseField.VALUE_TYPE.getKey(), type.getKey());
     entry.setProperty(BaseField.VALUE_CLASS.getKey(), BaseField.TYPE_CLASS.getValue(this).getRawValue(type));
     return Value.getInstance(this, entry, RetrieveMode.READ_WRITE);
@@ -88,7 +87,7 @@ public final class ValueService {
   Value<?> getValue(@Nonnull final String key, @Nonnull final RetrieveMode retrieveMode) {
     Value<?> value = baseValues.get(key);
     if (null == value) {
-      value = Value.getInstance(this, getEntryService().getEntry(key), retrieveMode);
+      value = Value.getInstance(this, entryService.getEntry(key), retrieveMode);
       if (value.isBaseValue()) {
         Preconditions.checkArgument(RetrieveMode.READ_ONLY == retrieveMode,
             "Cannot provide writable value of %s", value.getName(RetrieveMode.READ_ONLY).getBaseValue());
@@ -113,7 +112,7 @@ public final class ValueService {
       value = Value.getInstance(this, entry, RetrieveMode.READ_ONLY);
       final Value<?> oldValue = baseValues.putIfAbsent(key, value);
       if (null == oldValue) {
-        getEntryService().saveEntry(entry);
+        entryService.saveEntry(entry);
       }
       else {
         value = oldValue;
@@ -125,7 +124,7 @@ public final class ValueService {
   private Entry readBaseEntry(@Nonnull final String key, @Nonnull final String defaultResource) {
     try {
       final ImmutableMap<String, String> values = PropertiesUtils.loadProperties(ValueService.class, defaultResource);
-      final Entry entry = getEntryService().getNewEntry(key);
+      final Entry entry = entryService.getNewEntry(key);
       for (final Map.Entry<String, String> ent : values.entrySet()) {
         final String fieldKey = ent.getKey();
         final String value = null == BaseField.getResolver(fieldKey) ? ent.getValue() :
@@ -234,6 +233,10 @@ public final class ValueService {
 
   public ListValue listOfValues(@Nonnull final Iterable<? extends Value<?>> values) {
     return listOfValues().addAll(values);
+  }
+
+  public ListValue listOfValues(@Nonnull final TypeValue type, @Nonnull final Value<?>... values) {
+    return listOfType(type).addAll(values);
   }
 
   public ListValue listOfValues(@Nonnull final TypeValue type, @Nonnull final Iterable<? extends Value<?>> values) {

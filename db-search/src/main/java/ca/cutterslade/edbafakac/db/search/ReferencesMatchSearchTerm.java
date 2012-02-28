@@ -3,27 +3,27 @@ package ca.cutterslade.edbafakac.db.search;
 import java.util.Objects;
 
 import ca.cutterslade.edbafakac.db.Entry;
-import ca.cutterslade.edbafakac.db.SearchService;
-import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.collect.ImmutableSet;
 
-public class ReferencesMatchSearchTerm implements SearchTerm {
+public class ReferencesMatchSearchTerm implements EntrySearchTerm {
 
   private final ImmutableSet<String> referenceFieldKeys;
 
-  private final SearchTerm term;
+  private final EntrySearchTerm term;
 
   private final int hash;
 
-  public ReferencesMatchSearchTerm(final Iterable<String> referenceFieldKeys, final SearchTerm term) {
+  public ReferencesMatchSearchTerm(final Iterable<String> referenceFieldKeys, final EntrySearchTerm term) {
     this.referenceFieldKeys = ImmutableSet.copyOf(referenceFieldKeys);
     this.term = term;
     hash = Objects.hash(referenceFieldKeys, term);
   }
 
   @Override
-  public boolean matches(final Entry entry, final SearchService service) {
+  public boolean matches(final Entry entry, final EntrySearchService service) {
     final Iterable<String> keys = service.searchForKeys(term);
     return new FieldValueSearchTerm(referenceFieldKeys, keys).matches(entry, service);
   }
@@ -32,7 +32,7 @@ public class ReferencesMatchSearchTerm implements SearchTerm {
     return referenceFieldKeys;
   }
 
-  public SearchTerm getTerm() {
+  public EntrySearchTerm getTerm() {
     return term;
   }
 

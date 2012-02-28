@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 
 /**
- * Implementations define rules for matching entries which can be executed as searches by a {@link SearchService}
+ * Implementations define rules for matching entries which can be executed as searches by a {@link EntrySearchService}
  * implementation. A search service should be capable of executing a search based an any arbitrary {@code SearchTerm}
  * implementation, however, it is common for a search service to be optimised for implementations returned by the
  * {@code SearchService} interface itself.
@@ -15,7 +15,7 @@ import javax.annotation.concurrent.Immutable;
  * @author W.F. Hartford
  */
 @Immutable
-public interface SearchTerm {
+public interface EntrySearchTerm {
 
   /**
    * Determine if the provided entry matches the conditions of this search term.
@@ -26,6 +26,6 @@ public interface SearchTerm {
    *          The search service executing the search
    * @return {@code true} if the provided entry matches the conditions of this search term, {@code false} if it does not
    */
-  boolean matches(@Nonnull Entry entry, @Nonnull SearchService service);
+  boolean matches(@Nonnull Entry entry, @Nonnull EntrySearchService service);
 
 }

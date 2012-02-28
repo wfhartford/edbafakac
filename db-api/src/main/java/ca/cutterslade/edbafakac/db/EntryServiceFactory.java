@@ -39,8 +39,8 @@ public final class EntryServiceFactory {
   }
 
   /**
-   * Set the {@link EntryService} instance to be returned by instances of {@link EntryServiceFactory} returned from future
-   * calls to {@link #getInstance()}.
+   * Set the {@link EntryService} instance to be returned by instances of {@link EntryServiceFactory} returned from
+   * future calls to {@link #getInstance()}.
    * 
    * @param service
    *          The {@link EntryService} to be returned by future instances of {@link EntryServiceFactory}

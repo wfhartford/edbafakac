@@ -5,12 +5,12 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 
 import ca.cutterslade.edbafakac.db.Entry;
-import ca.cutterslade.edbafakac.db.SearchService;
-import ca.cutterslade.edbafakac.db.SearchTerm;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.collect.ImmutableSet;
 
-public class FieldValueSearchTerm implements SearchTerm {
+public class FieldValueSearchTerm implements EntrySearchTerm {
 
   private final ImmutableSet<String> fieldKeys;
 
@@ -25,7 +25,7 @@ public class FieldValueSearchTerm implements SearchTerm {
   }
 
   @Override
-  public boolean matches(final Entry entry, final SearchService service) {
+  public boolean matches(final Entry entry, final EntrySearchService service) {
     boolean match = false;
     for (final String key : fieldKeys) {
       if (values.contains(entry.getProperty(key))) {

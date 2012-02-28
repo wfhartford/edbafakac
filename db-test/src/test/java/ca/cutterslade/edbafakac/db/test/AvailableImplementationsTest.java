@@ -14,7 +14,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import ca.cutterslade.edbafakac.db.EntryService;
-import ca.cutterslade.edbafakac.db.SearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
 import ca.cutterslade.edbafakac.db.jdbc.JdbcEntryService;
 
 import com.google.appengine.tools.development.testing.LocalDatastoreServiceTestConfig;
@@ -38,7 +38,7 @@ public abstract class AvailableImplementationsTest {
     return entryService;
   }
 
-  protected SearchService getSearchService() {
+  protected EntrySearchService getSearchService() {
     return entryService.getSearchService();
   }
 
