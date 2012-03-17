@@ -3,6 +3,8 @@ package ca.cutterslade.edbafakac.model;
 import javax.annotation.Nonnull;
 
 import ca.cutterslade.edbafakac.db.Entry;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
+import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.base.Preconditions;
 
@@ -51,7 +53,22 @@ public final class FieldValue extends Value<FieldValue> {
           fieldType.getName(RetrieveMode.READ_ONLY).getBaseValue() +
           " field to a " + fieldValue.getType(RetrieveMode.READ_ONLY).getName(RetrieveMode.READ_ONLY).getBaseValue());
     }
+    if (isUnique()) {
+      final EntrySearchService searchService = getValueService().getEntryService().getSearchService();
+      final EntrySearchTerm fieldWithKey = searchService.propertyValue(getKey(), fieldValue.getKey());
+      final EntrySearchTerm sameType = searchService
+          .propertyValue(BaseField.VALUE_TYPE.getKey(), targetValue.getProperty(BaseField.VALUE_TYPE.getKey()));
+      final EntrySearchTerm notSameEntry = searchService.not(searchService.key(targetValue.getKey()));
+      final EntrySearchTerm uniqueViolation = searchService.and(fieldWithKey, sameType, notSameEntry);
+      if (searchService.searchForMatch(uniqueViolation)) {
+        throw new IllegalArgumentException("Value violates field uniqueness");
+      }
+    }
     return setRawValue(targetValue.save(), fieldValue.save().getKey());
+  }
+
+  public boolean isUnique() {
+    return BaseValue.BOOLEAN_TRUE.getKey().equals(getProperty(BaseField.UNIQUE.getKey()));
   }
 
   String getRawValue(@Nonnull final Value<?> value) {

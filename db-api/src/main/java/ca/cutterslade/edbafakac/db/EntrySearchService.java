@@ -38,6 +38,8 @@ public interface EntrySearchService {
    */
   Iterable<Entry> searchForEntries(@Nonnull EntrySearchTerm term);
 
+  boolean searchForMatch(@Nonnull EntrySearchTerm term);
+
   /**
    * Create a {@link EntrySearchTerm} by combining the provided terms using boolean AND logic. In order to match the
    * returned term, an entry must match every provided term. If no terms are provided, the returned term will match any
@@ -151,4 +153,6 @@ public interface EntrySearchService {
    * @return A search term matching entries with any of the specified property values
    */
   EntrySearchTerm propertyValue(@Nonnull Iterable<String> propertyKeys, @Nonnull Iterable<String> values);
+
+  EntrySearchTerm key(@Nonnull String entryKey);
 }

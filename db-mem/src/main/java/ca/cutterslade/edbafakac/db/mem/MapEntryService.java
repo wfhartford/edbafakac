@@ -1,5 +1,6 @@
 package ca.cutterslade.edbafakac.db.mem;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.UUID;
@@ -11,8 +12,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
-import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.EntrySearchService;
+import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.search.AbstractSearchService;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 
@@ -22,7 +23,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.MapMaker;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -175,7 +175,7 @@ public class MapEntryService implements EntryService {
   }
 
   Iterable<String> getAllKeys() {
-    return Iterables.unmodifiableIterable(entries.keySet());
+    return Collections.unmodifiableSet(entries.keySet());
   }
 
   private void addDirtyEntryKey(final String key) {

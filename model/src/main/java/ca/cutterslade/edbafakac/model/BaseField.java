@@ -31,7 +31,8 @@ enum BaseField implements InitialValue {
       return resolvedValue.save(true).getKey();
     }
   }),
-  TYPE_CLASS("1c979df8-f291-4d1e-b020-8ec7f77e04b4", null);
+  TYPE_CLASS("1c979df8-f291-4d1e-b020-8ec7f77e04b4", null),
+  UNIQUE("1b1a0387-7ea9-4f96-9c20-a5dbc2c8498e", null);
 
   private static final ImmutableMap<String, BaseField> FIELDS_BY_KEY;
   static {

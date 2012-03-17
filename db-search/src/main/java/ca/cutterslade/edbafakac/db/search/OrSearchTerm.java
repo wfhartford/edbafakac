@@ -12,7 +12,7 @@ import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.collect.ImmutableSet;
 
-public class OrSearchTerm implements CompositeEntrySearchTerm {
+public final class OrSearchTerm implements CompositeEntrySearchTerm {
 
   private final ImmutableSet<EntrySearchTerm> terms;
 

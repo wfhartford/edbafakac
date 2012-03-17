@@ -10,7 +10,7 @@ import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.collect.ImmutableSet;
 
-public class FieldValueSearchTerm implements EntrySearchTerm {
+public final class FieldValueSearchTerm implements EntrySearchTerm {
 
   private final ImmutableSet<String> fieldKeys;
 

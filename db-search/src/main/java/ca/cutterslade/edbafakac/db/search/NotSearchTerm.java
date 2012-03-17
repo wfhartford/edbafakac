@@ -7,13 +7,13 @@ import javax.annotation.Nonnull;
 
 import ca.cutterslade.edbafakac.db.CompositeEntrySearchTerm;
 import ca.cutterslade.edbafakac.db.Entry;
-import ca.cutterslade.edbafakac.db.NegatedEntrySearchTerm;
 import ca.cutterslade.edbafakac.db.EntrySearchService;
 import ca.cutterslade.edbafakac.db.EntrySearchTerm;
+import ca.cutterslade.edbafakac.db.NegatedEntrySearchTerm;
 
 import com.google.common.collect.ImmutableList;
 
-public class NotSearchTerm implements CompositeEntrySearchTerm, NegatedEntrySearchTerm {
+public final class NotSearchTerm implements CompositeEntrySearchTerm, NegatedEntrySearchTerm {
 
   private final EntrySearchTerm term;
 

@@ -99,6 +99,16 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
   }
 
   @Override
+  public boolean searchForMatch(final EntrySearchTerm term) {
+    return !Iterables.isEmpty(searchForKeys(term));
+  }
+
+  @Override
+  public EntrySearchTerm key(final String entryKey) {
+    return new KeySearchTerm(entryKey);
+  }
+
+  @Override
   public EntrySearchTerm and(final EntrySearchTerm... terms) {
     return and(ImmutableSet.copyOf(terms));
   }
@@ -201,6 +211,9 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
     else if (Constant.ANY_ENTRY.equals(term)) {
       result = getAllKeys();
     }
+    else if (term instanceof KeySearchTerm) {
+      result = executeKeySearchTerm((KeySearchTerm) term);
+    }
     else if (term instanceof FieldValueSearchTerm) {
       result = executeFieldValueSearch((FieldValueSearchTerm) term);
     }
@@ -230,6 +243,11 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
   }
 
   protected abstract Iterable<String> getAllKeys();
+
+  protected Iterable<String> executeKeySearchTerm(final KeySearchTerm term) {
+    return Iterables.contains(getAllKeys(), term.getKey()) ?
+        ImmutableSet.of(term.getKey()) : ImmutableSet.<String> of();
+  }
 
   /**
    * Implements the basic filtering on a {@link FieldValueSearchTerm}. This implementation, while effective, should

@@ -8,7 +8,7 @@ import ca.cutterslade.edbafakac.db.EntrySearchTerm;
 
 import com.google.common.collect.ImmutableSet;
 
-public class ReferencesMatchSearchTerm implements EntrySearchTerm {
+public final class ReferencesMatchSearchTerm implements EntrySearchTerm {
 
   private final ImmutableSet<String> referenceFieldKeys;
 
