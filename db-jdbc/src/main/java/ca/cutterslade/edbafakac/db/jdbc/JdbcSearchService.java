@@ -11,8 +11,7 @@ public class JdbcSearchService extends AbstractSearchService<JdbcEntryService> {
 
   @Override
   protected Iterable<String> getAllKeys() {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("getAllKeys has not been implemented");
+    return getEntryService().getAllKeys();
   }
 
   @Override

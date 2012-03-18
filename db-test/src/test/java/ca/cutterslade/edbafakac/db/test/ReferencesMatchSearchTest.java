@@ -55,12 +55,12 @@ public class ReferencesMatchSearchTest extends AvailableImplementationsTest {
   @Test
   public void testReferencesMatchSearchNoResult() {
     final EntryService service = getEntryService();
-    final Entry referant = service.getNewEntry().setProperty("keyOne", "valueOne");
+    final Entry referant = service.getNewEntry().setProperty("keyTwo", "valueOne");
     service.saveEntry(referant);
     final Entry referer = service.getNewEntry().setProperty("reference", referant.getKey());
     service.saveEntry(referer);
     final Iterable<Entry> search = getSearchService().searchForEntries(
-        getSearchService().referencesMatch("reference", getSearchService().propertyValue("keyOne", "valueTwo")));
+        getSearchService().referencesMatch("reference", getSearchService().propertyValue("keyTwo", "valueTwo")));
     assertNotNull(search);
     assertTrue(Iterables.isEmpty(search));
   }

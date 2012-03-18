@@ -97,6 +97,8 @@ public class JdbcEntryService implements EntryService {
 
   private static final String DELETE_PROPERTIES = "delete from EDBAFAKAC.ENTRIES where ENTRY_KEY = ?";
 
+  private static final String SEARCH_ALL_KEYS = "select distinct ENTRY_KEY from EDBAFAKAC.ENTRIES";
+
   private static final ImmutableSet<String> RESERVED_KEYS = ImmutableSet.of(Entry.WRITE_TIME_KEY, PLACEHOLDER_STRING);
 
   private final DataSource dataSource;
@@ -264,6 +266,15 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
+  Iterable<String> getAllKeys() {
+    try (Connection connection = getConnection()) {
+      return getQueryResult(connection, SEARCH_ALL_KEYS, ImmutableList.of(), ResultSetTransformer.STRING_TRANSFORMER);
+    }
+    catch (final SQLException e) {
+      throw new EntryStoreException(e);
+    }
+  }
+
   @SuppressWarnings("PMD.ExcessiveParameterList")
   @edu.umd.cs.findbugs.annotations.SuppressWarnings("SQL_PREPARED_STATEMENT_GENERATED_FROM_NONCONSTANT_STRING")
   private <T> ImmutableList<T> getQueryResult(@Nonnull final Connection connection, @Nonnull final String query,
@@ -284,6 +295,12 @@ public class JdbcEntryService implements EntryService {
   public void createTable() throws SQLException {
     try (final Connection connection = getConnection()) {
       createTable(connection);
+    }
+  }
+
+  public static void dropTable(@Nonnull final Connection connection) throws SQLException {
+    try (Statement statement = connection.createStatement()) {
+      statement.execute("drop table EDBAFAKAC.ENTRIES");
     }
   }
 

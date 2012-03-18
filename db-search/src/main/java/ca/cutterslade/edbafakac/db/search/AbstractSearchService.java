@@ -408,23 +408,31 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
   }
 
   protected Iterable<String> executeAndSearch(final AndSearchTerm term) {
+    final Set<EntrySearchTerm> negatedTerms = Sets.newHashSet();
     Set<String> results = null;
     for (final EntrySearchTerm component : term.getComponents()) {
-      if (null == results) {
+      if (component instanceof NegatedEntrySearchTerm) {
+        negatedTerms.add(((NegatedEntrySearchTerm) component).getNegatedTerm());
+      }
+      else if (null == results) {
         results = Sets.newHashSet(searchForKeys(component));
       }
       else {
+        final Set<String> narrowed = Sets.newHashSet();
         final Iterable<String> keys = searchForKeys(component);
         for (final String key : keys) {
-          results.remove(key);
-          if (results.isEmpty()) {
-            break;
+          if (results.contains(key)) {
+            narrowed.add(key);
           }
         }
+        results = narrowed;
       }
-      if (results.isEmpty()) {
+      if (null != results && results.isEmpty()) {
         break;
       }
+    }
+    if (!negatedTerms.isEmpty()) {
+      filterEntryKeys(results, not(or(negatedTerms)));
     }
     return results;
   }
