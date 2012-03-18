@@ -388,18 +388,37 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
   }
 
   protected Iterable<String> executeOrSearch(final OrSearchTerm term) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("executeOrSearch has not been implemented");
+    final Set<String> results = Sets.newHashSet();
+    for (final EntrySearchTerm component : term.getComponents()) {
+      Iterables.addAll(results, searchForKeys(component));
+    }
+    return results;
   }
 
   protected Iterable<String> executeAndSearch(final AndSearchTerm term) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("executeAndSearch has not been implemented");
+    Set<String> results = null;
+    for (final EntrySearchTerm component : term.getComponents()) {
+      if (null == results) {
+        results = Sets.newHashSet(searchForKeys(component));
+      }
+      else {
+        final Iterable<String> keys = searchForKeys(component);
+        for (final String key : keys) {
+          results.remove(key);
+          if (results.isEmpty()) {
+            break;
+          }
+        }
+      }
+      if (results.isEmpty()) {
+        break;
+      }
+    }
+    return results;
   }
 
   protected Iterable<String> executeUnsupportedCompositeSearch(final CompositeEntrySearchTerm term) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("executeUnsupportedCompositeSearch has not been implemented");
+    return executeUnsupportedSearch(term);
   }
 
   protected Iterable<String> executeUnsupportedSearch(final EntrySearchTerm term) {
