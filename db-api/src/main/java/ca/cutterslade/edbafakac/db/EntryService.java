@@ -49,6 +49,15 @@ public interface EntryService {
   Entry getEntry(@Nonnull String key);
 
   /**
+   * Determine if the provided key identifies an existing entry.
+   * 
+   * @param key
+   *          The key of the entry
+   * @return {@code true} if the provided key identifies an entry, {@code false} if it does not.
+   */
+  boolean entryExists(@Nonnull String key);
+
+  /**
    * Save an entry to the database.
    * 
    * @param entry

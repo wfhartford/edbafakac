@@ -20,9 +20,9 @@ import org.apache.commons.dbcp.BasicDataSource;
 import ca.cutterslade.edbafakac.db.Entry;
 import ca.cutterslade.edbafakac.db.EntryAlreadyExistsException;
 import ca.cutterslade.edbafakac.db.EntryNotFoundException;
+import ca.cutterslade.edbafakac.db.EntrySearchService;
 import ca.cutterslade.edbafakac.db.EntryService;
 import ca.cutterslade.edbafakac.db.EntryStoreException;
-import ca.cutterslade.edbafakac.db.EntrySearchService;
 import ca.cutterslade.edbafakac.db.mem.MapEntry;
 import ca.cutterslade.edbafakac.db.search.FieldValueSearchTerm;
 import ca.cutterslade.utilities.PropertiesUtils;
@@ -177,6 +177,16 @@ public class JdbcEntryService implements EntryService {
     }
   }
 
+  @Override
+  public boolean entryExists(final String key) {
+    try (final Connection connection = getConnection()) {
+      return 0 != getPropertyCount(key, connection);
+    }
+    catch (final SQLException e) {
+      throw new EntryStoreException(e);
+    }
+  }
+
   @VisibleForTesting
   Connection getConnection() throws SQLException {
     return dataSource.getConnection();
@@ -214,9 +224,7 @@ public class JdbcEntryService implements EntryService {
       final boolean newEntry) throws SQLException {
     try (final Connection connection = getConnection()) {
       connection.setAutoCommit(false);
-      if (newEntry &&
-          0 != Iterables.getOnlyElement(getQueryResult(connection, PROPERTY_COUNT_QUERY, ImmutableSet.of(key),
-              ResultSetTransformer.INTEGER_TRANSFORMER))) {
+      if (newEntry && 0 != getPropertyCount(key, connection)) {
         throw new EntryAlreadyExistsException(key);
       }
       if (!newEntry) {
@@ -225,6 +233,11 @@ public class JdbcEntryService implements EntryService {
       insertProperties(connection, key, properties);
       connection.commit();
     }
+  }
+
+  private Integer getPropertyCount(final String key, final Connection connection) throws SQLException {
+    return Iterables.getOnlyElement(getQueryResult(connection, PROPERTY_COUNT_QUERY, ImmutableSet.of(key),
+        ResultSetTransformer.INTEGER_TRANSFORMER));
   }
 
   private void insertProperties(@Nonnull final Connection connection, @Nonnull final String key,

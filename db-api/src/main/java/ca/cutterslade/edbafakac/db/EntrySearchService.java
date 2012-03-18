@@ -38,6 +38,18 @@ public interface EntrySearchService {
    */
   Iterable<Entry> searchForEntries(@Nonnull EntrySearchTerm term);
 
+  /**
+   * Execute a search to determine if matching entries exist.. An implementation should be able to search using any
+   * arbitrary {@link EntrySearchTerm} implementation, it may choose not to support certain combinations in which case
+   * an UnsupportedSearchException should be thrown.
+   * 
+   * @param term
+   *          The term to search for
+   * @return {@code true} if one or more entries exist which match the provided search term, {@code false} if no entry
+   *         exists which would match the term
+   * @throws UnsupportedSearchException
+   *           if the provided search term cannot be evaluated
+   */
   boolean searchForMatch(@Nonnull EntrySearchTerm term);
 
   /**
@@ -154,5 +166,12 @@ public interface EntrySearchService {
    */
   EntrySearchTerm propertyValue(@Nonnull Iterable<String> propertyKeys, @Nonnull Iterable<String> values);
 
+  /**
+   * Create a {@link EntrySearchTerm} which matches the entry with the provided key if it exists.
+   * 
+   * @param entryKey
+   *          The key of the entry to search for
+   * @return A search term matching the entry with the supplied key
+   */
   EntrySearchTerm key(@Nonnull String entryKey);
 }

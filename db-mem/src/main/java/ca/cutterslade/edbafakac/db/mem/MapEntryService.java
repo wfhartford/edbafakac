@@ -134,6 +134,11 @@ public class MapEntryService implements EntryService {
   }
 
   @Override
+  public boolean entryExists(final String key) {
+    return entries.containsKey(key);
+  }
+
+  @Override
   public void saveEntry(final Entry entry) {
     ((MapEntry) entry).setWriteTime(System.currentTimeMillis());
     saveEntryWithoutUpdatingWriteTime(entry);
