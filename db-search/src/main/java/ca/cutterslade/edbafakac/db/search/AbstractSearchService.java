@@ -44,64 +44,72 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
   protected final class ConstantSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeConstantSearchTerm((Constant) input);
+      return null == input ? getNoKeys() : executeConstantSearchTerm((Constant) input);
     }
   }
 
   protected final class KeySearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeKeySearchTerm((KeySearchTerm) input);
+      return null == input ? getNoKeys() : executeKeySearchTerm((KeySearchTerm) input);
     }
   }
 
   protected final class FieldValueSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeFieldValueSearch((FieldValueSearchTerm) input);
+      return null == input ? getNoKeys() : executeFieldValueSearch((FieldValueSearchTerm) input);
     }
   }
 
   protected final class ReferencesMatchSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeReferencesMatchSearch((ReferencesMatchSearchTerm) input);
+      return null == input ? getNoKeys() : executeReferencesMatchSearch((ReferencesMatchSearchTerm) input);
     }
   }
 
   protected final class AndSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeAndSearch((AndSearchTerm) input);
+      return null == input ? getNoKeys() : executeAndSearch((AndSearchTerm) input);
     }
   }
 
   protected final class OrSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeOrSearch((OrSearchTerm) input);
+      return null == input ? getNoKeys() : executeOrSearch((OrSearchTerm) input);
     }
   }
 
   protected final class NegatedSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeNegatedSearch((NegatedEntrySearchTerm) input);
+      return null == input ? getNoKeys() : executeNegatedSearch((NegatedEntrySearchTerm) input);
     }
   }
 
   protected final class CompositeSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
 
     @Override
+    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeUnsupportedCompositeSearch((CompositeEntrySearchTerm) input);
+      return null == input ? getNoKeys() : executeUnsupportedCompositeSearch((CompositeEntrySearchTerm) input);
     }
   }
 
@@ -109,7 +117,7 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
 
     @Override
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return executeUnsupportedSearch(input);
+      return null == input ? getNoKeys() : executeUnsupportedSearch(input);
     }
   }
 
@@ -142,8 +150,12 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
         }
       };
 
-  private final AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>>> searchMap =
-      new AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>>>();
+  // @formatter:off
+  private final AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, 
+      Function<EntrySearchTerm, Iterable<String>>>> searchMap =
+          new AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, 
+              Function<EntrySearchTerm, Iterable<String>>>>();
+  // @formatter:on
 
   private final Function<String, Entry> lookup = new Function<String, Entry>() {
 
