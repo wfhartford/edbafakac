@@ -41,83 +41,129 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
 
   }
 
-  protected final class ConstantSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected abstract class SearchFunction<S extends EntrySearchTerm> implements
+      Function<EntrySearchTerm, Iterable<String>> {
+
+    private final Class<S> termType;
+
+    public SearchFunction(final Class<S> termType) {
+      this.termType = termType;
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
     public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeConstantSearchTerm((Constant) input);
+      return null == input ? getNoKeys() : executeSearch(termType.cast(input));
+    }
+
+    protected abstract Iterable<String> executeSearch(@Nonnull S cast);
+
+  }
+
+  protected final class ConstantSearchFunction extends SearchFunction<Constant> {
+
+    public ConstantSearchFunction() {
+      super(Constant.class);
+    }
+
+    @Override
+    protected Iterable<String> executeSearch(final Constant input) {
+      return executeConstantSearchTerm(input);
     }
   }
 
-  protected final class KeySearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class KeySearchFunction extends SearchFunction<KeySearchTerm> {
+
+    public KeySearchFunction() {
+      super(KeySearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeKeySearchTerm((KeySearchTerm) input);
+    protected Iterable<String> executeSearch(final KeySearchTerm input) {
+      return executeKeySearchTerm(input);
     }
   }
 
-  protected final class FieldValueSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class FieldValueSearchFunction extends SearchFunction<FieldValueSearchTerm> {
+
+    public FieldValueSearchFunction() {
+      super(FieldValueSearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeFieldValueSearch((FieldValueSearchTerm) input);
+    protected Iterable<String> executeSearch(final FieldValueSearchTerm input) {
+      return executeFieldValueSearch(input);
     }
   }
 
-  protected final class ReferencesMatchSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class ReferencesMatchSearchFunction extends SearchFunction<ReferencesMatchSearchTerm> {
+
+    public ReferencesMatchSearchFunction() {
+      super(ReferencesMatchSearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeReferencesMatchSearch((ReferencesMatchSearchTerm) input);
+    protected Iterable<String> executeSearch(final ReferencesMatchSearchTerm input) {
+      return executeReferencesMatchSearch(input);
     }
   }
 
-  protected final class AndSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class AndSearchFunction extends SearchFunction<AndSearchTerm> {
+
+    public AndSearchFunction() {
+      super(AndSearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeAndSearch((AndSearchTerm) input);
+    protected Iterable<String> executeSearch(final AndSearchTerm input) {
+      return executeAndSearch(input);
     }
   }
 
-  protected final class OrSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class OrSearchFunction extends SearchFunction<OrSearchTerm> {
+
+    public OrSearchFunction() {
+      super(OrSearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeOrSearch((OrSearchTerm) input);
+    protected Iterable<String> executeSearch(final OrSearchTerm input) {
+      return executeOrSearch(input);
     }
   }
 
-  protected final class NegatedSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class NegatedSearchFunction extends SearchFunction<NegatedEntrySearchTerm> {
+
+    public NegatedSearchFunction() {
+      super(NegatedEntrySearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeNegatedSearch((NegatedEntrySearchTerm) input);
+    protected Iterable<String> executeSearch(final NegatedEntrySearchTerm input) {
+      return executeNegatedSearch(input);
     }
   }
 
-  protected final class CompositeSearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class CompositeSearchFunction extends SearchFunction<CompositeEntrySearchTerm> {
+
+    public CompositeSearchFunction() {
+      super(CompositeEntrySearchTerm.class);
+    }
 
     @Override
-    @edu.umd.cs.findbugs.annotations.SuppressWarnings("BC_UNCONFIRMED_CAST")
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeUnsupportedCompositeSearch((CompositeEntrySearchTerm) input);
+    protected Iterable<String> executeSearch(final CompositeEntrySearchTerm input) {
+      return executeUnsupportedCompositeSearch(input);
     }
   }
 
-  protected final class EntrySearchFunction implements Function<EntrySearchTerm, Iterable<String>> {
+  protected final class EntrySearchFunction extends SearchFunction<EntrySearchTerm> {
+
+    public EntrySearchFunction() {
+      super(EntrySearchTerm.class);
+    }
 
     @Override
-    public Iterable<String> apply(final EntrySearchTerm input) {
-      return null == input ? getNoKeys() : executeUnsupportedSearch(input);
+    protected Iterable<String> executeSearch(final EntrySearchTerm input) {
+      return executeUnsupportedSearch(input);
     }
   }
 
@@ -152,9 +198,9 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
 
   // @formatter:off
   private final AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, 
-      Function<EntrySearchTerm, Iterable<String>>>> searchMap =
-          new AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, 
-              Function<EntrySearchTerm, Iterable<String>>>>();
+        ? extends Function<EntrySearchTerm, Iterable<String>>>> searchMap =
+      new AtomicReference<ImmutableMap<Class<? extends EntrySearchTerm>, 
+            ? extends Function<EntrySearchTerm, Iterable<String>>>>();
   // @formatter:on
 
   private final Function<String, Entry> lookup = new Function<String, Entry>() {
@@ -265,8 +311,8 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
 
   @Override
   public EntrySearchTerm not(final EntrySearchTerm term) {
-    return term instanceof NegatedEntrySearchTerm ? ((NegatedEntrySearchTerm) term).getNegatedTerm()
-        : new NotSearchTerm(term);
+    return term instanceof NegatedEntrySearchTerm ?
+        ((NegatedEntrySearchTerm) term).getNegatedTerm() : new NotSearchTerm(term);
   }
 
   @Override
@@ -296,9 +342,10 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
         new FieldValueSearchTerm(fieldKeys, values);
   }
 
-  protected final ImmutableMap<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>>
+  protected final ImmutableMap<Class<? extends EntrySearchTerm>, ? extends Function<EntrySearchTerm, Iterable<String>>>
       getSearchMap() {
-    ImmutableMap<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>> map = searchMap.get();
+    ImmutableMap<Class<? extends EntrySearchTerm>, ? extends Function<EntrySearchTerm, Iterable<String>>> map =
+        searchMap.get();
     if (null == map) {
       map = createSearchMap();
       if (!searchMap.compareAndSet(null, map)) {
@@ -308,7 +355,7 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
     return map;
   }
 
-  protected ImmutableMap<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>>
+  protected ImmutableMap<Class<? extends EntrySearchTerm>, ? extends Function<EntrySearchTerm, Iterable<String>>>
       createSearchMap() {
     return ImmutableMap.<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>> builder()
         .put(Constant.class, new ConstantSearchFunction())
@@ -324,8 +371,11 @@ public abstract class AbstractSearchService<T extends EntryService> implements E
   }
 
   protected Function<EntrySearchTerm, Iterable<String>> getSearchFunction(final EntrySearchTerm term) {
-    final ImmutableMap<Class<? extends EntrySearchTerm>, Function<EntrySearchTerm, Iterable<String>>> functionMap =
-        getSearchMap();
+    // @formatter:off
+    final ImmutableMap<Class<? extends EntrySearchTerm>, 
+          ? extends Function<EntrySearchTerm, Iterable<String>>> functionMap = getSearchMap();
+    // @formatter:on
+
     final Class<? extends EntrySearchTerm> termClass = term.getClass();
     final Function<EntrySearchTerm, Iterable<String>> searchFunction;
     if (functionMap.containsKey(termClass)) {
